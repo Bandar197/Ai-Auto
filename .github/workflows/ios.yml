@@ -25,6 +25,10 @@ on:
     branches: [main]
     paths: ["mobile/**", ".github/workflows/ios.yml"]
 
+# Least privilege for the workflow token.
+permissions:
+  contents: read
+
 concurrency:
   group: ios-${{ github.ref }}
   cancel-in-progress: true

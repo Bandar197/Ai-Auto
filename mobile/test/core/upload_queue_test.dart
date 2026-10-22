@@ -65,7 +65,7 @@ void main() {
       }
       return (404, {'error': {'code': 'not_found', 'message': o.path}});
     });
-    final dio = buildDio('http://test/api/v1', tokens)..httpClientAdapter = adapter;
+    final dio = buildDio('https://test/api/v1', tokens)..httpClientAdapter = adapter;
     final queue = UploadQueue(store, AutomindApi(dio, tokens));
     final report = await seed();
     await queue.enqueue(report.id);
@@ -101,7 +101,7 @@ void main() {
       }
       return (404, null);
     });
-    final dio = buildDio('http://test/api/v1', tokens);
+    final dio = buildDio('https://test/api/v1', tokens);
     dio.httpClientAdapter = adapter;
     // the refresh Dio shares options but has its own adapter: patch via interceptor
     final auth = dio.interceptors.whereType<AuthInterceptor>().single;
@@ -114,7 +114,7 @@ void main() {
 
   test('failed refresh clears tokens and surfaces unauthorized', () async {
     final adapter = FakeAdapter((o, body) => (401, {'error': {'code': 'unauthorized', 'message': 'nope'}}));
-    final dio = buildDio('http://test/api/v1', tokens)..httpClientAdapter = adapter;
+    final dio = buildDio('https://test/api/v1', tokens)..httpClientAdapter = adapter;
     dio.interceptors.whereType<AuthInterceptor>().single.refreshDio.httpClientAdapter = adapter;
     await expectLater(AutomindApi(dio, tokens).me(), throwsA(isA<ApiException>().having((e) => e.status, 'status', 401)));
     expect(tokens.tokens, isNull);

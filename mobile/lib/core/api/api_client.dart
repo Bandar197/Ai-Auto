@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import 'token_store.dart';
+import 'transport_policy.dart';
 
 /// API error with the backend's `{error: {code, message}}` envelope.
 class ApiException implements Exception {
@@ -17,6 +18,7 @@ class ApiException implements Exception {
   static ApiException from(Object e) {
     if (e is ApiException) return e;
     if (e is DioException) {
+      if (e.error is ApiException) return e.error! as ApiException;
       final data = e.response?.data;
       if (data is Map && data['error'] is Map) {
         final err = data['error'] as Map;
@@ -86,6 +88,9 @@ Dio buildDio(String baseUrl, TokenStore tokens, {void Function()? onLoggedOut}) 
   );
   final dio = Dio(options);
   final refreshDio = Dio(options);
+  // First in the chain: nothing (not even the bearer token) goes out over insecure HTTP.
+  dio.interceptors.add(TransportSecurityInterceptor());
+  refreshDio.interceptors.add(TransportSecurityInterceptor());
   dio.interceptors.add(AuthInterceptor(tokens, refreshDio, onLoggedOut: onLoggedOut));
   return dio;
 }

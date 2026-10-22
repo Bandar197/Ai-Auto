@@ -51,7 +51,7 @@ void main() {
       }
       return (404, {'error': {'code': 'not_found', 'message': path}});
     });
-    final dio = buildDio('http://test/api/v1', tokens)..httpClientAdapter = adapter;
+    final dio = buildDio('https://test/api/v1', tokens)..httpClientAdapter = adapter;
     dio.interceptors.whereType<AuthInterceptor>().single.refreshDio.httpClientAdapter = adapter;
     final container = ProviderContainer(
       retry: (_, _) => null,

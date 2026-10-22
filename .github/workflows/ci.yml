@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
 
+# Least privilege for the workflow token.
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -82,11 +86,35 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
-      - run: flutter build apk --debug
+      - name: Release signing key (only when the repository secrets are set)
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
+            printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+            echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+            echo "Signing with the release key."
+          else
+            echo "::notice::ANDROID_KEYSTORE_BASE64 not set: the APK is signed with the debug key (testing only). See docs/ANDROID_RELEASE.md."
+          fi
+      - name: Release APK (obfuscated)
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: flutter build apk --release --obfuscate --split-debug-info=build/symbols/android
+      - name: Remove signing key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/upload.jks"
       - uses: actions/upload-artifact@v5
         with:
-          name: automind-debug-apk
-          path: mobile/build/app/outputs/flutter-apk/app-debug.apk
+          name: automind-android
+          path: mobile/build/app/outputs/flutter-apk/app-release.apk
+      - uses: actions/upload-artifact@v5
+        with:
+          name: automind-android-symbols
+          path: mobile/build/symbols/android/
+          retention-days: 90
 
   windows-app:
     name: Windows app (desktop build)
@@ -102,7 +130,7 @@ jobs:
           flutter-version: "3.47.7"
           cache: true
       - run: flutter pub get
-      - run: flutter build windows --release
+      - run: flutter build windows --release --obfuscate --split-debug-info=build/symbols/windows
       - name: Bundle the Visual C++ runtime so the app runs on any Windows PC
         shell: pwsh
         run: |
@@ -115,3 +143,26 @@ jobs:
         with:
           name: automind-windows
           path: mobile/build/windows/x64/runner/Release/
+      - name: Microsoft Store package (MSIX, signed by the Store on upload)
+        shell: pwsh
+        env:
+          MSIX_IDENTITY_NAME: ${{ vars.MSIX_IDENTITY_NAME }}
+          MSIX_PUBLISHER: ${{ vars.MSIX_PUBLISHER }}
+          MSIX_PUBLISHER_DISPLAY_NAME: ${{ vars.MSIX_PUBLISHER_DISPLAY_NAME }}
+        run: |
+          $msixArgs = @("run", "msix:create", "--version", "1.0.${{ github.run_number }}.0", "--output-path", "build/msix", "--output-name", "AutoMindAI")
+          if ($env:MSIX_IDENTITY_NAME) { $msixArgs += @("--identity-name", $env:MSIX_IDENTITY_NAME) }
+          if ($env:MSIX_PUBLISHER) { $msixArgs += @("--publisher", $env:MSIX_PUBLISHER) }
+          if ($env:MSIX_PUBLISHER_DISPLAY_NAME) { $msixArgs += @("--publisher-display-name", $env:MSIX_PUBLISHER_DISPLAY_NAME) }
+          dart @msixArgs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Get-ChildItem build/msix | Select-Object Name, Length
+      - uses: actions/upload-artifact@v5
+        with:
+          name: automind-windows-store
+          path: mobile/build/msix/AutoMindAI.msix
+      - uses: actions/upload-artifact@v5
+        with:
+          name: automind-windows-symbols
+          path: mobile/build/symbols/windows/
+          retention-days: 90

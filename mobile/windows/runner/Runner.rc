@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "ai.automind" "\0"
-            VALUE "FileDescription", "automind_app" "\0"
+            VALUE "CompanyName", "AutoMind AI" "\0"
+            VALUE "FileDescription", "AutoMind AI - OBD-II car diagnostics" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "automind_app" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 ai.automind. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 AutoMind AI. All rights reserved." "\0"
             VALUE "OriginalFilename", "automind_app.exe" "\0"
-            VALUE "ProductName", "automind_app" "\0"
+            VALUE "ProductName", "AutoMind AI" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

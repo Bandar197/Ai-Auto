@@ -130,7 +130,7 @@ AUTOMIND_SIM=127.0.0.1:35091 AUTOMIND_SIM_SCENARIO=p0106_map_sensor flutter test
 **Android** (needs Android SDK 36 + build-tools, JDK 17+):
 
 ```bash
-flutter build apk --debug          # build/app/outputs/flutter-apk/app-debug.apk
+flutter build apk --release --obfuscate --split-debug-info=build/symbols/android  # signing: docs/ANDROID_RELEASE.md
 flutter build appbundle --release  # configure signing first (android/key.properties)
 ```
 

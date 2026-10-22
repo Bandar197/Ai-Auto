@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -29,11 +32,39 @@ android {
         versionName = flutter.versionName
     }
 
+    // Release signing: android/key.properties locally (never committed) or the
+    // ANDROID_KEYSTORE_* environment variables in CI (from repository secrets).
+    // Without either, release builds fall back to the debug key (for local testing only).
+    val keyProps = Properties().apply {
+        val f = rootProject.file("key.properties")
+        if (f.exists()) FileInputStream(f).use { load(it) }
+    }
+    fun signingValue(prop: String, env: String): String? =
+        keyProps.getProperty(prop) ?: System.getenv(env)?.takeIf { it.isNotBlank() }
+    val storeFilePath = signingValue("storeFile", "ANDROID_KEYSTORE_PATH")
+
+    signingConfigs {
+        if (storeFilePath != null) {
+            create("release") {
+                storeFile = file(storeFilePath)
+                storePassword = signingValue("storePassword", "ANDROID_KEYSTORE_PASSWORD")
+                keyAlias = signingValue("keyAlias", "ANDROID_KEY_ALIAS")
+                keyPassword = signingValue("keyPassword", "ANDROID_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (storeFilePath != null) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
+            // Shrink and obfuscate the Java/Kotlin side (Dart is obfuscated by --obfuscate).
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 }
