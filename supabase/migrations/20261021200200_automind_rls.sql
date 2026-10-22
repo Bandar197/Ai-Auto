@@ -26,8 +26,10 @@ do $$
 begin
   execute format('grant automind_app to %I with set true', current_user);
 exception when others then
-  -- older servers / superuser: plain membership is enough
-  execute format('grant automind_app to %I', current_user);
+  raise exception using
+    message = format('cannot grant automind_app to %s: %s', current_user, sqlerrm),
+    hint = format('automind_app already exists and was created by another role; as that role run: '
+                  'grant automind_app to %I with admin option, set true;', current_user);
 end;
 $$;
 
@@ -339,8 +341,10 @@ create policy vehicle_connections_update on automind.vehicle_connections for upd
   using (user_id = automind.current_user_id()) with check (user_id = automind.current_user_id());
 
 -- diagnostic sessions & children ----------------------------------------------
+-- The direct owner check comes first: can_access_session() is STABLE and cannot
+-- see a row inserted by the same statement (needed for INSERT … RETURNING).
 create policy sessions_select on automind.diagnostic_sessions for select to automind_app
-  using (automind.can_access_session(id));
+  using (user_id = automind.current_user_id() or automind.can_access_session(id));
 create policy sessions_insert on automind.diagnostic_sessions for insert to automind_app
   with check (user_id = automind.current_user_id()
               and (vehicle_id is null or automind.can_write_vehicle(vehicle_id))

@@ -51,7 +51,7 @@ void main() {
     expect(stored.dtcs.map((d) => d.code), ['P0106']);
     expect(stored.dtcs.single.ecu, '7E8');
     expect((await client.readDtcs(DtcStatus.pending)).dtcs, isEmpty);
-    expect((await client.readDtcs(DtcStatus.permanent)).dtcs, isEmpty);
+    expect((await client.readDtcs(DtcStatus.permanent)).dtcs.map((d) => d.code), ['P0106']);
 
     final ff = await client.readFreezeFrame();
     expect(ff, isNotNull);
@@ -127,6 +127,44 @@ void main() {
     expect(out.responseFrames.join(), contains('44'));
     expect((await client.readDtcs(DtcStatus.stored)).dtcs, isEmpty);
     expect((await client.readDtcs(DtcStatus.pending)).dtcs, isEmpty);
+    expect((await client.readDtcs(DtcStatus.permanent)).dtcs, isNotEmpty); // permanent stays
+    expect(await client.readFreezeFrame(), isNull);
+    await client.dispose();
+  });
+
+  for (final (proto, ecu, family) in [('7', '18DAF110', ProtocolFamily.can29), ('3', '10', ProtocolFamily.iso9141), ('2', '10', ProtocolFamily.j1850)]) {
+    test('end-to-end over protocol $proto (${family.name})', () async {
+      final sc = loadScenario('p0302_misfire');
+      final emu = Elm327Emulator(sc, table, clock: () => const Duration(seconds: 10), protocol: proto);
+      final client = ObdClient(transport: DemoTransport(emu, latency: Duration.zero), table: table);
+      final r = await client.connect();
+      expect(r.ecuOk, isTrue);
+      expect(client.info.protocolCode, proto);
+      expect(client.services.family, family);
+      final sup = await client.readSupportedPids();
+      expect(sup.byEcu.keys, contains(ecu));
+      expect(sup.supports(0x0C), isTrue);
+      final vin = await client.readVin();
+      expect(vin.vin, sc.vin);
+      final dtcs = await client.readDtcs(DtcStatus.stored);
+      expect(dtcs.dtcs.map((d) => d.code), ['P0302']);
+      expect(dtcs.dtcs.single.ecu, ecu);
+      expect((await client.readDtcs(DtcStatus.pending)).dtcs.map((d) => d.code), ['P0300']);
+      final rpm = (await client.readPid(0x0C)).single;
+      expect(rpm.ecu, ecu);
+      expect(rpm.values['engine_rpm'], inInclusiveRange(550, 950));
+      await client.dispose();
+    });
+  }
+
+  test('ignition off → adapter OK, ECU no response', () async {
+    final emu = Elm327Emulator(loadScenario('healthy'), table, ignitionOn: false);
+    final client = ObdClient(transport: DemoTransport(emu, latency: Duration.zero), table: table);
+    final r = await client.connect();
+    expect(r.adapterOk, isTrue);
+    expect(r.ecuOk, isFalse);
+    expect(client.currentStatus.ecu, EcuState.noResponse);
+    expect(r.log.errorCode, 'ecu_unable_to_connect');
     await client.dispose();
   });
 

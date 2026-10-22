@@ -26,4 +26,6 @@ USER automind:automind
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=4).status == 200 else 1)"
-CMD ["uvicorn", "automind.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*", "--no-server-header"]
+# Forwarded headers are trusted only from the proxies listed in FORWARDED_ALLOW_IPS
+# (uvicorn default 127.0.0.1); set it to your load balancer's address in production.
+CMD ["uvicorn", "automind.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--no-server-header"]

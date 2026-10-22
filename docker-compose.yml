@@ -1,5 +1,5 @@
 # Local development stack:  cp .env.example .env  (fill secrets)  &&  docker compose up --build
-#   API      http://localhost:8000/api/v1   (docs: /docs)
+#   API      http://localhost:8000/api/v1   (docs: /api/v1/docs)
 #   Admin    http://localhost:3000
 #   ECU sim  tcp://localhost:35000          (point the app or CLI at it; data is labelled DEMO)
 # Production uses Supabase Postgres instead of the `db` service.

@@ -51,6 +51,11 @@ const List<int> scanCapturePids = [
 /// One-shot reads included once per scan.
 const List<int> scanOncePids = [0x01, 0x1C, 0x51, 0x21, 0x30, 0x31, 0x4D, 0x4E, 0xA6];
 
+/// Live-capture duration during a scan (settings; overridable in tests).
+final scanCaptureDurationProvider = Provider<Duration>(
+  (ref) => Duration(seconds: ref.watch(settingsProvider.select((s) => s.captureSeconds)).clamp(10, 300)),
+);
+
 class ScanController extends Notifier<ScanState> {
   bool _cancel = false;
 
@@ -167,7 +172,7 @@ class ScanController extends Notifier<ScanState> {
         }
       }
       final pids = [for (final p in scanCapturePids) if (sup.supports(p)) p];
-      final seconds = ref.read(settingsProvider).captureSeconds.clamp(10, 300);
+      final seconds = ref.read(scanCaptureDurationProvider).inSeconds;
       client.autoReconnect = true;
       final sw = Stopwatch()..start();
       while (sw.elapsed.inSeconds < seconds && !_cancel && pids.isNotEmpty) {
