@@ -173,14 +173,31 @@ async def test_operation_prohibited_rejected_and_stored(client, db):
     assert_envelope(r, 403, "policy_rejected")
 
 
+async def _live_session_with_codes(client, h) -> dict:
+    v = (await client.post("/vehicles", headers=h, json={"make": "Dodge", "model": "Challenger", "model_year": 2019})).json()
+    s = (await client.post("/sessions", headers=h, json={"data_mode": "live", "vehicle_id": v["id"]})).json()
+    r = await client.post(f"/sessions/{s['id']}/dtcs", headers=h,
+                          json={"dtcs": [{"code": "P0106", "status": "stored", "source_service": "03"}]})
+    assert r.status_code == 204, r.text
+    return {"vehicle_id": v["id"], "session_id": s["id"]}
+
+
+async def test_clear_requires_saved_scan(client):
+    u = await register(client)
+    r = await client.post("/control/operations", headers=u["headers"],
+                          json={**BODY, "procedure_key": "clear_dtcs", "data_mode": "live"})
+    assert_envelope(r, 422, "validation_error")
+
+
 async def test_clear_dtcs_live_flow(client, db):
     u = await register(client)
     h = u["headers"]
+    base = {**BODY, **(await _live_session_with_codes(client, h))}
     r = await client.post(
         "/control/operations",
         headers=h,
         json={
-            **BODY,
+            **base,
             "procedure_key": "clear_dtcs",
             "data_mode": "live",
             "conditions": {"engine_running": True, "vehicle_speed_kmh": 0},
@@ -191,7 +208,7 @@ async def test_clear_dtcs_live_flow(client, db):
         "/control/operations",
         headers=h,
         json={
-            **BODY,
+            **base,
             "procedure_key": "clear_dtcs",
             "data_mode": "live",
             "conditions": {"engine_running": False, "vehicle_speed_kmh": 12},
@@ -199,20 +216,20 @@ async def test_clear_dtcs_live_flow(client, db):
     )
     assert r.json()["reason"] == "vehicle_moving"
     r = await client.post(
-        "/control/operations", headers=h, json={**BODY, "procedure_key": "clear_dtcs", "data_mode": "live", "confirmed": False}
+        "/control/operations", headers=h, json={**base, "procedure_key": "clear_dtcs", "data_mode": "live", "confirmed": False}
     )
     assert r.json()["reason"] == "not_confirmed"
     assert_envelope(
         await client.post(
             "/control/operations",
             headers=h,
-            json={**BODY, "procedure_key": "clear_dtcs", "data_mode": "live", "consent_text": ""},
+            json={**base, "procedure_key": "clear_dtcs", "data_mode": "live", "consent_text": ""},
         ),
         422,
         "validation_error",
     )
 
-    r = await client.post("/control/operations", headers=h, json={**BODY, "procedure_key": "clear_dtcs", "data_mode": "live"})
+    r = await client.post("/control/operations", headers=h, json={**base, "procedure_key": "clear_dtcs", "data_mode": "live"})
     out = r.json()
     assert out["status"] == "approved" and out["commands"] == ["04"] and out["simulated"] is False
     r = await client.patch(

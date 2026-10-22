@@ -72,6 +72,8 @@ class Recording(BaseModel):
     ecus: list[str] = Field(default_factory=list)
     dtcs: list[RecDTC] = Field(default_factory=list)
     freeze_frames: list[RecFreezeFrame] = Field(default_factory=list)
+    # service 01 PID 01 at scan time: {"mil_on", "dtc_count", "ignition", "monitors": {name: {available, complete}}}
+    readiness: dict | None = None
     duration_ms: int = Field(0, ge=0)
     signals: list[RecSignal] = Field(default_factory=list)
     samples: list[RecSample] = Field(default_factory=list)

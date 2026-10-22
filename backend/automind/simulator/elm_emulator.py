@@ -60,6 +60,7 @@ class Elm327Emulator:
         protocol: str | None = None,
         ignition_on: bool = True,
         engine_running: bool = True,
+        start_engine_after_clear_s: float | None = None,
     ):
         self.scenario = scenario
         self.vehicle = VehicleModel(scenario, seed=seed)
@@ -79,6 +80,15 @@ class Elm327Emulator:
         self.permanent = [d["code"] for d in dtcs if d["status"] == "permanent"] or list(self.stored)
         self.freeze = scenario.get("freeze_frame")
         self.monitors_complete = True
+        # After a clear (service 04) a fault that is still physically present is
+        # detected again: pending first, then stored. A repaired fault stays away.
+        self.fault_active = bool(scenario.get("fault_active", bool(scenario.get("faults"))))
+        self._fault_codes = [d["code"] for d in dtcs if d["status"] in ("stored", "pending")]
+        self.cleared_at: float | None = None
+        self.redetect_pending_s = float(scenario.get("redetect_pending_s", 20))
+        self.redetect_stored_s = float(scenario.get("redetect_stored_s", 45))
+        self.monitor_complete_s = float(scenario.get("monitor_complete_s", 90))
+        self.start_engine_after_clear_s = start_engine_after_clear_s
         self.reset()
 
     # ------------------------------------------------------------------ state
@@ -193,6 +203,7 @@ class Elm327Emulator:
             if data is not None:
                 out.append(("7E8", bytes([0x42, rest[0], 0x00]) + data))
         elif sid in (0x03, 0x07, 0x0A):
+            self._advance_after_clear(t)
             codes = {0x03: self.stored, 0x07: self.pending, 0x0A: self.permanent}[sid]
             body = b"".join(bytes(encode_dtc(c)) for c in codes)
             if self._is_can:
@@ -203,6 +214,7 @@ class Elm327Emulator:
             self.stored, self.pending = [], []
             self.freeze = None
             self.monitors_complete = False
+            self.cleared_at = t
             out.append(("7E8", b"\x44"))
         elif sid == 0x09 and len(rest) >= 1:
             pid = rest[0]
@@ -218,6 +230,33 @@ class Elm327Emulator:
                 cal = b"AMSIM-CAL-0001\x00\x00"
                 out.append(("7E8", bytes([0x49, 0x04, 0x01]) + cal))
         return out
+
+    def _since_clear(self, t: float) -> float | None:
+        if (self.cleared_at is not None and not self.vehicle.engine_running
+                and self.start_engine_after_clear_s is not None and t - self.cleared_at >= self.start_engine_after_clear_s):
+            self.vehicle.engine_running = True  # driver starts the engine after clearing
+        if self.cleared_at is None or not self.vehicle.engine_running:
+            return None
+        return max(0.0, t - self.cleared_at)
+
+    def _advance_after_clear(self, t: float) -> None:
+        dt = self._since_clear(t)
+        if dt is None:
+            return
+        if self.fault_active:
+            for code in self._fault_codes:
+                if dt >= self.redetect_stored_s and code not in self.stored:
+                    self.stored.append(code)
+                    if code in self.pending:
+                        self.pending.remove(code)
+                elif self.redetect_pending_s <= dt < self.redetect_stored_s and code not in self.pending:
+                    self.pending.append(code)
+            if dt >= self.redetect_stored_s and self.stored:
+                self.permanent = sorted(set(self.permanent) | set(self.stored))
+        if dt >= self.monitor_complete_s:
+            self.monitors_complete = True
+            if not self.fault_active:
+                self.permanent = []  # self-test passed → permanent codes erase themselves
 
     @property
     def _is_can(self) -> bool:
@@ -247,6 +286,14 @@ class Elm327Emulator:
             return None
         if pid not in self.engine_pids:
             return None
+        self._advance_after_clear(t)
+        dt = self._since_clear(t)
+        if dt is not None and pid in ("30", "31", "4E"):
+            if pid == "30":
+                return bytes([1 if dt >= self.monitor_complete_s else 0])
+            if pid == "31":
+                return int(dt * 0.012).to_bytes(2, "big")  # ≈ 43 km/h average while driving
+            return int(dt // 60).to_bytes(2, "big")
         if pid == "01":
             mil = bool(self.stored)
             a = (0x80 if mil else 0) | min(len(self.stored), 0x7F)

@@ -5,6 +5,7 @@
   "p0171_vacuum_leak",
   "p0128_thermostat",
   "charging_low",
-  "p0302_misfire"
+  "p0302_misfire",
+  "old_code_repaired"
  ]
 }

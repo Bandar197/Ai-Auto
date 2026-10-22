@@ -69,4 +69,6 @@ ignore = ["S101", "S311", "B008", "ASYNC109"]  # ASYNC109: explicit OBD command 
 "automind/diagnosis/rules/*.py" = ["E501"]
 "automind/diagnosis/engine.py" = ["E501"]
 "automind/diagnosis/llm.py" = ["E501"]
+"automind/diagnosis/recurrence.py" = ["E501"]
+"automind/cli.py" = ["ASYNC240"]  # small local files in a CLI process
 "automind/reports/__init__.py" = ["E501"]

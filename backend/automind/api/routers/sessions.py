@@ -86,6 +86,8 @@ class MeasurementsIn(BaseModel):
 
 class CompleteIn(BaseModel):
     mil_on: bool | None = None
+    # service 01 PID 01 decoded on the device (readiness monitors) — used by clear-and-verify
+    readiness: dict[str, Any] | None = None
     odometer_km: int | None = Field(None, ge=0, le=5_000_000)
     language: Lang = "ar"
     use_llm: bool = False
@@ -256,6 +258,8 @@ async def complete_session(session_id: uuid.UUID, user: CurrentUser, svc: SvcDep
         s = await get_session(conn, session_id, write=True, for_update=True)
         if s["status"] in ("failed", "cancelled"):
             raise conflict("session cannot be completed", {"status": s["status"]})
+        if body.readiness is not None:
+            s = await pipeline.store_readiness(conn, s, body.readiness)
         return await pipeline.diagnose_session(
             conn,
             svc,

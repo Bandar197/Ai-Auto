@@ -9,6 +9,8 @@
     automind diagnose session.json --lang ar --report report.html
     automind ble-scan
     automind kb P0106
+    automind clear --host 192.168.0.10 --out clear_record.json    # save codes, clear with consent, re-check
+    automind verify clear_record.json --host 192.168.0.10         # later: did the codes come back?
 """
 
 from __future__ import annotations
@@ -148,7 +150,7 @@ async def cmd_simulate(a: argparse.Namespace) -> None:
     await serve_forever(SimulatorConfig(
         scenario=a.scenario, host=a.host, port=a.port, time_scale=a.time_scale, seed=a.seed,
         protocol=a.protocol, ignition_on=not a.ignition_off, engine_running=not a.engine_off,
-        drop_after=a.drop_after, latency_ms=a.latency_ms,
+        drop_after=a.drop_after, latency_ms=a.latency_ms, start_engine_after_clear_s=a.start_engine_after_clear,
     ))
 
 
@@ -214,6 +216,131 @@ def cmd_kb(a: argparse.Namespace) -> None:
         print(f"{a.code.upper()}: not in the knowledge base (v{kb.version}). Structure: {kb.structure(a.code)}")
         return
     print(json.dumps(k, ensure_ascii=False, indent=1))
+
+
+# ---------------------------------------------------------------- clear & verify
+CLEAR_FORMAT = "automind.clear_record.v1"
+CONSENT_EN = ("I understand that clearing erases the stored trouble codes and freeze-frame data and resets the "
+              "readiness monitors (the vehicle may not pass an emissions inspection until it has been driven), and "
+              "that clearing does not repair any fault.")
+CONSENT_AR = ("أفهم أن المسح يحذف أكواد الأعطال المخزنة وبيانات الإطار المجمد ويعيد ضبط مؤشرات الجاهزية "
+              "(قد لا تجتاز السيارة فحص الانبعاثات حتى تتم قيادتها)، وأن المسح لا يصلح أي عطل.")
+
+
+async def _snapshot(c: ObdClient):  # noqa: ANN202
+    from datetime import UTC, datetime
+
+    from automind.diagnosis.models import InputDTC
+    from automind.diagnosis.recurrence import ScanSnapshot
+
+    dtcs = [InputDTC(code=d.code, status=d.status, ecu=d.ecu) for d in await c.read_all_dtcs()]
+    readiness = await c.monitor_status() if c.is_supported("01") else None
+    vals: dict = {}
+    for pid in ("0C", "30", "31"):
+        if c.is_supported(pid):
+            try:
+                vals.update((await c.read_pid(pid)).values)
+            except Exception:  # noqa: BLE001,S110 - optional evidence
+                pass
+    return ScanSnapshot(
+        taken_at=datetime.now(UTC), dtcs=dtcs, readiness=readiness or None,
+        warmups_since_clear=vals.get("warmups_since_clear"), distance_since_clear_km=vals.get("distance_since_clear"),
+        engine_running=(vals["engine_rpm"] > 300) if vals.get("engine_rpm") is not None else None,
+    )
+
+
+def _print_verification(v, lang: str) -> None:  # noqa: ANN001
+    ar = lang == "ar"
+    labels = {"problem_confirmed": ("REAL PROBLEM", "يوجد عطل حقيقي"), "likely_resolved": ("LIKELY RESOLVED", "غالبا انتهى"),
+              "verifying": ("STILL VERIFYING", "التحقق مستمر"), "nothing_cleared": ("NOTHING TO VERIFY", "لا يوجد ما يُتحقق منه")}
+    label = labels[v.overall][1 if ar else 0]
+    print(f"\n== {'نتيجة التحقق بعد المسح' if ar else 'Clear verification'}: {label} "
+          f"({v.checks_after_clear} {'فحص' if ar else 'check(s)'}) ==")
+    print(v.summary_ar if ar else v.summary_en)
+    for cv in v.codes:
+        flag = {True: "!!", False: "OK", None: ".."}[cv.is_real_problem]
+        print(f"\n  [{flag}] {cv.title_ar if ar else cv.title_en}")
+        print(f"       {cv.explanation_ar if ar else cv.explanation_en}")
+        print(f"       → {cv.next_step_ar if ar else cv.next_step_en}")
+
+
+def _load_clear_file(path: str) -> dict:
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    if data.get("format") != CLEAR_FORMAT:
+        raise SystemExit(f"{path} is not an AutoMind clear record")
+    return data
+
+
+async def cmd_clear(a: argparse.Namespace) -> None:
+    import uuid
+    from datetime import UTC, datetime
+
+    from automind.diagnosis.recurrence import ClearRecord, assess_after_clear
+    from automind.obd.client import ClearAuthorization
+    from automind.obd.errors import PolicyViolation
+
+    c = await _connect(a)
+    try:
+        before = await _snapshot(c)
+        ff = await c.read_freeze_frame()
+        mode = "demo" if c.is_simulator else "live"
+        codes = sorted({d.code for d in before.dtcs})
+        print(f"\nCodes saved before clearing: {', '.join(codes) or 'none'}")
+        if ff.get("dtc"):
+            print(f"Freeze frame saved (for {ff['dtc']}): {ff['values']}")
+        if not codes:
+            print("Nothing to clear.")
+            return
+        print("\n" + CONSENT_AR + "\n" + CONSENT_EN)
+        if not a.yes:
+            answer = (await asyncio.to_thread(input, "Type YES / اكتب نعم to clear: ")).strip().lower()
+            if answer not in ("yes", "نعم"):
+                print("Cancelled — nothing was sent to the vehicle.")
+                return
+        auth = ClearAuthorization(operation_id=f"local-{uuid.uuid4()}", approved=True, consent_text=CONSENT_EN)
+        try:
+            res = await c.clear_dtcs(auth)
+        except PolicyViolation as e:
+            raise SystemExit(f"Not cleared: {e}") from e
+        cleared_at = datetime.now(UTC)
+        print(f"Service 04 sent — adapter response: {res['response']!r} ({'OK' if res['ok'] else 'NOT ACKNOWLEDGED'})")
+        record = ClearRecord(cleared_at=cleared_at, before=before, operation_id=auth.operation_id, data_mode=mode)
+        await asyncio.sleep(a.settle)
+        first = await _snapshot(c)  # same key cycle: catches faults that are present right now
+    finally:
+        await c.close()
+    out = {"format": CLEAR_FORMAT, "record": record.model_dump(mode="json"), "freeze_frame": ff,
+           "checks": [first.model_dump(mode="json")]}
+    Path(a.out).write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    audit = Path.home() / ".automind" / "audit.log"
+    audit.parent.mkdir(exist_ok=True)
+    with audit.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps({"at": cleared_at.isoformat(), "action": "clear_dtcs", "operation_id": auth.operation_id,
+                             "data_mode": mode, "codes": codes, "adapter": c.transport.description}) + "\n")
+    print(f"Clear record saved: {a.out}  (local audit: {audit})")
+    _print_verification(assess_after_clear(record, [first]), a.lang)
+    print("\nNext: drive normally, then run  automind verify " + a.out)
+
+
+async def cmd_verify(a: argparse.Namespace) -> None:
+    from automind.diagnosis.recurrence import ClearRecord, ScanSnapshot, assess_after_clear, snapshot_from_recording
+    from automind.recording.format import Recording
+
+    data = _load_clear_file(a.record)
+    record = ClearRecord.model_validate(data["record"])
+    checks = [ScanSnapshot.model_validate(x) for x in data.get("checks", [])]
+    if a.from_recordings:
+        for f in a.from_recordings:
+            checks.append(snapshot_from_recording(Recording.load(f)))
+    else:
+        c = await _connect(a)
+        try:
+            checks.append(await _snapshot(c))
+        finally:
+            await c.close()
+    data["checks"] = [x.model_dump(mode="json") for x in checks]
+    Path(a.record).write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
+    _print_verification(assess_after_clear(record, checks), a.lang)
 
 
 # ---------------------------------------------------------------- output helpers
@@ -290,6 +417,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--engine-off", action="store_true", help="ignition on, engine off")
     p.add_argument("--drop-after", type=int, default=None, help="close the connection after N commands")
     p.add_argument("--latency-ms", type=int, default=0)
+    p.add_argument("--start-engine-after-clear", type=float, default=None, metavar="S",
+                   help="with --engine-off: the simulated driver starts the engine S seconds after a clear")
     p.set_defaults(fn=cmd_simulate)
 
     p = sub.add_parser("demo", help="simulate a scenario end-to-end and diagnose it")
@@ -311,6 +440,21 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--as-replay", action="store_true")
     _add_output_args(p)
     p.set_defaults(fn=cmd_diagnose)
+
+    p = sub.add_parser("clear", help="save codes + freeze frame, clear DTCs (service 04) with consent, re-check")
+    _add_link_args(p)
+    p.add_argument("--out", default="clear_record.json", help="clear record used later by `automind verify`")
+    p.add_argument("--yes", action="store_true", help="skip the interactive confirmation (consent text still applies)")
+    p.add_argument("--settle", type=float, default=5.0, help="seconds to wait before the immediate re-check")
+    p.add_argument("--lang", choices=["ar", "en"], default="ar")
+    p.set_defaults(fn=cmd_clear)
+
+    p = sub.add_parser("verify", help="re-scan after a clear and tell whether each code came back")
+    p.add_argument("record", help="file written by `automind clear`")
+    _add_link_args(p)
+    p.add_argument("--from-recordings", nargs="*", metavar="REC", help="use saved scan recordings instead of connecting")
+    p.add_argument("--lang", choices=["ar", "en"], default="ar")
+    p.set_defaults(fn=cmd_verify)
 
     p = sub.add_parser("ble-scan", help="list nearby BLE OBD adapters")
     p.add_argument("--timeout", type=float, default=6.0)

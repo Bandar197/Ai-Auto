@@ -67,6 +67,8 @@ class DeviceCtx:
 class Conditions:
     engine_running: bool | None = None
     vehicle_speed_kmh: float | None = None
+    active_faults: int | None = None  # faults the module reports as failing right now (SRS clear)
+    repair_confirmed: bool | None = None
 
 
 @dataclass(frozen=True)
@@ -144,7 +146,20 @@ def evaluate(
 
     # 3. vehicle state
     cond = request.conditions
-    if procedure.key == "clear_dtcs":
+    if procedure.key == "clear_srs_dtcs":
+        if cond.active_faults is None or cond.active_faults > 0:
+            return _reject(
+                "active_fault",
+                "An airbag fault is active right now: clearing cannot fix it and the light will return. Repair the cause first.",
+                "يوجد عطل نشط الآن في الوسائد الهوائية: المسح لا يصلحه وستعود اللمبة. أصلح السبب أولاً.",
+            )
+        if cond.repair_confirmed is not True:
+            return _reject(
+                "repair_not_confirmed",
+                "Confirm that the related repair (e.g. clock spring, connector) has been completed.",
+                "أكّد أن الإصلاح المرتبط (مثل فحمة الدركسون أو الفيش) قد تم.",
+            )
+    if procedure.key in ("clear_dtcs", "clear_srs_dtcs"):
         if cond.engine_running is not False:
             return _reject(
                 "engine_running",

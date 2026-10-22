@@ -32,6 +32,7 @@ class SimulatorConfig:
     engine_running: bool = True
     drop_after: int | None = None
     latency_ms: int = 0
+    start_engine_after_clear_s: float | None = None
 
 
 class SimulatorServer:
@@ -41,6 +42,13 @@ class SimulatorServer:
         self._server: asyncio.base_events.Server | None = None
         self.connections = 0
         self.commands = 0
+        # One simulated car for the server's lifetime: codes cleared on one
+        # connection stay cleared on the next (like a real vehicle).
+        self.emulator = Elm327Emulator(
+            self.scenario, time_scale=cfg.time_scale, seed=cfg.seed, protocol=cfg.protocol,
+            ignition_on=cfg.ignition_on, engine_running=cfg.engine_running,
+            start_engine_after_clear_s=cfg.start_engine_after_clear_s,
+        )
 
     @property
     def port(self) -> int:
@@ -67,10 +75,8 @@ class SimulatorServer:
 
     async def _handle(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         self.connections += 1
-        emu = Elm327Emulator(
-            self.scenario, time_scale=self.cfg.time_scale, seed=self.cfg.seed, protocol=self.cfg.protocol,
-            ignition_on=self.cfg.ignition_on, engine_running=self.cfg.engine_running,
-        )
+        emu = self.emulator
+        emu.reset()  # adapter settings reset per connection; vehicle state persists
         n = 0
         buf = b""
         try:

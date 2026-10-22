@@ -82,7 +82,7 @@ looks like `2C3CDZ*******1234`. `GET /vehicles/{id}?reveal_vin=true` returns
 | POST | `/sessions/{id}/telemetry` | `{samples: [{ts, pid, signal, value, unit?, ecu_address?}]}` (≤ 5000/call) → `{accepted}` |
 | POST | `/sessions/{id}/recording` | body = recording v1 (see `shared/schemas/recording.v1.schema.json`) → 201 `recording_meta`. DTCs/telemetry are derived from it when not uploaded separately. |
 | POST | `/sessions/{id}/measurements` | `{measurements: [{key, value, unit, note?}]}` — manual readings (e.g. A/C pressures) → 204 |
-| POST | `/sessions/{id}/complete` | `{mil_on?, odometer_km?, language?: "ar"|"en", use_llm?: bool}` → `diagnosis_result`; sets status `completed`, health score, findings, evidence |
+| POST | `/sessions/{id}/complete` | `{mil_on?, odometer_km?, readiness?: {mil_on, dtc_count, ignition, monitors: {name: {available, complete}}}, language?: "ar"|"en", use_llm?: bool}` → `diagnosis_result`; sets status `completed`, health score, findings, evidence. `readiness` (service 01 PID 01) is stored for clear-and-verify. |
 | POST | `/sessions/{id}/diagnose` | `{language?, use_llm?}` → `diagnosis_result` (re-run, keeps history) |
 | GET | `/sessions/{id}/diagnosis` | latest `diagnosis_result` |
 | GET | `/sessions/{id}/telemetry` | `?signals=engine_rpm,map_kpa` → `{series: {signal: [{t, v}]}, units: {...}}` |
@@ -117,6 +117,26 @@ looks like `2C3CDZ*******1234`. `GET /vehicles/{id}?reveal_vin=true` returns
 | GET | `/kb/dtc` | `?q=` search |
 | GET | `/kb/pids` | the shared PID table |
 
+## Clear and verify
+
+Owners clear a warning light and watch whether it comes back. The platform makes that a verdict:
+the codes + freeze frame are saved in a session **before** clearing (a live clear without `session_id`
+is rejected with 422), and every later scan of the same vehicle is compared with them.
+
+| Method | Path | Notes |
+|---|---|---|
+| GET | `/vehicles/{id}/clear-verification` | for the latest successful `clear_dtcs` operation of the vehicle → `clear_verification` (404 when none) |
+| POST | `/diagnosis/clear-verification` | stateless: `{record: {cleared_at, before: snapshot, data_mode?}, checks: [snapshot]}` → `clear_verification` |
+
+`snapshot = {taken_at, dtcs: [{code, status, ecu?}], readiness?, warmups_since_clear?, distance_since_clear_km?, engine_running?}`
+
+`clear_verification = {overall: problem_confirmed|likely_resolved|verifying|nothing_cleared, data_mode, cleared_at, checks_after_clear, summary_en, summary_ar, codes: [{code, ecu, family, verdict, is_real_problem, monitor, monitor_complete, returned_in_check, title_en/ar, explanation_en/ar, next_step_en/ar}]}`
+
+`verdict ∈ returned_immediately | returned_confirmed | returned_pending | new_code | still_permanent | not_returned_verified | not_returned_yet`.
+Powertrain codes count as verified only when their readiness monitor (or, for circuit codes, the comprehensive
+component monitor plus a warm-up/drive) has run since the clear. Airbag (B) and network (U) codes are self-tested at
+each ignition-on, so two key cycles without the code verify them. Permanent codes (0A) alone are not a return.
+
 ## AutoMind Control
 
 The phone holds the OBD connection, so the **server authorises** and the
@@ -128,7 +148,9 @@ The phone holds the OBD connection, so the **server authorises** and the
 | POST | `/control/operations` | `{procedure_key, vehicle_id?, session_id?, device_id?, data_mode, consent_text, confirmed: true, conditions: {engine_running: bool, vehicle_speed_kmh: number}}` → 201 `{id, status: "approved"|"rejected_policy", reason?, commands?: ["04"]}` |
 | PATCH | `/control/operations/{id}` | `{status: succeeded|failed, request_frames, response_frames, result?}` → 204 |
 
-Policy: prohibited procedures are always rejected; anything not
+`conditions` may also carry `active_faults` (int) and `repair_confirmed` (bool) — required by `clear_srs_dtcs`.
+
+Policy: prohibited procedures are always rejected; `clear_srs_dtcs` (stored airbag codes) is refused while any SRS fault is active or the repair is not confirmed, and for live vehicles needs a validated allow-list entry (manufacturer pack + certified adapter); anything not
 `enabled_by_default` needs an active allow-list match (vehicle/ECU/device,
 certified device); `clear_dtcs` requires engine off and speed 0. Every request
 and result is written to `audit_logs`. In `demo`/`replay` mode no command ever

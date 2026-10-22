@@ -165,6 +165,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         admin,
         analysis,
         auth,
+        clear_verify,
         commerce,
         control,
         devices,
@@ -187,6 +188,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         analysis,
         kb,
         control,
+        clear_verify,
         commerce,
         admin,
     ):

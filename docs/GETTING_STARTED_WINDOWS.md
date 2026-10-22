@@ -66,7 +66,29 @@ The output is labelled **DEMO** because the simulator identifies itself.
 أرسل لي ملف `challenger.json` (يمكنك حذف رقم الهيكل بخيار `--no-vin`) لأحسّن التوافق بناء على بيانات سيارتك الحقيقية.
 Send the `challenger.json` (use `--no-vin` to omit the VIN) so compatibility can be tuned on real data.
 
-## 4. BLE / USB
+## 4. المسح ثم التحقق هل رجع العطل / Clear, then verify whether the fault comes back
+
+```powershell
+# المحرك مطفأ والإشعال شغال / engine OFF, ignition ON
+automind clear --host 192.168.0.10 --port 35000 --out clear_record.json
+# يحفظ الأكواد والإطار المجمد أولا، يطلب موافقتك، يمسح، ثم يعيد الفحص فورا
+
+# بعد القيادة (يوم أو يومين) / after driving
+automind verify clear_record.json --host 192.168.0.10 --port 35000
+```
+
+النتيجة لكل كود / verdict per code:
+
+| النتيجة | المعنى |
+|---|---|
+| رجع فورا | العطل موجود الآن — المسح لا يصلحه |
+| رجع / اكتُشف مرة أخرى | عطل حقيقي متقطع أو مع الحمل |
+| لم يرجع — غالبا عطل قديم | السيارة أعادت اختبارها الذاتي ولم يظهر (مثلا بعد تغيير قطعة) |
+| لم يرجع حتى الآن | الاختبار الذاتي لم يكتمل بعد — قُد السيارة وأعد التحقق |
+
+> مسح أكواد الوسائد الهوائية (الإيرباق) يحتاج بروتوكول الشركة المصنعة وجهازا يدعمه، وهو مسجل في النظام كإجراء مقيد يُفعّل لكل شركة وطراز بعد اختباره. منطق "هل رجع؟" نفسه جاهز لأكواد الإيرباق (B) ويعتمد على الفحص الذاتي عند كل تشغيل للإشعال.
+
+## 5. BLE / USB
 
 ```powershell
 automind ble-scan

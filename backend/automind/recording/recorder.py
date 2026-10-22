@@ -27,8 +27,9 @@ log = logging.getLogger("automind.recording")
 DEFAULT_LIVE_PIDS = [
     "0C", "0D", "05", "0F", "0B", "10", "11", "04", "06", "07", "08", "09", "0E",
     "14", "15", "42", "33", "46", "03", "2F", "1F", "49", "4C", "5C",
+    "21", "30", "31", "4D", "4E",  # MIL / since-clear counters (clear-and-verify)
 ]
-STATIC_PIDS = {"03", "13", "1C", "1F", "21", "2F", "30", "31", "33", "46", "51"}  # slow-changing: poll rarely
+STATIC_PIDS = {"03", "13", "1C", "1F", "21", "2F", "30", "31", "33", "46", "4D", "4E", "51"}  # slow-changing: poll rarely
 
 
 def _source_kind(transport_kind: str) -> str:
@@ -82,6 +83,12 @@ async def capture_session(
     if include_vin:
         vin = await client.read_vin()
         rec.vehicle = RecVehicle(vin=vin)
+    progress("readiness")
+    if client.is_supported("01"):
+        try:
+            rec.readiness = await client.monitor_status() or None
+        except (EcuNoResponse, AdapterError):
+            rec.readiness = None
     progress("dtcs")
     for d in await client.read_all_dtcs():
         rec.dtcs.append(RecDTC(code=d.code, status=d.status, ecu=d.ecu))  # type: ignore[arg-type]

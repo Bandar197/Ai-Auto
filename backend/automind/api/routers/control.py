@@ -32,6 +32,8 @@ router = APIRouter(prefix="/control", tags=["control"])
 class ConditionsIn(BaseModel):
     engine_running: bool
     vehicle_speed_kmh: float = Field(ge=0, le=500)
+    active_faults: int | None = Field(None, ge=0, le=500)
+    repair_confirmed: bool | None = None
 
 
 class OperationIn(BaseModel):
@@ -123,7 +125,8 @@ async def list_procedures(
                 data_mode="live",
                 confirmed=True,
                 consent_text="availability-check",
-                conditions=Conditions(engine_running=engine and proc.key != "clear_dtcs", vehicle_speed_kmh=0),
+                conditions=Conditions(engine_running=engine and proc.key not in ("clear_dtcs", "clear_srs_dtcs"),
+                                      vehicle_speed_kmh=0, active_faults=0, repair_confirmed=True),
             )
             allow = await _allowlist(conn, r["id"]) if not (proc.enabled_by_default or proc.is_prohibited) else []
             d = evaluate(proc, req, vehicle=_vehicle_ctx(vehicle), device=_device_ctx(device), allowlist=allow)
@@ -159,6 +162,12 @@ async def request_operation(body: OperationIn, user: CurrentUser, svc: SvcDep, c
             raise not_found("procedure")
         vehicle = await get_vehicle(conn, body.vehicle_id) if body.vehicle_id else None
         device = await ensure_device(conn, body.device_id)
+        if proc_row["key"] in ("clear_dtcs", "clear_srs_dtcs") and body.data_mode == "live" and not body.session_id:
+            # The codes + freeze frame must be saved first: clearing erases them and they are
+            # needed to verify afterwards whether the fault comes back.
+            raise validation(
+                "save a scan (session with its trouble codes) before clearing", {"field": "session_id"}
+            )
         if body.session_id:
             s = await get_session(conn, body.session_id, write=True)
             if s["data_mode"] != body.data_mode:
@@ -174,6 +183,8 @@ async def request_operation(body: OperationIn, user: CurrentUser, svc: SvcDep, c
             conditions=Conditions(
                 engine_running=body.conditions.engine_running,
                 vehicle_speed_kmh=body.conditions.vehicle_speed_kmh,
+                active_faults=body.conditions.active_faults,
+                repair_confirmed=body.conditions.repair_confirmed,
             ),
             ecu_address=body.ecu_address,
         )
