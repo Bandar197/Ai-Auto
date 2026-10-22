@@ -1693,6 +1693,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'not complete'**
   String get monitorIncomplete;
+
+  /// Shown instead of the Wi-Fi/BLE selector on desktop platforms without BLE support
+  ///
+  /// In en, this message translates to:
+  /// **'On Windows use a Wi-Fi adapter (e.g. ELM327 Wi-Fi). Bluetooth adapters work from the phone app.'**
+  String get bleDesktopNote;
 }
 
 class _AppLocalizationsDelegate

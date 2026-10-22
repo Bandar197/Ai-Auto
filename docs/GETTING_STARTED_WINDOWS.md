@@ -88,7 +88,33 @@ automind verify clear_record.json --host 192.168.0.10 --port 35000
 
 > مسح أكواد الوسائد الهوائية (الإيرباق) يحتاج بروتوكول الشركة المصنعة وجهازا يدعمه، وهو مسجل في النظام كإجراء مقيد يُفعّل لكل شركة وطراز بعد اختباره. منطق "هل رجع؟" نفسه جاهز لأكواد الإيرباق (B) ويعتمد على الفحص الذاتي عند كل تشغيل للإشعال.
 
-## 5. BLE / USB
+## 5. تطبيق ويندوز والنظام الكامل على اللابتوب / Windows app and the full system on the laptop
+
+### تطبيق ويندوز (نفس تطبيق الجوال) / Windows app (same app as the phone)
+
+1. من GitHub: **Actions** ← آخر تشغيل لـ **CI** ← قسم **Artifacts** ← نزّل **automind-windows**.
+2. فك الضغط في مجلد، وشغّل `automind_app.exe`. إذا ظهر تحذير Windows SmartScreen اختر **More info ← Run anyway** (النسخة غير موقّعة بعد).
+3. **الوضع التجريبي** يعمل فورا. **الوضع الحي**: اربط اللابتوب بشبكة واي فاي جهاز ELM327 ثم اتصل على `192.168.0.10:35000`.
+4. البلوتوث غير مدعوم في نسخة ويندوز — استخدم جهاز Wi-Fi.
+
+### النظام الكامل (الخادم + لوحة الإدارة + المحاكي) / Full stack
+
+1. ثبّت **Docker Desktop** وشغّله: https://www.docker.com/products/docker-desktop/
+2. من مجلد المشروع في PowerShell:
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File scripts\windows\start-local.ps1
+   ```
+3. أنشئ حساب المدير (يطبع رمز المصادقة الثنائية لتطبيق Google Authenticator):
+   ```powershell
+   docker compose exec -it api automind create-admin --email you@example.com
+   ```
+4. افتح لوحة الإدارة: http://localhost:3000 — ووثائق الـ API: http://localhost:8000/api/v1/docs
+5. تطبيق ويندوز يتصل تلقائيا بالخادم على `localhost:8000` (التسجيل، التحليل الكامل، التقارير، المسح ثم التحقق).
+6. يمكن تجربة الوضع الحي في التطبيق على المحاكي: العنوان `127.0.0.1` والمنفذ `35000` (سيظهر كبيانات تجريبية).
+
+> كرت الشاشة غير مطلوب حاليا؛ النظام يعمل على المعالج. ‎32 جيجا رام أكثر من كافية.
+
+## 6. BLE / USB
 
 ```powershell
 automind ble-scan

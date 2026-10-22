@@ -169,17 +169,23 @@ class _ConnectScreenState extends ConsumerState<ConnectScreen> {
   List<Widget> _live(BuildContext context, ConnState conn, String protocol) {
     final l = context.l10n;
     return [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: SegmentedButton<bool>(
-          segments: [
-            ButtonSegment(value: false, label: Text(l.transportWifi), icon: const Icon(Icons.wifi)),
-            ButtonSegment(value: true, label: Text(l.transportBle), icon: const Icon(Icons.bluetooth)),
-          ],
-          selected: {_ble},
-          onSelectionChanged: (s) => setState(() => _ble = s.first),
+      if (BleTransport.isAvailable)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: SegmentedButton<bool>(
+            segments: [
+              ButtonSegment(value: false, label: Text(l.transportWifi), icon: const Icon(Icons.wifi)),
+              ButtonSegment(value: true, label: Text(l.transportBle), icon: const Icon(Icons.bluetooth)),
+            ],
+            selected: {_ble},
+            onSelectionChanged: (s) => setState(() => _ble = s.first),
+          ),
+        )
+      else
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+          child: Text(l.bleDesktopNote, style: Theme.of(context).textTheme.bodySmall),
         ),
-      ),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: DropdownButtonFormField<String>(

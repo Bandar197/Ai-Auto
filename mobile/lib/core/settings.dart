@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// User-adjustable settings persisted in SharedPreferences (no secrets here;
@@ -23,6 +25,12 @@ class AppSettings {
 
   /// Android emulator → host machine. Change in Settings for a device.
   static const String defaultBackendUrl = 'http://10.0.2.2:8000/api/v1';
+
+  /// Desktop builds (e.g. Windows) usually run next to a local backend.
+  static const String desktopBackendUrl = 'http://localhost:8000/api/v1';
+
+  static String get platformDefaultBackendUrl =>
+      (Platform.isWindows || Platform.isLinux || Platform.isMacOS) ? desktopBackendUrl : defaultBackendUrl;
 
   final String locale;
   final String backendUrl;
@@ -78,7 +86,7 @@ class AppSettings {
 
   static AppSettings load(SharedPreferences p) => AppSettings(
         locale: p.getString('locale') ?? 'ar',
-        backendUrl: p.getString('backendUrl') ?? defaultBackendUrl,
+        backendUrl: p.getString('backendUrl') ?? platformDefaultBackendUrl,
         wifiHost: p.getString('wifiHost') ?? '192.168.0.10',
         wifiPort: p.getInt('wifiPort') ?? 35000,
         protocol: p.getString('protocol') ?? '0',

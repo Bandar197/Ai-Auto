@@ -898,4 +898,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get monitorIncomplete => 'غير مكتمل';
+
+  @override
+  String get bleDesktopNote =>
+      'على ويندوز استخدم قارئ Wi-Fi (مثل ELM327 Wi-Fi). قارئات البلوتوث تعمل من تطبيق الجوال.';
 }

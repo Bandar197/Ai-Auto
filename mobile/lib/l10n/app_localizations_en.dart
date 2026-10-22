@@ -893,4 +893,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get monitorIncomplete => 'not complete';
+
+  @override
+  String get bleDesktopNote =>
+      'On Windows use a Wi-Fi adapter (e.g. ELM327 Wi-Fi). Bluetooth adapters work from the phone app.';
 }

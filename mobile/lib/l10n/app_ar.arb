@@ -265,5 +265,6 @@
   "srsNote": "لا يقوم التطبيق أبدًا بمسح أكواد الوسائد الهوائية (SRS).",
   "autoStartAfterClear": "تجريبي: تشغيل المحرك تلقائيًا بعد المسح",
   "monitorComplete": "مكتمل",
-  "monitorIncomplete": "غير مكتمل"
+  "monitorIncomplete": "غير مكتمل",
+  "bleDesktopNote": "على ويندوز استخدم قارئ Wi-Fi (مثل ELM327 Wi-Fi). قارئات البلوتوث تعمل من تطبيق الجوال."
 }

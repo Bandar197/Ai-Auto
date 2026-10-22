@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' show Platform;
 
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
@@ -11,6 +12,9 @@ import '../obd/transport/obd_transport.dart';
 /// Classic Bluetooth SPP adapters are not supported (iOS forbids SPP for
 /// normal apps; Android SPP is a documented future option).
 class BleTransport implements ObdTransport {
+  /// flutter_blue_plus 1.x has no Windows implementation; Wi-Fi adapters work everywhere.
+  static bool get isAvailable => Platform.isAndroid || Platform.isIOS || Platform.isMacOS || Platform.isLinux;
+
   BleTransport(this.device, {this.uuidOverride, this.connectTimeout = const Duration(seconds: 12)});
 
   final BluetoothDevice device;

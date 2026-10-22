@@ -87,3 +87,31 @@ jobs:
         with:
           name: automind-debug-apk
           path: mobile/build/app/outputs/flutter-apk/app-debug.apk
+
+  windows-app:
+    name: Windows app (desktop build)
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v5
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: "3.47.7"
+          cache: true
+      - run: flutter pub get
+      - run: flutter build windows --release
+      - name: Bundle the Visual C++ runtime so the app runs on any Windows PC
+        shell: pwsh
+        run: |
+          $out = "build/windows/x64/runner/Release"
+          foreach ($dll in "msvcp140.dll", "vcruntime140.dll", "vcruntime140_1.dll") {
+            Copy-Item "$env:WINDIR/System32/$dll" $out -ErrorAction Stop
+          }
+          Get-ChildItem $out | Select-Object Name, Length
+      - uses: actions/upload-artifact@v5
+        with:
+          name: automind-windows
+          path: mobile/build/windows/x64/runner/Release/

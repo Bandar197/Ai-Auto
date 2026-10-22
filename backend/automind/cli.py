@@ -343,6 +343,64 @@ async def cmd_verify(a: argparse.Namespace) -> None:
     _print_verification(assess_after_clear(record, checks), a.lang)
 
 
+# ---------------------------------------------------------------- admin bootstrap
+async def cmd_create_admin(a: argparse.Namespace, settings=None) -> None:  # noqa: ANN001
+    """Promote (or create) an account to platform admin and enable TOTP MFA in one step.
+
+    Runs against AUTOMIND_DATABASE_URL with the backend's own settings (same keys as the API),
+    so the encrypted MFA secret is readable by the API.
+    """
+    import getpass
+    import uuid
+
+    from sqlalchemy import func, insert, select, update
+    from sqlalchemy.ext.asyncio import create_async_engine
+
+    from automind.core.config import get_settings
+    from automind.core.crypto import Cipher
+    from automind.core.security import (
+        Passwords,
+        check_password_policy,
+        encrypt_mfa_secret,
+        new_totp_secret,
+        totp_uri,
+    )
+    from automind.db import tables as t
+
+    settings = settings or get_settings()
+    email = a.email.strip()
+    engine = create_async_engine(settings.database_url)
+    try:
+        async with engine.begin() as conn:
+            row = (await conn.execute(
+                select(t.users.c.id).where(func.lower(t.users.c.email) == email.lower(), t.users.c.deleted_at.is_(None))
+            )).first()
+            if row is None:
+                pw = await asyncio.to_thread(getpass.getpass, f"No account for {email}. New password (min 10 chars): ")
+                check_password_policy(pw, email)
+                user_id = uuid.uuid4()
+                await conn.execute(insert(t.users).values(
+                    id=user_id, email=email, password_hash=await Passwords(settings).hash(pw), full_name=a.name,
+                    locale="ar", email_verified_at=func.now()))
+                print(f"Created account {email}")
+            else:
+                user_id = row.id
+            secret = new_totp_secret()
+            await conn.execute(update(t.users).where(t.users.c.id == user_id).values(
+                platform_role=a.role, status="active", mfa_enabled=True,
+                mfa_secret_ciphertext=encrypt_mfa_secret(Cipher(settings.data_key_bytes), user_id, secret)))
+            await conn.execute(insert(t.audit_logs).values(
+                action="admin.bootstrap", entity_type="user", entity_id=str(user_id),
+                metadata={"role": a.role, "via": "cli"}))
+    finally:
+        await engine.dispose()
+    print(f"\n{email} is now '{a.role}' with two-factor sign-in enabled.")
+    print("Add this account to an authenticator app (Google Authenticator, Microsoft Authenticator, …):")
+    print(f"  secret : {secret}")
+    print(f"  link   : {totp_uri(secret, email)}")
+    print("Then sign in to the admin dashboard with the email, password and the 6-digit code.")
+
+
 # ---------------------------------------------------------------- output helpers
 def _print_result(r, lang: str) -> None:  # noqa: ANN001
     print(f"\n== Diagnosis ({r.data_mode}) — health {r.health_score}/100 [{r.health_band}] ==")
@@ -455,6 +513,12 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--from-recordings", nargs="*", metavar="REC", help="use saved scan recordings instead of connecting")
     p.add_argument("--lang", choices=["ar", "en"], default="ar")
     p.set_defaults(fn=cmd_verify)
+
+    p = sub.add_parser("create-admin", help="make an account a platform admin with two-factor sign-in")
+    p.add_argument("--email", required=True)
+    p.add_argument("--name", default=None)
+    p.add_argument("--role", choices=["admin", "super_admin", "support"], default="super_admin")
+    p.set_defaults(fn=cmd_create_admin)
 
     p = sub.add_parser("ble-scan", help="list nearby BLE OBD adapters")
     p.add_argument("--timeout", type=float, default=6.0)

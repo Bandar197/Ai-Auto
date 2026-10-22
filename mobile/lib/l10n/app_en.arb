@@ -379,5 +379,9 @@
   "srsNote": "Airbag (SRS) codes are never cleared by this app.",
   "autoStartAfterClear": "Demo: start the engine automatically after clearing",
   "monitorComplete": "complete",
-  "monitorIncomplete": "not complete"
+  "monitorIncomplete": "not complete",
+  "bleDesktopNote": "On Windows use a Wi-Fi adapter (e.g. ELM327 Wi-Fi). Bluetooth adapters work from the phone app.",
+  "@bleDesktopNote": {
+    "description": "Shown instead of the Wi-Fi/BLE selector on desktop platforms without BLE support"
+  }
 }
