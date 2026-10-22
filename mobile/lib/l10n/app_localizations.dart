@@ -1435,6 +1435,264 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'s'**
   String get seconds;
+
+  /// No description provided for @verifyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify after clear'**
+  String get verifyTitle;
+
+  /// No description provided for @verifyOverall_problem_confirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Real problem'**
+  String get verifyOverall_problem_confirmed;
+
+  /// No description provided for @verifyOverall_likely_resolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Most likely an old fault'**
+  String get verifyOverall_likely_resolved;
+
+  /// No description provided for @verifyOverall_verifying.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification in progress'**
+  String get verifyOverall_verifying;
+
+  /// No description provided for @verifyOverall_nothing_cleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to verify'**
+  String get verifyOverall_nothing_cleared;
+
+  /// No description provided for @verifyChecks.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No check since clearing yet} =1{1 check since clearing} other{{count} checks since clearing}}'**
+  String verifyChecks(int count);
+
+  /// No description provided for @verifyCheckNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Check now'**
+  String get verifyCheckNow;
+
+  /// No description provided for @verifyRunScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Full scan'**
+  String get verifyRunScan;
+
+  /// No description provided for @verifyClose.
+  ///
+  /// In en, this message translates to:
+  /// **'End verification'**
+  String get verifyClose;
+
+  /// No description provided for @verifyClearedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Cleared: {when}'**
+  String verifyClearedAt(Object when);
+
+  /// No description provided for @verifySourceServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Verdict from the AutoMind server'**
+  String get verifySourceServer;
+
+  /// No description provided for @verifySourceLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline verdict calculated on the phone (same rules as the server)'**
+  String get verifySourceLocal;
+
+  /// No description provided for @verifyNextStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Next step'**
+  String get verifyNextStep;
+
+  /// No description provided for @verifyBeforeCodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved before clearing'**
+  String get verifyBeforeCodes;
+
+  /// No description provided for @verifyHomeCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear & verify'**
+  String get verifyHomeCard;
+
+  /// No description provided for @verifyNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No clear to verify yet.'**
+  String get verifyNone;
+
+  /// No description provided for @verifyHowItWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'If a cleared code comes back, you have a real problem. If it stays away after the car re-runs its self-tests, it was most likely an old fault.'**
+  String get verifyHowItWorks;
+
+  /// No description provided for @checkLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Check #{n}'**
+  String checkLabel(int n);
+
+  /// No description provided for @noCodesInCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'No codes'**
+  String get noCodesInCheck;
+
+  /// No description provided for @viewVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'View verification'**
+  String get viewVerification;
+
+  /// No description provided for @clearErases.
+  ///
+  /// In en, this message translates to:
+  /// **'Clearing will erase'**
+  String get clearErases;
+
+  /// No description provided for @clearErasesFreeze.
+  ///
+  /// In en, this message translates to:
+  /// **'The freeze frame (conditions when the fault happened). A copy stays in the saved scan.'**
+  String get clearErasesFreeze;
+
+  /// No description provided for @clearErasesReadiness.
+  ///
+  /// In en, this message translates to:
+  /// **'All readiness monitors restart from zero:'**
+  String get clearErasesReadiness;
+
+  /// No description provided for @clearScanSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'The scan (codes + freeze frame) is saved on the server.'**
+  String get clearScanSaved;
+
+  /// No description provided for @clearScanNotSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'The scan will be saved on the server first — clearing is only allowed after the codes are saved.'**
+  String get clearScanNotSaved;
+
+  /// No description provided for @clearNoReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Run a scan first: the codes must be saved before clearing.'**
+  String get clearNoReport;
+
+  /// No description provided for @clearPhase_checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking engine off and speed 0…'**
+  String get clearPhase_checking;
+
+  /// No description provided for @clearPhase_uploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving the scan on the server…'**
+  String get clearPhase_uploading;
+
+  /// No description provided for @clearPhase_requesting.
+  ///
+  /// In en, this message translates to:
+  /// **'Requesting server approval…'**
+  String get clearPhase_requesting;
+
+  /// No description provided for @clearPhase_clearing.
+  ///
+  /// In en, this message translates to:
+  /// **'Clearing codes…'**
+  String get clearPhase_clearing;
+
+  /// No description provided for @clearPhase_waiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting a few seconds…'**
+  String get clearPhase_waiting;
+
+  /// No description provided for @clearPhase_rechecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-checking the codes…'**
+  String get clearPhase_rechecking;
+
+  /// No description provided for @clearFailReplay.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available for replays.'**
+  String get clearFailReplay;
+
+  /// No description provided for @clearFailUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine speed / vehicle speed cannot be read, so it is not safe to clear.'**
+  String get clearFailUnreadable;
+
+  /// No description provided for @clearFailEngine.
+  ///
+  /// In en, this message translates to:
+  /// **'The engine is running ({rpm} rpm). Switch the engine off and keep the ignition on.'**
+  String clearFailEngine(Object rpm);
+
+  /// No description provided for @clearFailMoving.
+  ///
+  /// In en, this message translates to:
+  /// **'The vehicle is moving ({speed} km/h).'**
+  String clearFailMoving(Object speed);
+
+  /// No description provided for @clearFailUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the scan on the server: {reason}'**
+  String clearFailUpload(Object reason);
+
+  /// No description provided for @otherProcedures.
+  ///
+  /// In en, this message translates to:
+  /// **'Other procedures'**
+  String get otherProcedures;
+
+  /// No description provided for @procedureUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get procedureUnavailable;
+
+  /// No description provided for @srsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Airbag (SRS) codes are never cleared by this app.'**
+  String get srsNote;
+
+  /// No description provided for @autoStartAfterClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo: start the engine automatically after clearing'**
+  String get autoStartAfterClear;
+
+  /// No description provided for @monitorComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'complete'**
+  String get monitorComplete;
+
+  /// No description provided for @monitorIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'not complete'**
+  String get monitorIncomplete;
 }
 
 class _AppLocalizationsDelegate

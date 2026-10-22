@@ -14,6 +14,7 @@ import 'features/scan_screen.dart';
 import 'features/settings_screen.dart';
 import 'features/shell.dart';
 import 'features/vehicles_screen.dart';
+import 'features/verify_screen.dart';
 import 'state/providers.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -44,7 +45,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/vehicles', builder: (_, _) => const VehiclesScreen()),
       GoRoute(path: '/vehicles/edit', builder: (_, s) => VehicleEditScreen(vehicle: s.extra as Map<String, dynamic>?)),
       GoRoute(path: '/maintenance/:vehicleId', builder: (_, s) => MaintenanceScreen(vehicleId: s.pathParameters['vehicleId']!)),
-      GoRoute(path: '/clear-dtcs', builder: (_, _) => const ClearDtcsScreen()),
+      GoRoute(path: '/clear-dtcs', builder: (_, s) => ClearDtcsScreen(reportId: s.uri.queryParameters['report'])),
+      GoRoute(path: '/verify', builder: (_, _) => const VerifyScreen()),
+      GoRoute(path: '/verify/:id', builder: (_, s) => VerifyScreen(entryId: s.pathParameters['id'])),
     ],
   );
 });

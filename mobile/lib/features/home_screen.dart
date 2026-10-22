@@ -6,6 +6,8 @@ import 'package:intl/intl.dart' show DateFormat;
 import '../core/storage/scan_report.dart';
 import '../state/connection_controller.dart';
 import '../state/providers.dart';
+import '../state/verification_controller.dart';
+import 'verify_screen.dart';
 import '../ui/l10n_helpers.dart';
 import '../ui/widgets.dart';
 
@@ -21,6 +23,7 @@ class HomeScreen extends ConsumerWidget {
     final latest = reports.isEmpty ? null : reports.first;
     final pending = ref.watch(pendingUploadsProvider).value ?? 0;
     final kb = ref.watch(appAssetsProvider).kb;
+    final verify = ref.watch(openVerificationProvider);
 
     final alerts = <(String, String?)>[];
     final findings = (latest?.diagnosis?['findings'] as List?) ?? const [];
@@ -72,6 +75,24 @@ class HomeScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: StatusChips(status: conn.status, simulator: conn.isSimulator),
           ),
+          if (verify != null)
+            Card(
+              key: const Key('home-verify-card'),
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              color: overallColor(verify.overall),
+              child: ListTile(
+                leading: Icon(overallIcon(verify.overall), color: Colors.white, size: 32),
+                title: Text('${l.verifyTitle} · ${overallText(context, verify.overall)}',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800)),
+                subtitle: Text(
+                  '${verify.record.before.dtcs.map((d) => d.code).toSet().join(', ')} · ${l.verifyChecks(verify.checks.length)}'
+                  '${verify.dataMode != 'live' ? ' · ${modeText(l, verify.dataMode).toUpperCase()}' : ''}',
+                  style: const TextStyle(color: Colors.white70),
+                ),
+                trailing: const Icon(Icons.chevron_right, color: Colors.white),
+                onTap: () => context.push('/verify/${verify.id}'),
+              ),
+            ),
           SectionCard(
             title: l.healthScore,
             icon: Icons.favorite_outline,

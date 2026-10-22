@@ -127,7 +127,7 @@ class UploadQueue {
       ]);
     }
     if (recJson != null) await api.uploadSessionRecording(sid, recJson);
-    final diagnosis = await api.completeSession(sid, milOn: report.milOn, language: language);
+    final diagnosis = await api.completeSession(sid, milOn: report.milOn, readiness: recording?.readiness, language: language);
     report
       ..diagnosis = diagnosis
       ..uploadState = 'uploaded'

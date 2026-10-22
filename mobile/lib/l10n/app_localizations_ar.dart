@@ -741,4 +741,161 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get seconds => 'ث';
+
+  @override
+  String get verifyTitle => 'تحقق بعد المسح';
+
+  @override
+  String get verifyOverall_problem_confirmed => 'يوجد عطل حقيقي';
+
+  @override
+  String get verifyOverall_likely_resolved => 'غالبا عطل قديم';
+
+  @override
+  String get verifyOverall_verifying => 'التحقق مستمر';
+
+  @override
+  String get verifyOverall_nothing_cleared => 'لا يوجد ما يتم التحقق منه';
+
+  @override
+  String verifyChecks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count فحص بعد المسح',
+      few: '$count فحوصات بعد المسح',
+      two: 'فحصان بعد المسح',
+      one: 'فحص واحد بعد المسح',
+      zero: 'لا يوجد فحص بعد المسح',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get verifyCheckNow => 'افحص الآن';
+
+  @override
+  String get verifyRunScan => 'فحص كامل';
+
+  @override
+  String get verifyClose => 'إنهاء التحقق';
+
+  @override
+  String verifyClearedAt(Object when) {
+    return 'تم المسح: $when';
+  }
+
+  @override
+  String get verifySourceServer => 'النتيجة من خادم أوتومايند';
+
+  @override
+  String get verifySourceLocal =>
+      'نتيجة بدون إنترنت محسوبة على الجوال (بنفس قواعد الخادم)';
+
+  @override
+  String get verifyNextStep => 'الخطوة التالية';
+
+  @override
+  String get verifyBeforeCodes => 'المحفوظ قبل المسح';
+
+  @override
+  String get verifyHomeCard => 'المسح والتحقق';
+
+  @override
+  String get verifyNone => 'لا يوجد مسح للتحقق منه بعد.';
+
+  @override
+  String get verifyHowItWorks =>
+      'إذا رجع الكود بعد المسح فهناك عطل حقيقي. وإذا لم يرجع بعد أن تعيد السيارة اختباراتها الذاتية فغالبا كان عطلا قديما.';
+
+  @override
+  String checkLabel(int n) {
+    return 'الفحص رقم $n';
+  }
+
+  @override
+  String get noCodesInCheck => 'لا توجد أكواد';
+
+  @override
+  String get viewVerification => 'عرض التحقق';
+
+  @override
+  String get clearErases => 'سيؤدي المسح إلى حذف';
+
+  @override
+  String get clearErasesFreeze =>
+      'الإطار المجمد (ظروف حدوث العطل). تبقى نسخة منه في الفحص المحفوظ.';
+
+  @override
+  String get clearErasesReadiness => 'جميع مراقبات الجاهزية تبدأ من الصفر:';
+
+  @override
+  String get clearScanSaved =>
+      'الفحص (الأكواد والإطار المجمد) محفوظ على الخادم.';
+
+  @override
+  String get clearScanNotSaved =>
+      'سيتم حفظ الفحص على الخادم أولًا — لا يُسمح بالمسح إلا بعد حفظ الأكواد.';
+
+  @override
+  String get clearNoReport => 'قم بالفحص أولًا: يجب حفظ الأكواد قبل المسح.';
+
+  @override
+  String get clearPhase_checking => 'التحقق من إطفاء المحرك وتوقف السيارة…';
+
+  @override
+  String get clearPhase_uploading => 'حفظ الفحص على الخادم…';
+
+  @override
+  String get clearPhase_requesting => 'طلب موافقة الخادم…';
+
+  @override
+  String get clearPhase_clearing => 'جارٍ مسح الأكواد…';
+
+  @override
+  String get clearPhase_waiting => 'انتظار بضع ثوانٍ…';
+
+  @override
+  String get clearPhase_rechecking => 'إعادة فحص الأكواد…';
+
+  @override
+  String get clearFailReplay => 'غير متاح في إعادة التشغيل.';
+
+  @override
+  String get clearFailUnreadable =>
+      'لا يمكن قراءة سرعة المحرك أو سرعة السيارة، لذلك المسح غير آمن.';
+
+  @override
+  String clearFailEngine(Object rpm) {
+    return 'المحرك يعمل ($rpm دورة/د). أطفئ المحرك واترك الإشعال يعمل.';
+  }
+
+  @override
+  String clearFailMoving(Object speed) {
+    return 'السيارة تتحرك ($speed كم/س).';
+  }
+
+  @override
+  String clearFailUpload(Object reason) {
+    return 'تعذر حفظ الفحص على الخادم: $reason';
+  }
+
+  @override
+  String get otherProcedures => 'إجراءات أخرى';
+
+  @override
+  String get procedureUnavailable => 'غير متاح';
+
+  @override
+  String get srsNote =>
+      'لا يقوم التطبيق أبدًا بمسح أكواد الوسائد الهوائية (SRS).';
+
+  @override
+  String get autoStartAfterClear => 'تجريبي: تشغيل المحرك تلقائيًا بعد المسح';
+
+  @override
+  String get monitorComplete => 'مكتمل';
+
+  @override
+  String get monitorIncomplete => 'غير مكتمل';
 }

@@ -12,10 +12,20 @@ import 'signal_model.dart';
 /// * first OBD request after ATSP0 is prefixed with `SEARCHING...`;
 /// * engine ECU 7E8 supports the scenario PIDs; TCM 7E9 only answers 0100.
 class Elm327Emulator {
-  Elm327Emulator(this.scenario, this.table, {Duration Function()? clock, int seed = 42, String? protocol, this.ignitionOn = true})
-      : model = SignalModel(scenario, seed: seed),
+  Elm327Emulator(
+    this.scenario,
+    this.table, {
+    Duration Function()? clock,
+    int seed = 42,
+    String? protocol,
+    this.ignitionOn = true,
+    bool engineRunning = true,
+    this.startEngineAfterClearS,
+    this.clearTimeScale = 1,
+  })  : model = SignalModel(scenario, seed: seed),
         carProtocol = protocol ?? scenario.protocol,
         _clock = clock ?? _defaultClock() {
+    model.engineRunning = engineRunning;
     _resetDtcs();
     reset();
   }
@@ -64,8 +74,20 @@ class Elm327Emulator {
   late List<String> pending;
   late List<String> permanent;
   Map<String, dynamic>? freezeFrame;
-  bool _cleared = false;
   bool monitorsComplete = true;
+
+  // ---- post-clear behaviour (mirrors backend/automind/simulator) ----
+  /// Codes that come back after a clear while the fault is still present.
+  late final List<String> _faultCodes;
+
+  /// Simulated time (s) of the last service 04, or null.
+  double? clearedAt;
+
+  /// Demo: the driver starts the engine this many (scaled) seconds after a clear.
+  double? startEngineAfterClearS;
+
+  /// Speeds up only the time since the clear (demo completes in seconds).
+  double clearTimeScale;
 
   bool get engineRunning => model.engineRunning;
   set engineRunning(bool v) => model.engineRunning = v;
@@ -90,6 +112,43 @@ class Elm327Emulator {
     final perm = [for (final x in d) if (x.status == DtcStatus.permanent) x.code];
     permanent = perm.isEmpty ? [...stored] : perm;
     freezeFrame = scenario.freezeFrame;
+    _faultCodes = [for (final x in d) if (x.status == DtcStatus.stored || x.status == DtcStatus.pending) x.code];
+  }
+
+  /// Engine-running seconds since the clear (scaled), or null.
+  double? _sinceClear(double t) {
+    final c = clearedAt;
+    if (c == null) return null;
+    final dt = (t - c) * clearTimeScale;
+    if (!model.engineRunning && startEngineAfterClearS != null && dt >= startEngineAfterClearS!) {
+      model.engineRunning = true; // the driver starts the engine after clearing
+    }
+    if (!model.engineRunning) return null;
+    return dt < 0 ? 0 : dt;
+  }
+
+  /// A fault that is still present is detected again (pending, then stored);
+  /// monitors complete after a while; a repaired fault's permanent code erases itself.
+  void _advanceAfterClear(double t) {
+    final dt = _sinceClear(t);
+    if (dt == null) return;
+    if (scenario.faultActive) {
+      for (final code in _faultCodes) {
+        if (dt >= scenario.redetectStoredS && !stored.contains(code)) {
+          stored.add(code);
+          pending.remove(code);
+        } else if (dt >= scenario.redetectPendingS && dt < scenario.redetectStoredS && !pending.contains(code)) {
+          pending.add(code);
+        }
+      }
+      if (dt >= scenario.redetectStoredS && stored.isNotEmpty) {
+        permanent = ({...permanent, ...stored}.toList()..sort());
+      }
+    }
+    if (dt >= scenario.monitorCompleteS) {
+      monitorsComplete = true;
+      if (!scenario.faultActive) permanent = [];
+    }
   }
 
   double get _t => _clock().inMicroseconds / 1e6;
@@ -202,9 +261,8 @@ class Elm327Emulator {
     switch (service) {
       case 0x01:
         if (rest.isEmpty) return out;
-        final values = currentValues();
         for (final ecu in scenario.ecus) {
-          final data = _mode01(ecu, rest[0], values);
+          final data = _mode01(ecu, rest[0]);
           if (data != null) out.add((ecu, [0x41, rest[0], ...data]));
         }
       case 0x02:
@@ -214,6 +272,7 @@ class Elm327Emulator {
       case 0x03:
       case 0x07:
       case 0x0A:
+        _advanceAfterClear(_t);
         final codes = service == 0x03 ? stored : (service == 0x07 ? pending : permanent);
         final body = [for (final c in codes) ...encodeDtc(c)];
         out.add((engineEcu, _isCan ? [service + 0x40, codes.length, ...body] : [service + 0x40, ...body]));
@@ -222,7 +281,7 @@ class Elm327Emulator {
         pending = [];
         freezeFrame = null;
         monitorsComplete = false;
-        _cleared = true;
+        clearedAt = _t;
         out.add((engineEcu, [0x44]));
       case 0x09:
         if (rest.isEmpty) return out;
@@ -240,7 +299,7 @@ class Elm327Emulator {
     return m;
   }
 
-  List<int>? _mode01(String ecu, int pid, Map<String, double> v) {
+  List<int>? _mode01(String ecu, int pid) {
     if (ecu != engineEcu) {
       // Transmission ECU: answers only the supported-PID request.
       return pid == 0x00 ? [0x80, 0x00, 0x00, 0x00] : null;
@@ -251,7 +310,16 @@ class Elm327Emulator {
       return null;
     }
     if (!sup.contains(pid)) return null;
-    return _encodeValue(pid, v);
+    _advanceAfterClear(_t);
+    if (clearedAt != null && (pid == 0x30 || pid == 0x31 || pid == 0x4E)) {
+      // Counters restart at the clear. (Python keeps the pre-clear value while
+      // the engine is still off after a clear; here they read 0 until it runs.)
+      final dt = _sinceClear(_t) ?? 0;
+      if (pid == 0x30) return [dt >= scenario.monitorCompleteS ? 1 : 0];
+      final x = pid == 0x31 ? (dt * 0.012).floor() : dt ~/ 60;
+      return [(x >> 8) & 0xFF, x & 0xFF];
+    }
+    return _encodeValue(pid, currentValues());
   }
 
   List<int>? _encodeValue(int pid, Map<String, double> v) {
@@ -268,10 +336,6 @@ class Elm327Emulator {
         return [0x01];
       case 0x21:
         return table.encode(pid, {'distance_mil_on': stored.isNotEmpty ? 42 : 0});
-      case 0x30:
-        return table.encode(pid, {'warmups_since_clear': _cleared ? 0 : (v['warmups_since_clear'] ?? 0)});
-      case 0x31:
-        return table.encode(pid, {'distance_since_clear': _cleared ? 0 : (v['distance_since_clear'] ?? 0)});
     }
     final def = table[pid];
     if (def == null || def.outputs.isEmpty) return null;

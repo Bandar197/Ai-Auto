@@ -109,8 +109,8 @@ class AutomindApi {
       _call(() => dio.post('/sessions/$sessionId/dtcs', data: {'dtcs': dtcs}));
   Future<Map<String, dynamic>> uploadSessionRecording(String sessionId, Map<String, dynamic> recording) =>
       _call(() => dio.post('/sessions/$sessionId/recording', data: recording));
-  Future<Map<String, dynamic>> completeSession(String sessionId, {bool? milOn, String language = 'ar'}) =>
-      _call(() => dio.post('/sessions/$sessionId/complete', data: {'mil_on': ?milOn, 'language': language}));
+  Future<Map<String, dynamic>> completeSession(String sessionId, {bool? milOn, Map<String, dynamic>? readiness, String language = 'ar'}) =>
+      _call(() => dio.post('/sessions/$sessionId/complete', data: {'mil_on': ?milOn, 'readiness': ?readiness, 'language': language}));
   Future<Map<String, dynamic>> diagnosis(String sessionId) => _call(() => dio.get('/sessions/$sessionId/diagnosis'));
 
   Future<Map<String, dynamic>> analyze(Map<String, dynamic> recording, {String language = 'ar'}) =>
@@ -132,7 +132,22 @@ class AutomindApi {
   Future<List<dynamic>> demoScenarios() => _call(() => dio.get('/demo/scenarios'));
   Future<Map<String, dynamic>> kbDtc(String code) => _call(() => dio.get('/kb/dtc/$code'));
 
+  // ------------------------------------------------------- clear & verify
+  /// Server verdict for the vehicle's latest clear (404 when none).
+  Future<Map<String, dynamic>> vehicleClearVerification(String vehicleId) =>
+      _call(() => dio.get('/vehicles/$vehicleId/clear-verification'));
+
+  /// Stateless verdict from local snapshots: `{record, checks}`.
+  Future<Map<String, dynamic>> clearVerification(Map<String, dynamic> record, List<Map<String, dynamic>> checks) =>
+      _call(() => dio.post('/diagnosis/clear-verification', data: {'record': record, 'checks': checks}));
+
   // --------------------------------------------------------------- control
+  Future<List<Map<String, dynamic>>> controlProcedures({String? vehicleId}) async {
+    final r = await _call<dynamic>(() => dio.get('/control/procedures', queryParameters: {'vehicle_id': ?vehicleId}));
+    final items = r is Map ? (r['items'] as List? ?? const []) : r as List;
+    return [for (final i in items) Map<String, dynamic>.from(i as Map)];
+  }
+
   Future<Map<String, dynamic>> requestOperation(Map<String, dynamic> body) =>
       _call(() => dio.post('/control/operations', data: body));
   Future<void> reportOperation(String id, Map<String, dynamic> body) =>

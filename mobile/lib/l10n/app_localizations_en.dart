@@ -736,4 +736,161 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get seconds => 's';
+
+  @override
+  String get verifyTitle => 'Verify after clear';
+
+  @override
+  String get verifyOverall_problem_confirmed => 'Real problem';
+
+  @override
+  String get verifyOverall_likely_resolved => 'Most likely an old fault';
+
+  @override
+  String get verifyOverall_verifying => 'Verification in progress';
+
+  @override
+  String get verifyOverall_nothing_cleared => 'Nothing to verify';
+
+  @override
+  String verifyChecks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count checks since clearing',
+      one: '1 check since clearing',
+      zero: 'No check since clearing yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get verifyCheckNow => 'Check now';
+
+  @override
+  String get verifyRunScan => 'Full scan';
+
+  @override
+  String get verifyClose => 'End verification';
+
+  @override
+  String verifyClearedAt(Object when) {
+    return 'Cleared: $when';
+  }
+
+  @override
+  String get verifySourceServer => 'Verdict from the AutoMind server';
+
+  @override
+  String get verifySourceLocal =>
+      'Offline verdict calculated on the phone (same rules as the server)';
+
+  @override
+  String get verifyNextStep => 'Next step';
+
+  @override
+  String get verifyBeforeCodes => 'Saved before clearing';
+
+  @override
+  String get verifyHomeCard => 'Clear & verify';
+
+  @override
+  String get verifyNone => 'No clear to verify yet.';
+
+  @override
+  String get verifyHowItWorks =>
+      'If a cleared code comes back, you have a real problem. If it stays away after the car re-runs its self-tests, it was most likely an old fault.';
+
+  @override
+  String checkLabel(int n) {
+    return 'Check #$n';
+  }
+
+  @override
+  String get noCodesInCheck => 'No codes';
+
+  @override
+  String get viewVerification => 'View verification';
+
+  @override
+  String get clearErases => 'Clearing will erase';
+
+  @override
+  String get clearErasesFreeze =>
+      'The freeze frame (conditions when the fault happened). A copy stays in the saved scan.';
+
+  @override
+  String get clearErasesReadiness =>
+      'All readiness monitors restart from zero:';
+
+  @override
+  String get clearScanSaved =>
+      'The scan (codes + freeze frame) is saved on the server.';
+
+  @override
+  String get clearScanNotSaved =>
+      'The scan will be saved on the server first — clearing is only allowed after the codes are saved.';
+
+  @override
+  String get clearNoReport =>
+      'Run a scan first: the codes must be saved before clearing.';
+
+  @override
+  String get clearPhase_checking => 'Checking engine off and speed 0…';
+
+  @override
+  String get clearPhase_uploading => 'Saving the scan on the server…';
+
+  @override
+  String get clearPhase_requesting => 'Requesting server approval…';
+
+  @override
+  String get clearPhase_clearing => 'Clearing codes…';
+
+  @override
+  String get clearPhase_waiting => 'Waiting a few seconds…';
+
+  @override
+  String get clearPhase_rechecking => 'Re-checking the codes…';
+
+  @override
+  String get clearFailReplay => 'Not available for replays.';
+
+  @override
+  String get clearFailUnreadable =>
+      'Engine speed / vehicle speed cannot be read, so it is not safe to clear.';
+
+  @override
+  String clearFailEngine(Object rpm) {
+    return 'The engine is running ($rpm rpm). Switch the engine off and keep the ignition on.';
+  }
+
+  @override
+  String clearFailMoving(Object speed) {
+    return 'The vehicle is moving ($speed km/h).';
+  }
+
+  @override
+  String clearFailUpload(Object reason) {
+    return 'Could not save the scan on the server: $reason';
+  }
+
+  @override
+  String get otherProcedures => 'Other procedures';
+
+  @override
+  String get procedureUnavailable => 'Unavailable';
+
+  @override
+  String get srsNote => 'Airbag (SRS) codes are never cleared by this app.';
+
+  @override
+  String get autoStartAfterClear =>
+      'Demo: start the engine automatically after clearing';
+
+  @override
+  String get monitorComplete => 'complete';
+
+  @override
+  String get monitorIncomplete => 'not complete';
 }

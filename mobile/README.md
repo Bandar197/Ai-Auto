@@ -137,6 +137,34 @@ flutter build ios --release        # or: flutter build ipa
 Minimum iOS 15. Info.plist includes `NSBluetoothAlwaysUsageDescription`,
 `NSLocalNetworkUsageDescription` and `NSAllowsLocalNetworking`.
 
+### Clear and verify
+
+The owner's habit — *"I clear the light; if it comes back, I have a real problem"* — made reliable:
+
+1. **Before clearing**, the scan (codes + freeze frame + readiness) must be saved as a server session
+   (the server rejects a live clear without `session_id`). The screen shows what clearing erases
+   (freeze frame, readiness monitors). A local `ClearEntry` keeps the before-snapshot.
+2. **Right after a successful clear** the app waits ~5 s and re-reads 03/07/0A, 01 01 (readiness),
+   01 30/31 in the same key cycle and shows the first verdict.
+3. **Verify after clear** (Home card while open, `/verify`): every later scan of the same vehicle
+   (or *Check now*) adds a check. Verdict = server (`GET /vehicles/{id}/clear-verification` for live,
+   `POST /diagnosis/clear-verification` with local snapshots otherwise) or, offline, the pure-Dart port
+   `lib/obd/verify/recurrence.dart` of `backend/automind/diagnosis/recurrence.py` (same rules and texts).
+   Overall: problem_confirmed (red) · likely_resolved (green) · verifying (amber).
+4. Recordings carry `readiness` (service 01 PID 01) and it is sent with `POST /sessions/{id}/complete`.
+5. Airbag (`clear_srs_dtcs`) is shown as unavailable with the server's reason; the app never sends SRS commands.
+
+Demo: the in-app simulator reproduces the Python post-clear behaviour (fault still present → pending
+after 20 s, stored after 45 s of engine running; monitors complete + warm-ups = 1 after 90 s;
+repaired scenario `old_code_repaired` erases its permanent code), sped up ×6 after a clear, with the
+engine auto-starting 5 s after clearing (switchable). Simulated vehicles persist across demo connections.
+
+```bash
+automind simulate --scenario old_code_repaired --port 35444 --engine-off --start-engine-after-clear 5 --time-scale 40 &
+AUTOMIND_SIM=127.0.0.1:35444 AUTOMIND_SIM_SCENARIO=old_code_repaired AUTOMIND_SIM_CLEAR_EXPECT=likely_resolved \
+  flutter test test/integration
+```
+
 ### Known limitations
 
 * **Bluetooth Classic (SPP)** adapters are not supported. iOS does not allow SPP
@@ -198,6 +226,18 @@ flutter run
 
 * أندرويد: `flutter build apk --debug` (يتطلب Android SDK 36).
 * iOS: على macOS مع Xcode: `cd ios && pod install` ثم `flutter build ios` (الحد الأدنى iOS 15).
+
+### المسح والتحقق
+
+فكرة المالك: «أمسح اللمبة؛ إذا رجعت فهناك عطل حقيقي» — بشكل موثوق:
+
+1. **قبل المسح** يجب حفظ الفحص (الأكواد والإطار المجمد والجاهزية) كجلسة على الخادم، وتعرض الشاشة ما
+   سيُحذف (الإطار المجمد ومراقبات الجاهزية)، ويُحفظ سجل محلي بالحالة قبل المسح.
+2. **بعد المسح مباشرة** ينتظر التطبيق نحو 5 ثوانٍ ويعيد قراءة الأكواد والجاهزية في نفس دورة التشغيل ويعرض أول نتيجة.
+3. شاشة **«تحقق بعد المسح»** وبطاقة في الرئيسية: كل فحص لاحق للسيارة نفسها يضيف فحصًا، والنتيجة من الخادم
+   أو من نسخة Dart المطابقة لمنطق الخادم عند عدم توفر الإنترنت: «يوجد عطل حقيقي» (أحمر)، «غالبا عطل قديم» (أخضر)،
+   «التحقق مستمر» (كهرماني). تبقى علامات «تجريبي» و«إعادة تشغيل» كما في بقية التطبيق.
+4. لا يرسل التطبيق أي أمر لمسح أكواد الوسائد الهوائية؛ يُعرض الإجراء كغير متاح مع سبب الخادم.
 
 ### القيود المعروفة
 

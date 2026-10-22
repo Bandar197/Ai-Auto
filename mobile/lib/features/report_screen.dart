@@ -57,7 +57,7 @@ class ReportScreen extends ConsumerWidget {
                       },
                 onClearDtcs: r.dataMode == 'replay' || r.dtcs.isEmpty || ref.watch(connectionProvider).client == null
                     ? null
-                    : () => context.push('/clear-dtcs'),
+                    : () => context.push('/clear-dtcs?report=${r.id}'),
               ),
       ),
     );

@@ -1,6 +1,8 @@
 import '../client/states.dart';
 import '../decode/dtc.dart';
 import '../decode/pid_table.dart';
+import '../decode/readiness.dart';
+import '../hex.dart';
 import '../services/obd_models.dart';
 import 'recording.dart';
 
@@ -46,6 +48,9 @@ class Recorder {
   List<Dtc> dtcs = [];
   List<FreezeFrame> freezeFrames = [];
 
+  /// Latest service 01 PID 01 readiness (filled automatically from readings).
+  Map<String, dynamic>? readiness;
+
   int get sampleCount => _samples.length;
   int elapsedMs([DateTime? at]) => (at ?? _now()).difference(_startedAt).inMilliseconds.clamp(0, 1 << 31);
 
@@ -55,6 +60,10 @@ class Recorder {
   }
 
   void addReading(PidReading r) {
+    if (r.pid == 0x01) {
+      final b = parseHexBytes(r.raw);
+      if (b != null && b.length >= 6) readiness = decodeMonitorStatus(b.sublist(2)) ?? readiness;
+    }
     final pidHex = r.requestId;
     final def = table[r.pid];
     for (final e in r.values.keys) {
@@ -90,6 +99,7 @@ class Recorder {
       signals: _signals.values.toList(),
       samples: List.unmodifiable(_samples),
       events: List.unmodifiable(_events),
+      readiness: readiness,
     );
   }
 }

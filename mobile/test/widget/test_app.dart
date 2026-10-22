@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:automind_app/core/api/token_store.dart';
@@ -12,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 AppAssets testAssets() {
   final table = PidTable.fromJsonString(File('assets/shared/obd/pids.json').readAsStringSync());
   final scenarios = [
-    for (final k in ['healthy', 'p0106_map_sensor'])
+    for (final k in (jsonDecode(File('assets/shared/scenarios/index.json').readAsStringSync())['scenarios'] as List).cast<String>())
       Scenario.fromJsonString(File('assets/shared/scenarios/$k.json').readAsStringSync()),
   ];
   final kbFile = File('assets/shared/kb/dtc_definitions.json');
@@ -23,7 +24,7 @@ AppAssets testAssets() {
   );
 }
 
-Future<List<Override>> testOverrides({String locale = 'ar'}) async {
+Future<List<Override>> testOverrides({String locale = 'ar', TokenStore? tokens}) async {
   SharedPreferences.setMockInitialValues({'onboardingDone': true, 'locale': locale});
   final prefs = await SharedPreferences.getInstance();
   final dir = Directory.systemTemp.createTempSync('automind_test');
@@ -31,6 +32,6 @@ Future<List<Override>> testOverrides({String locale = 'ar'}) async {
     sharedPrefsProvider.overrideWithValue(prefs),
     localStoreProvider.overrideWithValue(LocalStore(dir)),
     appAssetsProvider.overrideWithValue(testAssets()),
-    tokenStoreProvider.overrideWithValue(MemoryTokenStore()),
+    tokenStoreProvider.overrideWithValue(tokens ?? MemoryTokenStore()),
   ];
 }

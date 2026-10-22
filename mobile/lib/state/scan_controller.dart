@@ -4,10 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../core/api/api_client.dart';
+import '../core/storage/clear_entry.dart';
 import '../core/storage/scan_report.dart';
 import '../obd/obd.dart';
 import 'connection_controller.dart';
 import 'providers.dart';
+import 'verification_controller.dart';
 
 enum ScanStep { adapter, init, protocol, ecu, supported, vin, dtcs, freeze, capture, upload }
 
@@ -20,7 +22,15 @@ class StepState {
 }
 
 class ScanState {
-  const ScanState({this.steps = const {}, this.running = false, this.reportId, this.error, this.captureLeft = 0, this.queued = false});
+  const ScanState({
+    this.steps = const {},
+    this.running = false,
+    this.reportId,
+    this.error,
+    this.captureLeft = 0,
+    this.queued = false,
+    this.verificationId,
+  });
 
   final Map<ScanStep, StepState> steps;
   final bool running;
@@ -29,9 +39,20 @@ class ScanState {
   final int captureLeft;
   final bool queued;
 
+  /// Set when this scan was added as a check to an open clear-and-verify.
+  final String? verificationId;
+
   StepState step(ScanStep s) => steps[s] ?? const StepState(StepStatus.pending);
 
-  ScanState copyWith({Map<ScanStep, StepState>? steps, bool? running, String? reportId, String? error, int? captureLeft, bool? queued}) =>
+  ScanState copyWith({
+    Map<ScanStep, StepState>? steps,
+    bool? running,
+    String? reportId,
+    String? error,
+    int? captureLeft,
+    bool? queued,
+    String? verificationId,
+  }) =>
       ScanState(
         steps: steps ?? this.steps,
         running: running ?? this.running,
@@ -39,6 +60,7 @@ class ScanState {
         error: error ?? this.error,
         captureLeft: captureLeft ?? this.captureLeft,
         queued: queued ?? this.queued,
+        verificationId: verificationId ?? this.verificationId,
       );
 }
 
@@ -283,6 +305,26 @@ class ScanController extends Notifier<ScanState> {
         _set(ScanStep.upload, e.isOffline ? StepStatus.skipped : StepStatus.failed, e.isOffline ? 'queued' : e.message);
         state = state.copyWith(queued: true);
       }
+    }
+    // Clear-and-verify: a later scan of the same vehicle is another check.
+    if (dataMode != DataMode.replay.apiValue) {
+      try {
+        final key = vehicleKeyFor(
+          dataMode: dataMode,
+          vehicleId: ref.read(settingsProvider).selectedVehicleId,
+          scenarioKey: scenarioKey,
+          vin: vin,
+        );
+        final verify = ref.read(verificationProvider.notifier);
+        final open = await verify.openFor(key, dataMode);
+        if (open != null) {
+          await verify.addCheck(
+            open.id,
+            ScanSnapshot.fromRecording(recording, takenAt: DateTime.now().toUtc(), sessionId: report.serverSessionId),
+          );
+          state = state.copyWith(verificationId: open.id);
+        }
+      } on Object catch (_) {}
     }
     await ref.read(reportsProvider.notifier).refresh();
     await ref.read(pendingUploadsProvider.notifier).refresh();

@@ -2,6 +2,9 @@ import 'dart:async';
 
 import '../decode/dtc.dart';
 import '../decode/pid_table.dart';
+import '../decode/readiness.dart';
+import '../hex.dart';
+import '../verify/recurrence.dart';
 import '../elm327/elm327.dart';
 import '../errors.dart';
 import '../protocol/protocol.dart';
@@ -367,6 +370,38 @@ class ObdClient {
   }
 
   Future<double?> readVoltage() => services.readAdapterVoltage();
+
+  /// Service 01 PID 01 → readiness monitors (null when unsupported / no answer).
+  Future<Map<String, dynamic>?> readReadiness() async {
+    final s = supported;
+    if (s == null || !s.supports(0x01)) return null;
+    final r = await services.readPid(0x01);
+    if (r.isEmpty) return null;
+    final b = parseHexBytes(r.first.raw);
+    return b == null || b.length < 6 ? null : decodeMonitorStatus(b.sublist(2));
+  }
+
+  /// Quick check for clear-and-verify: codes (03/07/0A), readiness (01 01),
+  /// engine speed and the "since codes cleared" counters (01 30 / 01 31).
+  Future<ScanSnapshot> snapshot({DateTime? at}) async {
+    if (supported == null) await readSupportedPids();
+    final dtcs = <SnapshotDtc>[];
+    for (final st in DtcStatus.values) {
+      for (final d in (await readDtcs(st)).dtcs) {
+        dtcs.add(SnapshotDtc(d.code, status: st.apiValue, ecu: d.ecu));
+      }
+    }
+    Future<double?> value(int pid, String key) async => supported!.supports(pid) ? (await _readFirst(pid, key)) : null;
+    final rpm = await value(0x0C, 'engine_rpm');
+    return ScanSnapshot(
+      takenAt: at ?? DateTime.now().toUtc(),
+      dtcs: dtcs,
+      readiness: await readReadiness(),
+      warmupsSinceClear: await value(0x30, 'warmups_since_clear'),
+      distanceSinceClearKm: await value(0x31, 'distance_since_clear'),
+      engineRunning: rpm == null ? null : rpm > 300,
+    );
+  }
 
   /// Clears DTCs (service 04) only when the server approved the operation
   /// and live data shows engine off (0 rpm) and vehicle stopped (0 km/h).

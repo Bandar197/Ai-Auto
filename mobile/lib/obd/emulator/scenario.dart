@@ -65,4 +65,10 @@ class Scenario {
   List<Dtc> get dtcs => [for (final d in (json['dtcs'] as List? ?? const [])) Dtc.fromJson(d as Map<String, dynamic>)];
 
   Map<String, dynamic>? get freezeFrame => json['freeze_frame'] as Map<String, dynamic>?;
+
+  /// Whether the fault is still physically present (re-detected after a clear).
+  bool get faultActive => json['fault_active'] as bool? ?? (json['faults'] as List? ?? const []).isNotEmpty;
+  double get redetectPendingS => (json['redetect_pending_s'] as num?)?.toDouble() ?? 20;
+  double get redetectStoredS => (json['redetect_stored_s'] as num?)?.toDouble() ?? 45;
+  double get monitorCompleteS => (json['monitor_complete_s'] as num?)?.toDouble() ?? 90;
 }

@@ -288,12 +288,13 @@ class Elm327Emulator:
             return None
         self._advance_after_clear(t)
         dt = self._since_clear(t)
-        if dt is not None and pid in ("30", "31", "4E"):
+        if self.cleared_at is not None and pid in ("30", "31", "4E"):
+            run = dt or 0.0  # counters restart at the clear; they only grow while the engine runs
             if pid == "30":
-                return bytes([1 if dt >= self.monitor_complete_s else 0])
+                return bytes([1 if run >= self.monitor_complete_s else 0])
             if pid == "31":
-                return int(dt * 0.012).to_bytes(2, "big")  # ≈ 43 km/h average while driving
-            return int(dt // 60).to_bytes(2, "big")
+                return int(run * 0.012).to_bytes(2, "big")  # ≈ 43 km/h average while driving
+            return int(max(0.0, t - self.cleared_at) // 60).to_bytes(2, "big")
         if pid == "01":
             mil = bool(self.stored)
             a = (0x80 if mil else 0) | min(len(self.stored), 0x7F)

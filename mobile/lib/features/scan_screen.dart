@@ -62,6 +62,15 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                 ]),
               ),
             if (scan.queued) Padding(padding: const EdgeInsets.all(16), child: Text(l.scanQueued)),
+            if (scan.verificationId != null && !scan.running)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.fact_check_outlined),
+                  label: Text(l.viewVerification),
+                  onPressed: () => context.push('/verify/${scan.verificationId}'),
+                ),
+              ),
           ]),
         ),
         Padding(

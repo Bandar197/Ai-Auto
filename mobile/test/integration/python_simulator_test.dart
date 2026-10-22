@@ -53,4 +53,37 @@ void main() {
     }
     await client.dispose();
   }, skip: skip, timeout: const Timeout(Duration(seconds: 60)));
+
+  /// Clear-and-verify against the simulator, e.g.:
+  ///   automind simulate --scenario old_code_repaired --port 35444 --engine-off --start-engine-after-clear 5 --time-scale 40
+  ///   AUTOMIND_SIM=127.0.0.1:35444 AUTOMIND_SIM_SCENARIO=old_code_repaired AUTOMIND_SIM_CLEAR_EXPECT=likely_resolved flutter test test/integration
+  final expectOverall = Platform.environment['AUTOMIND_SIM_CLEAR_EXPECT'];
+  test('clear and verify against `automind simulate` → $expectOverall', () async {
+    final parts = target!.split(':');
+    final table = loadTable();
+    final waitS = int.tryParse(Platform.environment['AUTOMIND_SIM_WAIT_S'] ?? '') ?? 4;
+    Future<ObdClient> open() async {
+      final c = ObdClient(transport: TcpTransport(host: parts[0], port: int.parse(parts[1])), table: table);
+      expect((await c.connect()).ecuOk, isTrue);
+      await c.readSupportedPids();
+      return c;
+    }
+
+    var c = await open();
+    final before = await c.snapshot();
+    expect(before.dtcs, isNotEmpty);
+    final out = await c.clearDtcs(const ClearDtcApproval(operationId: 'it', status: 'approved', commands: ['04']));
+    expect(out.success, isTrue, reason: 'engine must be off (--engine-off)');
+    final record = ClearRecord(clearedAt: DateTime.now().toUtc(), before: before, dataMode: 'demo');
+    final checks = [await c.snapshot()]; // immediate, same key cycle
+    await c.dispose();
+    await Future<void>.delayed(Duration(seconds: waitS)); // simulated time runs ×time-scale
+    c = await open(); // later scan on a new connection: vehicle state persists in the server
+    checks.add(await c.snapshot());
+    await c.dispose();
+    final v = assessAfterClear(record, checks);
+    // ignore: avoid_print
+    print('verdict: ${v.overall} · ${v.codes.map((x) => '${x.code}:${x.verdict}').join(', ')}');
+    expect(v.overall, expectOverall);
+  }, skip: target == null || expectOverall == null ? 'set AUTOMIND_SIM and AUTOMIND_SIM_CLEAR_EXPECT' : null, timeout: const Timeout(Duration(seconds: 90)));
 }

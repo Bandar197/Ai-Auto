@@ -113,3 +113,16 @@ def test_monitor_mapping():
     assert monitor_for("P0302") == "misfire" and monitor_for("P0135") == "o2_sensor_heater"
     assert monitor_for("P0420") == "catalyst" and monitor_for("P0106") == "components"
     assert monitor_for("B0001") is None and monitor_for("U0100") is None
+
+
+async def test_counters_reset_while_engine_still_off_after_clear():
+    """Right after a clear (engine not started yet) warm-ups/distance must read 0, not the old values."""
+    cfg = SimulatorConfig(scenario="p0106_map_sensor", port=0, time_scale=1, engine_running=False)
+    async with SimulatorServer(cfg) as srv:
+        c = ObdClient(TcpTransport("127.0.0.1", srv.port))
+        assert (await c.connect(retries=1)).ok
+        assert (await c.read_pid("30")).values["warmups_since_clear"] == 12
+        await c.clear_dtcs(ClearAuthorization("op", True, "ok"))
+        assert (await c.read_pid("30")).values["warmups_since_clear"] == 0
+        assert (await c.read_pid("31")).values["distance_since_clear"] == 0
+        await c.close()

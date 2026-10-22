@@ -302,5 +302,82 @@
   },
   "clearDemoNote": "Demo/simulator: no command reaches a real vehicle.",
   "selectAll": "All",
-  "seconds": "s"
+  "seconds": "s",
+  "verifyTitle": "Verify after clear",
+  "verifyOverall_problem_confirmed": "Real problem",
+  "verifyOverall_likely_resolved": "Most likely an old fault",
+  "verifyOverall_verifying": "Verification in progress",
+  "verifyOverall_nothing_cleared": "Nothing to verify",
+  "verifyChecks": "{count, plural, =0{No check since clearing yet} =1{1 check since clearing} other{{count} checks since clearing}}",
+  "@verifyChecks": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "verifyCheckNow": "Check now",
+  "verifyRunScan": "Full scan",
+  "verifyClose": "End verification",
+  "verifyClearedAt": "Cleared: {when}",
+  "@verifyClearedAt": {
+    "placeholders": {
+      "when": {}
+    }
+  },
+  "verifySourceServer": "Verdict from the AutoMind server",
+  "verifySourceLocal": "Offline verdict calculated on the phone (same rules as the server)",
+  "verifyNextStep": "Next step",
+  "verifyBeforeCodes": "Saved before clearing",
+  "verifyHomeCard": "Clear & verify",
+  "verifyNone": "No clear to verify yet.",
+  "verifyHowItWorks": "If a cleared code comes back, you have a real problem. If it stays away after the car re-runs its self-tests, it was most likely an old fault.",
+  "checkLabel": "Check #{n}",
+  "@checkLabel": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "noCodesInCheck": "No codes",
+  "viewVerification": "View verification",
+  "clearErases": "Clearing will erase",
+  "clearErasesFreeze": "The freeze frame (conditions when the fault happened). A copy stays in the saved scan.",
+  "clearErasesReadiness": "All readiness monitors restart from zero:",
+  "clearScanSaved": "The scan (codes + freeze frame) is saved on the server.",
+  "clearScanNotSaved": "The scan will be saved on the server first — clearing is only allowed after the codes are saved.",
+  "clearNoReport": "Run a scan first: the codes must be saved before clearing.",
+  "clearPhase_checking": "Checking engine off and speed 0…",
+  "clearPhase_uploading": "Saving the scan on the server…",
+  "clearPhase_requesting": "Requesting server approval…",
+  "clearPhase_clearing": "Clearing codes…",
+  "clearPhase_waiting": "Waiting a few seconds…",
+  "clearPhase_rechecking": "Re-checking the codes…",
+  "clearFailReplay": "Not available for replays.",
+  "clearFailUnreadable": "Engine speed / vehicle speed cannot be read, so it is not safe to clear.",
+  "clearFailEngine": "The engine is running ({rpm} rpm). Switch the engine off and keep the ignition on.",
+  "@clearFailEngine": {
+    "placeholders": {
+      "rpm": {}
+    }
+  },
+  "clearFailMoving": "The vehicle is moving ({speed} km/h).",
+  "@clearFailMoving": {
+    "placeholders": {
+      "speed": {}
+    }
+  },
+  "clearFailUpload": "Could not save the scan on the server: {reason}",
+  "@clearFailUpload": {
+    "placeholders": {
+      "reason": {}
+    }
+  },
+  "otherProcedures": "Other procedures",
+  "procedureUnavailable": "Unavailable",
+  "srsNote": "Airbag (SRS) codes are never cleared by this app.",
+  "autoStartAfterClear": "Demo: start the engine automatically after clearing",
+  "monitorComplete": "complete",
+  "monitorIncomplete": "not complete"
 }

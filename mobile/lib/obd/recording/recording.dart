@@ -70,6 +70,7 @@ class Recording {
     this.dtcs = const [],
     this.freezeFrames = const [],
     this.events = const [],
+    this.readiness,
   });
 
   factory Recording.fromJsonString(String s) => Recording.fromJson(jsonDecode(s) as Map<String, dynamic>);
@@ -100,6 +101,7 @@ class Recording {
       signals: [for (final s in j['signals'] as List) RecordingSignal.fromJson(s as Map<String, dynamic>)],
       samples: [for (final s in j['samples'] as List) RecordingSample.fromJson(s as Map<String, dynamic>)],
       events: [for (final e in (j['events'] as List? ?? const [])) RecordingEvent.fromJson(e as Map<String, dynamic>)],
+      readiness: (j['readiness'] as Map?)?.cast<String, dynamic>(),
     );
   }
 
@@ -116,6 +118,9 @@ class Recording {
   final List<RecordingSignal> signals;
   final List<RecordingSample> samples;
   final List<RecordingEvent> events;
+
+  /// Service 01 PID 01 decoded at scan time (readiness monitors), or null.
+  final Map<String, dynamic>? readiness;
 
   String? get demoScenario => source['demo_scenario'] as String?;
 
@@ -134,6 +139,7 @@ class Recording {
         'signals': [for (final s in signals) s.toJson()],
         'samples': [for (final s in samples) s.toJson()],
         'events': [for (final e in events) e.toJson()],
+        if (readiness != null) 'readiness': readiness,
       };
 
   String toJsonString({bool pretty = false}) =>
@@ -166,6 +172,7 @@ class Recording {
         signals: signals,
         samples: samples,
         events: events,
+        readiness: readiness,
       );
 
   /// Required top-level fields per the JSON schema; returns problems found.

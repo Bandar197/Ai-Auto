@@ -61,6 +61,13 @@ class ConnectionController extends Notifier<ConnState> {
   StreamSubscription<LinkStatus>? _sub;
   ObdClient? _client;
 
+  /// Simulated vehicles persist across demo connections (like the Python
+  /// simulator server), so a later scan sees the state after a clear.
+  final Map<String, Elm327Emulator> _demoVehicles = {};
+
+  /// Demo: the "driver" starts the engine 5 s (scaled) after a clear.
+  bool autoStartAfterClear = true;
+
   @override
   ConnState build() {
     ref.onDispose(() {
@@ -130,8 +137,17 @@ class ConnectionController extends Notifier<ConnState> {
   }
 
   Future<ConnectResult> connectDemo(Scenario scenario) {
-    final emu = Elm327Emulator(scenario, ref.read(appAssetsProvider).table);
-    final t = DemoTransport(emu);
+    final emu = _demoVehicles.putIfAbsent(
+      scenario.key,
+      () => Elm327Emulator(
+        scenario,
+        ref.read(appAssetsProvider).table,
+        clock: ref.read(demoClockProvider),
+        clearTimeScale: ref.read(demoClearTimeScaleProvider),
+      ),
+    );
+    emu.startEngineAfterClearS = autoStartAfterClear ? 5 : null;
+    final t = DemoTransport(emu, latency: ref.read(demoLatencyProvider));
     return _connect(t, scenarioKey: scenario.key, demo: t, kind: 'simulator');
   }
 
@@ -158,6 +174,12 @@ class ConnectionController extends Notifier<ConnState> {
     state = ConnState(mode: DataMode.replay, replay: recording, replayServerId: serverId);
   }
 
+  void setAutoStartAfterClear(bool v) {
+    autoStartAfterClear = v;
+    state.demo?.emulator.startEngineAfterClearS = v ? 5 : null;
+    state = state.copyWith();
+  }
+
   void setEngineRunning(bool running) {
     final d = state.demo;
     if (d == null) return;
@@ -170,5 +192,11 @@ class ConnectionController extends Notifier<ConnState> {
     state = const ConnState(status: LinkStatus(message: LinkMessage.disconnected));
   }
 }
+
+/// Demo knobs (overridable in tests): emulator clock, post-clear time scale
+/// (so a demo clear-and-verify completes in seconds) and adapter latency.
+final demoClockProvider = Provider<Duration Function()?>((ref) => null);
+final demoClearTimeScaleProvider = Provider<double>((ref) => 6);
+final demoLatencyProvider = Provider<Duration>((ref) => const Duration(milliseconds: 25));
 
 final connectionProvider = NotifierProvider<ConnectionController, ConnState>(ConnectionController.new);
