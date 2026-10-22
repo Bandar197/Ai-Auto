@@ -1,0 +1,199 @@
+/* =========================================================================
+   ZUKHR header + announcement bar.
+   Builds on Raed's header structure (header.scss) and restyles it to the
+   brand: white bar, navy type, hairline frost border, a field-style search
+   on desktop and the smart-sticky hide/reveal.
+   Markup: app/components/layout/Header.tsx, app/components/zukhr/AnnouncementBar.tsx
+   ========================================================================= */
+
+/* ---- Announcement bar --------------------------------------------------- */
+.zk-announcement {
+  background: var(--zk-navy);
+  color: var(--zk-white);
+}
+
+.zk-announcement__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding-block: 6px;
+}
+
+.zk-announcement__text {
+  margin: 0;
+  font-size: var(--zk-fs-xs);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  text-align: center;
+  color: inherit;
+}
+
+a.zk-announcement__text {
+  text-decoration: underline;
+  text-decoration-color: rgba(200, 210, 220, 0.5);
+  text-underline-offset: 4px;
+
+  &:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+/* ---- Bar ---------------------------------------------------------------- */
+.site-header--zk {
+  .site-header__bar-outer,
+  .site-header__bar-inner {
+    min-height: var(--zk-header-h);
+  }
+
+  .site-header__bar {
+    background: var(--zk-white);
+    border-bottom: 1px solid var(--zk-border);
+    transition:
+      transform 280ms var(--zk-ease),
+      box-shadow var(--zk-dur) var(--zk-ease),
+      background-color var(--zk-dur) var(--zk-ease);
+
+    &.is-scrolled {
+      background: rgba(255, 255, 255, 0.92);
+      border-color: var(--zk-border);
+      box-shadow: var(--zk-shadow-sm);
+
+      @supports (backdrop-filter: blur(12px)) {
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: saturate(160%) blur(12px);
+      }
+    }
+
+    /* Smart sticky: slides away while scrolling down, back on scroll up. */
+    &.is-scrolled.is-hidden {
+      transform: translateY(calc(-100% - 2px));
+    }
+  }
+
+  .site-header__bar.is-scrolled .site-header__bar-inner {
+    min-height: 60px;
+  }
+
+  .site-header__brand img {
+    height: 40px;
+    max-width: 150px;
+  }
+
+  .site-header__bar.is-scrolled .site-header__brand img {
+    height: 34px;
+  }
+
+  /* ---- Icon actions ---- */
+  .header-action {
+    width: 44px;
+    height: 44px;
+    color: var(--zk-navy);
+    border-radius: var(--zk-radius-pill);
+
+    &:hover {
+      background: var(--zk-frost);
+      color: var(--zk-navy);
+    }
+
+    svg:not(.s-user-menu-dropdown-item *) {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  .site-header__actions {
+    gap: 2px;
+  }
+
+  /* Search: an icon on phones and tablets, a field on desktop. */
+  .site-header__search-hint {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .site-header__bar-inner {
+      gap: 1.5rem;
+    }
+
+    .site-header__actions {
+      gap: 4px;
+    }
+
+    .header-action.site-header__search {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      width: clamp(200px, 20vw, 300px);
+      height: 44px;
+      margin-inline-end: 8px;
+      padding-inline: 16px;
+      background: var(--zk-pearl);
+      box-shadow: inset 0 0 0 1px var(--zk-border);
+      color: var(--zk-text-subtle);
+      transition:
+        box-shadow var(--zk-dur) var(--zk-ease),
+        background-color var(--zk-dur) var(--zk-ease);
+
+      svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        color: var(--zk-navy);
+      }
+
+      &:hover {
+        background: var(--zk-white);
+        box-shadow: inset 0 0 0 1px var(--zk-silver);
+      }
+    }
+
+    .site-header__search-hint {
+      display: block;
+      overflow: hidden;
+      font-size: var(--zk-fs-sm);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    /* Category menu: navy text, quiet hover underline. */
+    .site-header__mainmenu .s-menu-root-level > a {
+      padding: 8px 12px;
+      font-size: var(--zk-fs-sm);
+      font-weight: 500;
+      color: var(--zk-navy);
+      border-radius: var(--zk-radius-sm);
+
+      &:hover {
+        color: var(--zk-glacier);
+        background: var(--zk-frost);
+      }
+    }
+
+    .site-header__mainmenu .main-menu {
+      justify-content: flex-start;
+    }
+  }
+
+  /* Wishlist lives in the bottom bar's account sheet on phones. */
+  @media (max-width: 767px) {
+    .site-header__wishlist {
+      display: none;
+    }
+  }
+}
+
+/* Cart count bubble: navy, not Raed's red. */
+.site-header--zk .s-cart-summary-count {
+  background: var(--zk-navy);
+  color: var(--zk-white);
+  box-shadow: 0 0 0 2px var(--zk-white);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header--zk .site-header__bar {
+    transition: none;
+  }
+}

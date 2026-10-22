@@ -7,6 +7,7 @@ import { useTranslation } from '@salla.sa/twilight-theme-engine/i18n';
 import { useUser } from '@salla.sa/twilight-theme-engine/hooks/useUser';
 import { Footer } from '@salla.sa/twilight-theme-engine/layout';
 import { Header } from './Header';
+import { AnnouncementBar } from '../zukhr/AnnouncementBar';
 import { ImportantLinksSheet } from './ImportantLinksSheet';
 import { MobileAccountSheet } from './MobileAccountSheet';
 import { MobileBottomBar } from './MobileBottomBar';
@@ -117,6 +118,7 @@ function GlobalModals() {
 
 export function ThemeLayout({ children }: ThemeLayoutProps) {
   const { theme } = useTwilight();
+  const { t } = useTranslation();
   // Owned here so the header's nav drawer and the mobile bottom bar's Categories
   // tab drive the same slide-in panel.
   const [navOpen, setNavOpen] = useState(false);
@@ -156,9 +158,13 @@ export function ThemeLayout({ children }: ThemeLayoutProps) {
         className={`app-inner flex flex-col min-h-full product-card-img--${imgRatio}`}
         suppressHydrationWarning
       >
+        <a className="zk-skip-link" href="#main-content">
+          {t('common.skip_to_content', 'Skip to content')}
+        </a>
+        <AnnouncementBar />
         <Header navOpen={navOpen} onNavOpenChange={setNavOpen} />
         <MobilePageTitleBar />
-        <main id="main-content" className="flex-1">
+        <main id="main-content" className="flex-1" tabIndex={-1}>
           {children}
         </main>
         <Suspense fallback={null}>

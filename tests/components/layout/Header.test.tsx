@@ -45,6 +45,11 @@ vi.mock('@salla.sa/twilight-theme-engine/common', () => ({
   Image: (props: Record<string, unknown>) => (
     <img alt={String(props.alt ?? '')} src={String(props.src ?? '')} />
   ),
+  Link: ({ to, children, ...rest }: { to: string; children?: React.ReactNode }) => (
+    <a href={to} {...rest}>
+      {children}
+    </a>
+  ),
 }));
 
 vi.mock('../../../app/components/layout/HeaderMainMenu', () => ({
@@ -59,9 +64,6 @@ vi.mock('@salla.sa/twilight-theme-engine/layout', () => ({
 }));
 vi.mock('@salla.sa/twilight-components-react/search', () => ({
   SallaSearch: () => <salla-search />,
-}));
-vi.mock('@salla.sa/twilight-components-react/social', () => ({
-  SallaSocial: () => <salla-social />,
 }));
 vi.mock('@salla.sa/twilight-components-react/user-menu', () => ({
   SallaUserMenu: () => <salla-user-menu />,
@@ -85,139 +87,71 @@ beforeEach(() => {
   state.routeIds = [];
 });
 
+// The pin observer: records its options, and lets a test push an intersection.
+let pinCallback: ((entries: { isIntersecting: boolean }[]) => void) | null = null;
+const observerMargins: string[] = [];
+class FakeIntersectionObserver {
+  constructor(cb: (entries: { isIntersecting: boolean }[]) => void, options: { rootMargin?: string }) {
+    pinCallback = cb;
+    observerMargins.push(options?.rootMargin ?? '');
+  }
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+beforeEach(() => {
+  pinCallback = null;
+  observerMargins.length = 0;
+  vi.stubGlobal('IntersectionObserver', FakeIntersectionObserver);
+});
+
+const scrollTo = (y: number) => {
+  Object.defineProperty(window, 'scrollY', { value: y, configurable: true });
+  fireEvent.scroll(window);
+};
+
 afterEach(() => {
   document.documentElement.style.removeProperty('--app-safe-area-top');
   vi.unstubAllGlobals();
 });
 
 describe('Header', () => {
-  it('renders the shell: logo, actions, search modal, cart, and the hook slots', () => {
-    const { container, getAllByLabelText } = render(<Header />);
-    expect(container.querySelector('header.site-header')).toBeTruthy();
-    expect(container.querySelector('.site-header__brand img')).toBeTruthy();
+  it('renders the shell: logo, actions, search modal, cart, wishlist and the hook slots', () => {
+    const { container, getAllByLabelText, getByLabelText } = render(<Header />);
+    expect(container.querySelector('header.site-header.site-header--zk')).toBeTruthy();
+    expect(container.querySelector('.site-header__brand img')?.getAttribute('alt')).toBe('Acme');
     expect(container.querySelector('salla-user-menu')).toBeTruthy();
     expect(container.querySelector('salla-cart-summary')).toBeTruthy();
     expect(container.querySelector('salla-search')).toBeTruthy();
-    // One search trigger, in the actions group opposite the menu button.
     expect(getAllByLabelText('Search')).toHaveLength(1);
+    expect(getByLabelText('Wishlist').getAttribute('href')).toBe('/account/wishlist');
     expect(container.querySelector('[data-hook-slot="header:start"]')).toBeTruthy();
     expect(container.querySelector('[data-hook-slot="header:end"]')).toBeTruthy();
   });
 
-  it('renders the store name, description and social links in the intro row', () => {
-    state.routeIds = [HOME_ROUTE_ID];
-    const { container } = render(<Header />);
-    const intro = container.querySelector('.site-header__intro-inner');
-    expect(intro?.querySelector('.site-header__intro-title')?.textContent).toBe('Acme');
-    expect(container.querySelector('.site-header__intro-text')?.innerHTML).toContain(
-      'Handmade goods'
-    );
-    expect(container.querySelector('.site-header__intro salla-social')).toBeTruthy();
+  it('renders the category menu in a labelled nav', () => {
+    const { getByTestId } = render(<Header />);
+    expect(getByTestId('header-main-menu').closest('nav')?.getAttribute('aria-label')).toBe('Categories');
   });
 
-  it('hides the store info row when header_show_store_info is off', () => {
-    state.routeIds = [HOME_ROUTE_ID];
-    state.theme = { settings: { header_show_store_info: false } };
-    const { container } = render(<Header />);
-    expect(container.querySelector('.site-header__intro')).toBeNull();
-    expect(container.querySelector('header.site-header')).toBeTruthy();
+  it('shows the search hint text inside the search button', () => {
+    const { getByLabelText } = render(<Header />);
+    expect(getByLabelText('Search').textContent).toContain('Search products, brands, categories');
   });
 
-  it('shows the store info row when header_show_store_info is unset', () => {
-    state.routeIds = [HOME_ROUTE_ID];
-    const { container } = render(<Header />);
-    expect(container.querySelector('.site-header__intro')).toBeTruthy();
+  it('hides the wishlist icon when header_show_wishlist is off', () => {
+    state.theme = { settings: { header_show_wishlist: false } };
+    const { queryByLabelText } = render(<Header />);
+    expect(queryByLabelText('Wishlist')).toBeNull();
   });
 
-  it('leaves the store contacts to the footer, out of the intro row', () => {
-    state.routeIds = [HOME_ROUTE_ID];
-    state.store = { ...state.store, contacts: { phone: '+971500000000', email: 'hi@acme.test' } };
-    const { container } = render(<Header />);
-    const intro = container.querySelector('.site-header__intro');
-    expect(intro).toBeTruthy();
-    expect(intro?.querySelector('a[href^="tel:"], a[href^="mailto:"]')).toBeNull();
-  });
-
-  it("server-renders the store's phone and email in the default layout's top bar", () => {
-    vi.stubGlobal(
-      'IntersectionObserver',
-      class {
-        observe() {}
-        unobserve() {}
-        disconnect() {}
-      }
-    );
-    state.theme = { settings: { header_layout: 'default' } };
-    state.store = { ...state.store, contacts: { phone: '8001111210', email: 'hi@acme.test' } };
-    const { container } = render(<Header />);
-    const contacts = container.querySelector('[data-testid="store-header-contacts"]')!;
-    // Plain links, not a web component that fills in after the SDK loads.
-    expect(contacts.tagName).toBe('DIV');
-    expect(contacts.querySelector('a[href="tel:8001111210"]')?.textContent).toBe('8001111210');
-    expect(contacts.querySelector('a[href="mailto:hi@acme.test"]')?.textContent).toBe('hi@acme.test');
-  });
-
-  it('leaves the contacts out of the top bar when the store has neither phone nor email', () => {
-    vi.stubGlobal(
-      'IntersectionObserver',
-      class {
-        observe() {}
-        unobserve() {}
-        disconnect() {}
-      }
-    );
-    state.theme = { settings: { header_layout: 'default' } };
-    state.store = { ...state.store, contacts: { whatsapp: '966500000000' } };
-    const { container } = render(<Header />);
-    expect(container.querySelector('.site-header__topnav')).toBeTruthy();
-    expect(container.querySelector('[data-testid="store-header-contacts"]')).toBeNull();
-  });
-
-  it('omits the description block when the store has none', () => {
-    state.routeIds = [HOME_ROUTE_ID];
-    state.store.description = '';
-    const { container } = render(<Header />);
-    expect(container.querySelector('.site-header__intro-text')).toBeNull();
-  });
-
-  it('uses <h1> for the intro title on the homepage', () => {
-    state.routeIds = [HOME_ROUTE_ID];
-    const { container } = render(<Header />);
-    expect(container.querySelector('h1.site-header__intro-title')?.textContent).toBe('Acme');
-  });
-
-  it('shows the store info row on the homepage only by default', () => {
-    state.routeIds = [HOME_ROUTE_ID];
+  it('renders the top bar only when header_show_topnav is on', () => {
     const { container, rerender } = render(<Header />);
-    expect(container.querySelector('.site-header__intro')).toBeTruthy();
-
-    state.routeIds = ['/{-$locale}/$slug/p{$id}'];
-    state.isHome = false;
+    expect(container.querySelector('.site-header__bullet--desktop')).toBeTruthy();
+    state.theme = { settings: { header_show_topnav: true } };
     rerender(<Header />);
-    expect(container.querySelector('.site-header__intro')).toBeNull();
-  });
-
-  it('shows the store info row on every page when home-only is off', () => {
-    state.theme = { settings: { header_store_info_home_only: false } };
-    state.routeIds = ['/{-$locale}/$slug/p{$id}'];
-    state.isHome = false;
-    const { container } = render(<Header />);
-    expect(container.querySelector('.site-header__intro')).toBeTruthy();
-  });
-
-  it('never shows the store info row in the default header layout', () => {
-    vi.stubGlobal(
-      'IntersectionObserver',
-      class {
-        observe() {}
-        unobserve() {}
-        disconnect() {}
-      }
-    );
-    state.theme = { settings: { header_layout: 'default', header_store_info_home_only: false } };
-    state.routeIds = [HOME_ROUTE_ID];
-    const { container } = render(<Header />);
-    expect(container.querySelector('.site-header__intro')).toBeNull();
+    expect(container.querySelector('.site-header__bullet--desktop')).toBeNull();
   });
 
   it('opens the nav drawer when the menu button is clicked', () => {
@@ -237,45 +171,43 @@ describe('Header', () => {
     expect(dispatch).toHaveBeenCalledWith('search::open');
   });
 
-  it('pins the bar on scroll by default (header_is_sticky unset)', () => {
+  it('pins the bar once its resting place leaves the viewport', () => {
     const { container } = render(<Header />);
-    Object.defineProperty(window, 'scrollY', { value: 10, configurable: true });
-    fireEvent.scroll(window);
+    expect(container.querySelector('.site-header__bar.is-scrolled')).toBeNull();
+    act(() => pinCallback?.([{ isIntersecting: false }]));
     expect(container.querySelector('.site-header__bar.is-scrolled')).toBeTruthy();
   });
 
-  it("pins the default layout at the Salla app's status bar line, and follows the inset", async () => {
-    const margins: string[] = [];
-    vi.stubGlobal(
-      'IntersectionObserver',
-      class {
-        constructor(_cb: unknown, options: { rootMargin?: string }) {
-          margins.push(options.rootMargin ?? '');
-        }
-        observe() {}
-        unobserve() {}
-        disconnect() {}
-      }
-    );
-    // Only the header's pin observer sets a top margin; other observers on the page don't.
-    const pinMargins = () => margins.filter((m) => m.startsWith('-'));
-    state.theme = { settings: { header_layout: 'default' } };
+  it("pins at the Salla app's status bar line, and follows the inset", async () => {
+    const pinMargins = () => observerMargins.filter((m) => m.startsWith('-'));
     document.documentElement.style.setProperty('--app-safe-area-top', '62px');
     render(<Header />);
     expect(pinMargins().at(-1)).toBe('-62px 0px 0px 0px');
-
-    // The app reports a new inset: the engine rewrites the variable.
     await act(async () => {
       document.documentElement.style.setProperty('--app-safe-area-top', '47px');
     });
     expect(pinMargins().at(-1)).toBe('-47px 0px 0px 0px');
   });
 
+  it('hides the pinned bar while scrolling down far, and brings it back on scroll up', async () => {
+    const { container } = render(<Header />);
+    act(() => pinCallback?.([{ isIntersecting: false }]));
+    const raf = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+      cb(0);
+      return 0;
+    });
+    act(() => scrollTo(0));
+    act(() => scrollTo(600));
+    expect(container.querySelector('.site-header__bar.is-hidden')).toBeTruthy();
+    act(() => scrollTo(500));
+    expect(container.querySelector('.site-header__bar.is-hidden')).toBeNull();
+    raf.mockRestore();
+  });
+
   it('never pins the bar when header_is_sticky is disabled', () => {
     state.theme = { settings: { header_is_sticky: false } };
     const { container } = render(<Header />);
-    Object.defineProperty(window, 'scrollY', { value: 10, configurable: true });
-    fireEvent.scroll(window);
+    act(() => pinCallback?.([{ isIntersecting: false }]));
     expect(container.querySelector('.site-header__bar.is-scrolled')).toBeNull();
   });
 
@@ -292,7 +224,7 @@ describe('Header', () => {
   });
 
   it('adds the home modifier from route match state, so it is in the SSR markup', () => {
-    state.routeIds = ['/{-$locale}/'];
+    state.routeIds = [HOME_ROUTE_ID];
     const { container } = render(<Header />);
     expect(container.querySelector('header.site-header--home')).toBeTruthy();
   });
@@ -303,29 +235,8 @@ describe('Header', () => {
     expect(container.querySelector('header.site-header--home')).toBeNull();
   });
 
-  it('reserves the social row when the store has social links', () => {
-    state.routeIds = [HOME_ROUTE_ID];
-    const { container } = render(<Header />);
-    expect(container.querySelector('.site-header__social-slot.has-links')).toBeTruthy();
-  });
-
-  it('does not reserve the social row when the store has no social links', () => {
-    state.routeIds = [HOME_ROUTE_ID];
-    state.store = { ...state.store, social: { twitter: '' } };
-    const { container } = render(<Header />);
-    expect(container.querySelector('.site-header__social-slot')).toBeTruthy();
-    expect(container.querySelector('.site-header__social-slot.has-links')).toBeNull();
-  });
-
-  it('does not reserve the social row for WhatsApp alone, which <salla-social> skips', () => {
-    state.store = { ...state.store, social: { whatsapp: '966500000000' } };
-    const { container } = render(<Header />);
-    expect(container.querySelector('.site-header__social-slot.has-links')).toBeNull();
-  });
-
   it("renders the engine's ad bar in the header's ad slot", () => {
     const { getByTestId } = render(<Header />);
-
     expect(getByTestId('advertisement-bar-render').closest('.site-header__ad')).not.toBeNull();
   });
 });
