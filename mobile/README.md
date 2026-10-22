@@ -139,11 +139,10 @@ Permissions: INTERNET, ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE,
 BLUETOOTH_SCAN (`neverForLocation`), BLUETOOTH_CONNECT (+ legacy BLUETOOTH/ADMIN/
 FINE_LOCATION for Android ≤ 11 only).
 
-**iOS** (macOS + Xcode 16+, CocoaPods):
+**iOS** (macOS + Xcode 26+; plugins come from Swift Package Manager — no CocoaPods):
 
 ```bash
 cd mobile && flutter pub get
-cd ios && pod install && cd ..
 open ios/Runner.xcworkspace        # set your Team / signing for bundle id ai.automind.app
 flutter build ios --release        # or: flutter build ipa
 ```
@@ -246,7 +245,7 @@ flutter run
 ### البناء
 
 * أندرويد: `flutter build apk --debug` (يتطلب Android SDK 36).
-* iOS: على macOS مع Xcode: `cd ios && pod install` ثم `flutter build ios` (الحد الأدنى iOS 15).
+* iOS: على macOS مع Xcode 26 أو أحدث: `flutter build ios` (الحد الأدنى iOS 15؛ المكتبات عبر Swift Package Manager دون CocoaPods).
 
 ### المسح والتحقق
 
