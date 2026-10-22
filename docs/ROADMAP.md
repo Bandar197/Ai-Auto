@@ -14,9 +14,9 @@ Status legend: ✅ done and tested here · 🟡 built, not yet verified on real 
 | Bilingual KB: 530 generic DTCs | ✅ | `tools/validate_kb.py` |
 | HTML + JSON reports (Arabic RTL / English) | ✅ | test 5 |
 | Optional Claude narrative (structured output, refusal fallback) | 🟡 | tested with a mock; needs `ANTHROPIC_API_KEY` |
-| FastAPI backend (auth, Argon2, JWT rotation, MFA, sessions, recordings, replay, demo, control policy, admin) | see backend report | `backend/tests/api` |
-| Flutter app (Live/Demo/Replay, Arabic/English) | see mobile report | `mobile/test` |
-| Admin dashboard (Next.js) | ✅ build/tests · 🟡 not yet run against the live API | `web/` |
+| FastAPI backend: all 66 endpoints in `docs/API.md` (auth, Argon2, JWT rotation, MFA, sessions, recordings, replay, demo, control policy, admin) | ✅ 145 tests pass on real PostgreSQL + RLS; container verified end-to-end | `backend/tests` |
+| Flutter app (Live/Demo/Replay, Arabic RTL/English, offline upload queue) | ✅ analyze clean, 100 tests, Dart engine verified against the Python simulator over TCP · 🟡 APK builds in CI (Android SDK download blocked in this sandbox), not yet run on a phone; iOS needs macOS | `mobile/test` |
+| Admin dashboard (Next.js) | ✅ lint/typecheck/47 tests/build · 🟡 not yet run against the live API | `web/` |
 | Docker Compose, CI | ✅ written · 🟡 CI runs on first push | `docker-compose.yml`, `.github/workflows/ci.yml` |
 | **Real ELM327 test on the Dodge Challenger 2019** | ⏳ needs you | `automind connect --host 192.168.0.10 --port 35000`, then `pytest -m hardware` |
 
