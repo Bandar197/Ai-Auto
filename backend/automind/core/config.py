@@ -60,6 +60,10 @@ class Settings(BaseSettings):
     jwt_algorithm: Literal["HS256", "HS384", "HS512", "RS256", "ES256"] = "HS256"
     jwt_private_key: SecretStr | None = None  # PEM, for RS256/ES256
     jwt_public_key: str | None = None  # PEM, for RS256/ES256
+    # ``iss``/``aud`` are always set and verified, so a token minted by another system that happens
+    # to share the key (e.g. a Supabase project JWT secret reused by mistake) is never accepted here.
+    jwt_issuer: str = Field("automind-api", min_length=1, max_length=200)
+    jwt_audience: str = Field("automind-api", min_length=1, max_length=200)
     access_token_ttl_s: int = Field(900, ge=60, le=86400)
     refresh_token_ttl_s: int = Field(30 * 86400, ge=3600, le=365 * 86400)
 
@@ -79,6 +83,9 @@ class Settings(BaseSettings):
     # HTTP --------------------------------------------------------------------------
     cors_origins: str = ""  # comma separated, e.g. "https://admin.automind.sa,http://localhost:3000"
     trust_proxy_headers: bool = False  # honour X-Forwarded-For (only behind a trusted proxy)
+    # How many proxies we run in front of the API that each APPEND to X-Forwarded-For. The client IP is
+    # the entry that many places from the right; everything to its left is client-supplied and spoofable.
+    trusted_proxy_count: int = Field(1, ge=1, le=10)
 
     # Rate limiting -----------------------------------------------------------------
     rate_limit_enabled: bool = True

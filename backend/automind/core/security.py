@@ -1,7 +1,8 @@
 """Passwords, tokens, MFA and account lockout.
 
 * Passwords: Argon2id (argon2-cffi), re-hashed on login when parameters change.
-* Access tokens: short-lived JWT (``sub, role, mfa, iat, exp, jti, typ=access``).
+* Access tokens: short-lived JWT (``iss, aud, sub, role, mfa, iat, exp, jti, typ=access``);
+  the algorithm is pinned to the configured one and ``iss``/``aud`` are verified.
 * Refresh tokens: opaque ``secrets.token_urlsafe(48)``; only their SHA-256 is
   stored (``automind.auth_sessions``). Every use rotates the token; presenting
   an already-rotated token revokes the whole family (theft detection).
@@ -13,6 +14,7 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import secrets
 import uuid
 from dataclasses import dataclass
@@ -165,6 +167,8 @@ class Tokens:
     def issue_access(self, user_id: uuid.UUID, role: str, mfa: bool) -> str:
         now = int(datetime.now(UTC).timestamp())
         claims = {
+            "iss": self.s.jwt_issuer,
+            "aud": self.s.jwt_audience,
             "sub": str(user_id),
             "role": role,
             "mfa": bool(mfa),
@@ -181,7 +185,9 @@ class Tokens:
                 token,
                 self._verify_key,
                 algorithms=[self.s.jwt_algorithm],
-                options={"require": ["sub", "exp", "iat", "jti", "typ"]},
+                issuer=self.s.jwt_issuer,
+                audience=self.s.jwt_audience,
+                options={"require": ["iss", "aud", "sub", "exp", "iat", "jti", "typ"]},
             )
         except jwt.PyJWTError as exc:
             raise TokenError(str(exc)) from exc
@@ -218,13 +224,40 @@ def totp_uri(secret: str, email: str) -> str:
     return pyotp.TOTP(secret).provisioning_uri(name=email, issuer_name=MFA_ISSUER)
 
 
-def verify_totp(secret: str, code: str | None) -> bool:
+def totp_match_step(secret: str, code: str | None, *, at: datetime | None = None) -> int | None:
+    """Time step (unix time // 30) the code belongs to, within one step of clock drift, else None.
+
+    Callers must record the step and refuse it (or any earlier step) next time: that is what
+    stops a code from being replayed inside its validity window.
+    """
     if not code:
-        return False
+        return None
     code = code.strip().replace(" ", "")
     if not code.isdigit() or len(code) != 6:
-        return False
-    return pyotp.TOTP(secret).verify(code, valid_window=1)
+        return None
+    totp = pyotp.TOTP(secret)
+    now = int((at or datetime.now(UTC)).timestamp()) // totp.interval
+    for step in (now - 1, now, now + 1):
+        if hmac.compare_digest(totp.generate_otp(step), code):
+            return step
+    return None
+
+
+def verify_totp(secret: str, code: str | None) -> bool:
+    return totp_match_step(secret, code) is not None
+
+
+async def consume_totp_step(conn: AsyncConnection, user_id: uuid.UUID, step: int) -> bool:
+    """Atomically record ``step`` as used; False if it (or a later one) was already used."""
+    res = await conn.execute(
+        update(t.users)
+        .where(
+            t.users.c.id == user_id,
+            (t.users.c.mfa_last_used_step.is_(None)) | (t.users.c.mfa_last_used_step < step),
+        )
+        .values(mfa_last_used_step=step)
+    )
+    return res.rowcount == 1
 
 
 def encrypt_mfa_secret(cipher: Cipher, user_id: uuid.UUID, secret: str) -> bytes:

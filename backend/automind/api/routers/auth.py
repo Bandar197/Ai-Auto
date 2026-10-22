@@ -18,6 +18,7 @@ from automind.core.security import (
     PasswordPolicyError,
     RefreshError,
     check_password_policy,
+    consume_totp_step,
     create_auth_session,
     decrypt_mfa_secret,
     encrypt_mfa_secret,
@@ -26,8 +27,8 @@ from automind.core.security import (
     register_failed_login,
     revoke_family,
     rotate_refresh_token,
+    totp_match_step,
     totp_uri,
-    verify_totp,
 )
 from automind.db import tables as t
 
@@ -221,7 +222,12 @@ async def login(body: LoginIn, svc: SvcDep, ctx: CtxDep) -> dict:
         if not body.totp_code:
             raise APIError(403, "mfa_required", "a TOTP code is required for this account")
         secret = decrypt_mfa_secret(svc.cipher, row["id"], row["mfa_secret_ciphertext"])
-        if not verify_totp(secret, body.totp_code):
+        step = totp_match_step(secret, body.totp_code)
+        replayed = False
+        if step is not None:
+            async with svc.db.system() as conn:
+                replayed = not await consume_totp_step(conn, row["id"], step)
+        if step is None or replayed:
             async with svc.db.system() as conn:
                 await register_failed_login(conn, svc.settings, row["id"])
                 await audit(
@@ -232,7 +238,7 @@ async def login(body: LoginIn, svc: SvcDep, ctx: CtxDep) -> dict:
                     entity_type="user",
                     entity_id=row["id"],
                     outcome="failure",
-                    metadata={"reason": "bad_totp"},
+                    metadata={"reason": "totp_replay" if replayed else "bad_totp"},
                 )
             raise unauthorized("invalid MFA code")
         mfa_ok = True
@@ -336,7 +342,8 @@ async def mfa_enable(body: CodeIn, user: CurrentUser, svc: SvcDep, ctx: CtxDep) 
         if row.mfa_enabled:
             raise conflict("MFA is already enabled")
         secret = decrypt_mfa_secret(svc.cipher, user.id, row.mfa_secret_ciphertext)
-        valid = verify_totp(secret, body.code)
+        step = totp_match_step(secret, body.code)
+        valid = step is not None
         if valid:
             await conn.execute(update(t.users).where(t.users.c.id == user.id).values(mfa_enabled=True))
         await audit(
@@ -350,4 +357,7 @@ async def mfa_enable(body: CodeIn, user: CurrentUser, svc: SvcDep, ctx: CtxDep) 
         )
     if not valid:
         raise validation("invalid MFA code", {"field": "code"})
+    # The code used to switch MFA on cannot then be reused to sign in.
+    async with svc.db.system() as conn:
+        await consume_totp_step(conn, user.id, step)
     return Response(status_code=204)

@@ -50,9 +50,12 @@ class RequestContext:
 def client_ip(request: Request) -> str | None:
     settings: Settings = request.app.state.services.settings
     if settings.trust_proxy_headers:
-        fwd = request.headers.get("x-forwarded-for")
-        if fwd:
-            return fwd.split(",")[0].strip() or None
+        # Each trusted proxy appends the address it received the connection from, so only the
+        # right-most ``trusted_proxy_count`` entries are trustworthy; anything to their left was sent
+        # by the client and must never be used (it would let anyone dodge per-IP rate limits).
+        hops = [h.strip() for v in request.headers.getlist("x-forwarded-for") for h in v.split(",") if h.strip()]
+        if hops:
+            return hops[-min(settings.trusted_proxy_count, len(hops))]
     return request.client.host if request.client else None
 
 
@@ -135,8 +138,9 @@ CurrentUser = Annotated[Principal, Depends(get_principal)]
 async def require_staff(p: CurrentUser) -> Principal:
     if p.role not in STAFF_ROLES:
         raise APIError(403, "forbidden", "platform staff only")
-    if p.role in ADMIN_ROLES and not (p.mfa_enabled and p.token_mfa):
-        raise APIError(403, "mfa_required", "administrators must sign in with MFA", {"mfa_enabled": p.mfa_enabled})
+    # Every staff role (support included: it can read users and audit logs) must sign in with MFA.
+    if not (p.mfa_enabled and p.token_mfa):
+        raise APIError(403, "mfa_required", "platform staff must sign in with MFA", {"mfa_enabled": p.mfa_enabled})
     return p
 
 

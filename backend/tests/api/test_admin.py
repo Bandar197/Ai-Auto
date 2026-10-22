@@ -11,7 +11,7 @@ import pyotp
 import pytest
 
 from tests.api.test_health_errors import assert_envelope
-from tests.conftest import DEFAULT_PASSWORD, auth, register
+from tests.conftest import DEFAULT_PASSWORD, auth, next_totp, register
 
 ADMIN_PATHS = [
     "/admin/stats/overview",
@@ -37,7 +37,7 @@ async def make_staff(client, db, role: str = "admin", mfa: bool = True) -> dict:
         await client.post("/auth/mfa/enable", headers=u["headers"], json={"code": pyotp.TOTP(secret).now()})
     ).status_code == 204
     r = await client.post(
-        "/auth/login", json={"email": u["email"], "password": DEFAULT_PASSWORD, "totp_code": pyotp.TOTP(secret).now()}
+        "/auth/login", json={"email": u["email"], "password": DEFAULT_PASSWORD, "totp_code": next_totp(secret)}
     )
     assert r.status_code == 200, r.text
     u["headers"] = auth(r.json()["tokens"])
@@ -74,8 +74,13 @@ async def test_admin_requires_mfa(client, db):
         assert r.status_code == 200, (path, r.text)
 
 
+async def test_support_staff_also_need_mfa(client, db):
+    s = await make_staff(client, db, "support", mfa=False)
+    assert_envelope(await client.get("/admin/users", headers=s["headers"]), 403, "mfa_required")
+
+
 async def test_support_reads_but_cannot_write(client, db):
-    s = await make_staff(client, db, "support", mfa=False)  # support staff: MFA not mandatory
+    s = await make_staff(client, db, "support", mfa=True)
     assert (await client.get("/admin/users", headers=s["headers"])).status_code == 200
     assert (await client.get("/admin/stats/overview", headers=s["headers"])).status_code == 200
     u = await register(client)

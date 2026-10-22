@@ -54,6 +54,7 @@ users = Table(
     Column("status", Text),
     Column("mfa_enabled", Boolean),
     Column("mfa_secret_ciphertext", LargeBinary),
+    Column("mfa_last_used_step", BigInteger),
     Column("email_verified_at", TS),
     Column("failed_login_count", Integer),
     Column("locked_until", TS),

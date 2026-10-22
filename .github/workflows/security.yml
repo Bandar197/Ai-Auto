@@ -1,0 +1,112 @@
+name: Security
+
+# Secret scanning, dependency vulnerability scanning and static analysis.
+# CodeQL is not used: it needs GitHub Advanced Security on a private repository.
+# Exceptions live next to the scanner and must carry a reason (and, for osv-scanner, an expiry):
+#   .gitleaks.toml (secrets)   web/osv-scanner.toml (lockfile vulns)   "# nosec Bxxx: why" (bandit)
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 3 * * 1" # weekly, Monday 03:17 UTC: catches advisories published after merge
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  secrets:
+    name: Secret scan (gitleaks, full history)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read # the action lists the PR's commits through the API
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_VERSION: "8.30.1" # .gitleaks.toml uses [[rules.allowlists]] (>= 8.25)
+          GITLEAKS_ENABLE_COMMENTS: "false" # read-only token; findings go to the job summary
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: "false" # keep (redacted) findings out of downloadable artifacts
+
+  python-deps:
+    name: Backend dependencies (pip-audit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: backend/pyproject.toml
+      - name: Resolve the backend's dependency set (all extras) in a clean venv
+        run: |
+          python -m venv "$RUNNER_TEMP/app"
+          "$RUNNER_TEMP/app/bin/pip" install --quiet -e "./backend[dev,llm,ble,serial]"
+          "$RUNNER_TEMP/app/bin/pip" freeze --all --exclude-editable > "$RUNNER_TEMP/backend-requirements.txt"
+          cat "$RUNNER_TEMP/backend-requirements.txt"
+      - name: pip-audit (run from its own venv so its dependencies are not audited as ours)
+        run: |
+          python -m venv "$RUNNER_TEMP/audit"
+          "$RUNNER_TEMP/audit/bin/pip" install --quiet "pip-audit==2.10.1"
+          "$RUNNER_TEMP/audit/bin/pip-audit" --requirement "$RUNNER_TEMP/backend-requirements.txt" \
+            --no-deps --disable-pip --progress-spinner off --desc
+
+  web-deps:
+    name: Admin web dependencies (npm audit)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: "22"
+      # Production dependencies only: dev tooling never ships. osv-scanner below covers the full
+      # lockfile (dev included) with documented, expiring exceptions.
+      - run: npm audit --omit=dev --audit-level=high
+
+  lockfiles:
+    name: Lockfile vulnerabilities (osv-scanner)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version: stable
+          cache: false
+      - name: Install osv-scanner (pinned; module checksums verified by sum.golang.org)
+        run: go install github.com/google/osv-scanner/v2/cmd/osv-scanner@v2.7.0
+      # web/osv-scanner.toml is picked up automatically for web/package-lock.json.
+      - run: osv-scanner scan source --lockfile mobile/pubspec.lock --lockfile web/package-lock.json
+
+  sast:
+    name: Backend static analysis (bandit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
+      - run: pip install "bandit==1.9.4"
+      # -ll: severity medium and above; -ii: confidence medium and above.
+      - run: bandit --recursive backend/automind -ll -ii

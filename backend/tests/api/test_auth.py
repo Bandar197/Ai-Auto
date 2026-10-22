@@ -7,7 +7,11 @@ import pyotp
 import pytest
 
 from tests.api.test_health_errors import assert_envelope
-from tests.conftest import DEFAULT_PASSWORD, auth, register, unique_email
+from tests.conftest import DEFAULT_PASSWORD, auth, next_totp, register, unique_email
+
+
+def _claims(token: str, settings) -> dict:
+    return jwt.decode(token, settings.jwt_secret.get_secret_value(), algorithms=["HS256"], audience=settings.jwt_audience)
 
 
 async def _audit_actions(db, user_id) -> list[str]:
@@ -23,9 +27,10 @@ async def test_register_returns_user_tokens_and_consents(client, db, settings):
     assert user["platform_role"] == "user" and user["mfa_enabled"] is False and user["locale"] == "en"
     tokens = data["tokens"]
     assert tokens["token_type"] == "bearer" and tokens["expires_in"] == settings.access_token_ttl_s
-    claims = jwt.decode(tokens["access_token"], settings.jwt_secret.get_secret_value(), algorithms=["HS256"])
+    claims = _claims(tokens["access_token"], settings)
     assert claims["sub"] == user["id"] and claims["typ"] == "access" and claims["mfa"] is False
-    assert {"sub", "role", "mfa", "iat", "exp", "jti", "typ"} <= set(claims)
+    assert {"iss", "aud", "sub", "role", "mfa", "iat", "exp", "jti", "typ"} <= set(claims)
+    assert claims["iss"] == settings.jwt_issuer and claims["aud"] == settings.jwt_audience
     # password stored as Argon2id, consents recorded, audit written
     row = await db.fetchrow("select password_hash from automind.users where id = $1", user["id"])
     assert row["password_hash"].startswith("$argon2id$")
@@ -211,14 +216,14 @@ async def test_mfa_setup_enable_and_login(client, db, settings):
     r = await client.post("/auth/login", json={"email": reg["email"], "password": DEFAULT_PASSWORD, "totp_code": "123456"})
     assert_envelope(r, 401, "unauthorized")
     r = await client.post(
-        "/auth/login", json={"email": reg["email"], "password": DEFAULT_PASSWORD, "totp_code": pyotp.TOTP(secret).now()}
+        "/auth/login", json={"email": reg["email"], "password": DEFAULT_PASSWORD, "totp_code": next_totp(secret)}
     )
     assert r.status_code == 200
-    claims = jwt.decode(r.json()["tokens"]["access_token"], settings.jwt_secret.get_secret_value(), algorithms=["HS256"])
+    claims = _claims(r.json()["tokens"]["access_token"], settings)
     assert claims["mfa"] is True
     # refresh keeps the MFA level of the session
     r2 = await client.post("/auth/refresh", json={"refresh_token": r.json()["tokens"]["refresh_token"]})
-    claims2 = jwt.decode(r2.json()["tokens"]["access_token"], settings.jwt_secret.get_secret_value(), algorithms=["HS256"])
+    claims2 = _claims(r2.json()["tokens"]["access_token"], settings)
     assert claims2["mfa"] is True
     actions = await _audit_actions(db, reg["user"]["id"])
     assert "auth.mfa_setup:success" in actions and "auth.mfa_enable:success" in actions
@@ -227,10 +232,40 @@ async def test_mfa_setup_enable_and_login(client, db, settings):
 
 async def test_expired_or_forged_access_token_rejected(client, settings):
     reg = await register(client)
-    claims = jwt.decode(reg["tokens"]["access_token"], settings.jwt_secret.get_secret_value(), algorithms=["HS256"])
+    claims = _claims(reg["tokens"]["access_token"], settings)
     forged = jwt.encode({**claims, "role": "super_admin"}, "not-the-secret-but-long-enough-for-hs256-0123", algorithm="HS256")
     assert_envelope(await client.get("/me", headers=auth(forged)), 401, "unauthorized")
     expired = jwt.encode({**claims, "exp": claims["iat"] - 10}, settings.jwt_secret.get_secret_value(), algorithm="HS256")
     assert_envelope(await client.get("/me", headers=auth(expired)), 401, "unauthorized")
     none_alg = jwt.encode(claims, key=None, algorithm="none")
     assert_envelope(await client.get("/me", headers=auth(none_alg)), 401, "unauthorized")
+    # Correctly signed with our key but minted for another issuer/audience (or without them): rejected.
+    key = settings.jwt_secret.get_secret_value()
+    for bad in ({"iss": "https://example.supabase.co/auth/v1"}, {"aud": "authenticated"}):
+        other = jwt.encode({**claims, **bad}, key, algorithm="HS256")
+        assert_envelope(await client.get("/me", headers=auth(other)), 401, "unauthorized")
+    for missing in ("iss", "aud"):
+        stripped = jwt.encode({k: v for k, v in claims.items() if k != missing}, key, algorithm="HS256")
+        assert_envelope(await client.get("/me", headers=auth(stripped)), 401, "unauthorized")
+    # sanity: the untouched claims re-signed with our key still work
+    assert (await client.get("/me", headers=auth(jwt.encode(claims, key, algorithm="HS256")))).status_code == 200
+
+
+async def test_totp_code_cannot_be_replayed(client, db):
+    reg = await register(client)
+    h = reg["headers"]
+    secret = (await client.post("/auth/mfa/setup", headers=h)).json()["secret"]
+    enable_code = pyotp.TOTP(secret).now()
+    assert (await client.post("/auth/mfa/enable", headers=h, json={"code": enable_code})).status_code == 204
+    creds = {"email": reg["email"], "password": DEFAULT_PASSWORD}
+    # the code that switched MFA on cannot be reused to sign in
+    assert_envelope(await client.post("/auth/login", json={**creds, "totp_code": enable_code}), 401, "unauthorized")
+    code = next_totp(secret)
+    assert (await client.post("/auth/login", json={**creds, "totp_code": code})).status_code == 200
+    # the same code a second time (e.g. seen over a shoulder) is refused
+    assert_envelope(await client.post("/auth/login", json={**creds, "totp_code": code}), 401, "unauthorized")
+    reasons = await db.fetch(
+        "select metadata->>'reason' as reason from automind.audit_logs where actor_user_id = $1 and action = 'auth.login'",
+        reg["user"]["id"],
+    )
+    assert sum(1 for r in reasons if r["reason"] == "totp_replay") == 2

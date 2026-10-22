@@ -28,11 +28,13 @@ from __future__ import annotations
 
 import asyncio
 import os
+import time
 import uuid
 from collections.abc import AsyncIterator
 from pathlib import Path
 from urllib.parse import urlparse, urlunparse
 
+import pyotp
 import pytest
 
 os.environ.setdefault("AUTOMIND_ENVIRONMENT", "test")
@@ -207,6 +209,12 @@ async def clean_db(db):
 
 
 # ----------------------------------------------------------------------------- helpers
+def next_totp(secret: str) -> str:
+    """The next 30-second TOTP code. A code is accepted only once, so signing in right after
+    the code used to enable MFA needs the following one (as a real user would wait for it)."""
+    return pyotp.TOTP(secret).at(int(time.time()) + 30)
+
+
 def unique_email(prefix: str = "user") -> str:
     return f"{prefix}-{uuid.uuid4().hex[:10]}@example.com"
 
