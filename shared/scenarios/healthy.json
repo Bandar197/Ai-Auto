@@ -1,0 +1,102 @@
+{
+ "format": "automind.scenario.v1",
+ "data_mode": "demo",
+ "vehicle": {
+  "vin": "AMDDEMX1234567890",
+  "make": "AutoMind Demo",
+  "model": "Demo V6",
+  "model_year": 2019,
+  "engine": "3.6L V6 (simulated)"
+ },
+ "protocol": "6",
+ "ecus": [
+  "7E8",
+  "7E9"
+ ],
+ "supported_pids": {
+  "01": [
+   "01",
+   "03",
+   "04",
+   "05",
+   "06",
+   "07",
+   "0B",
+   "0C",
+   "0D",
+   "0E",
+   "0F",
+   "10",
+   "11",
+   "13",
+   "14",
+   "15",
+   "1C",
+   "1F",
+   "21",
+   "2F",
+   "30",
+   "31",
+   "33",
+   "42",
+   "46",
+   "49",
+   "4C"
+  ],
+  "09": [
+   "02",
+   "04"
+  ]
+ },
+ "adapter_firmware": "ELM327 v1.5",
+ "battery_voltage_off": 12.6,
+ "charging_voltage": 14.2,
+ "initial_coolant_c": 88,
+ "ambient_c": 38,
+ "baro_kpa": 100,
+ "drive_cycle": [
+  {
+   "phase": "warm_idle",
+   "duration_s": 30,
+   "rpm": 750,
+   "speed": 0,
+   "throttle": 0
+  },
+  {
+   "phase": "rev_2500",
+   "duration_s": 15,
+   "rpm": 2500,
+   "speed": 0,
+   "throttle": 18
+  },
+  {
+   "phase": "idle",
+   "duration_s": 15,
+   "rpm": 750,
+   "speed": 0,
+   "throttle": 0
+  },
+  {
+   "phase": "cruise",
+   "duration_s": 30,
+   "rpm": 1900,
+   "speed": 80,
+   "throttle": 22
+  },
+  {
+   "phase": "idle",
+   "duration_s": 20,
+   "rpm": 750,
+   "speed": 0,
+   "throttle": 0
+  }
+ ],
+ "key": "healthy",
+ "name_en": "Healthy vehicle",
+ "name_ar": "سيارة سليمة",
+ "description_en": "Warm engine, closed loop, no DTCs. Baseline for comparison.",
+ "description_ar": "محرك دافئ ونظام الوقود في الحلقة المغلقة بدون أكواد أعطال.",
+ "dtcs": [],
+ "faults": [],
+ "freeze_frame": null
+}

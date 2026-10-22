@@ -1,0 +1,144 @@
+{
+ "format": "automind.scenario.v1",
+ "data_mode": "demo",
+ "vehicle": {
+  "vin": "AMDDEMX1234567890",
+  "make": "AutoMind Demo",
+  "model": "Demo V6",
+  "model_year": 2019,
+  "engine": "3.6L V6 (simulated)"
+ },
+ "protocol": "6",
+ "ecus": [
+  "7E8",
+  "7E9"
+ ],
+ "supported_pids": {
+  "01": [
+   "01",
+   "03",
+   "04",
+   "05",
+   "06",
+   "07",
+   "0B",
+   "0C",
+   "0D",
+   "0E",
+   "0F",
+   "10",
+   "11",
+   "13",
+   "14",
+   "15",
+   "1C",
+   "1F",
+   "21",
+   "2F",
+   "30",
+   "31",
+   "33",
+   "42",
+   "46",
+   "49",
+   "4C"
+  ],
+  "09": [
+   "02",
+   "04"
+  ]
+ },
+ "adapter_firmware": "ELM327 v1.5",
+ "battery_voltage_off": 12.6,
+ "charging_voltage": 14.2,
+ "initial_coolant_c": 88,
+ "ambient_c": 38,
+ "baro_kpa": 100,
+ "drive_cycle": [
+  {
+   "phase": "warm_idle",
+   "duration_s": 30,
+   "rpm": 750,
+   "speed": 0,
+   "throttle": 0
+  },
+  {
+   "phase": "rev_2500",
+   "duration_s": 15,
+   "rpm": 2500,
+   "speed": 0,
+   "throttle": 18
+  },
+  {
+   "phase": "idle",
+   "duration_s": 15,
+   "rpm": 750,
+   "speed": 0,
+   "throttle": 0
+  },
+  {
+   "phase": "cruise",
+   "duration_s": 30,
+   "rpm": 1900,
+   "speed": 80,
+   "throttle": 22
+  },
+  {
+   "phase": "idle",
+   "duration_s": 20,
+   "rpm": 750,
+   "speed": 0,
+   "throttle": 0
+  }
+ ],
+ "key": "p0171_vacuum_leak",
+ "name_en": "P0171 — System too lean (vacuum leak)",
+ "name_ar": "P0171 — خليط فقير (تسريب هواء)",
+ "description_en": "Long-term fuel trim strongly positive at idle and improving at higher RPM — the classic unmetered-air (vacuum leak) signature.",
+ "description_ar": "تصحيح الوقود طويل المدى موجب بشكل كبير في الخمول ويتحسن مع ارتفاع الدورات، وهي علامة تسريب هواء غير مقاس.",
+ "dtcs": [
+  {
+   "code": "P0171",
+   "status": "stored",
+   "ecu": "7E8"
+  },
+  {
+   "code": "P0174",
+   "status": "pending",
+   "ecu": "7E8"
+  }
+ ],
+ "faults": [
+  {
+   "signal": "ltft_b1",
+   "type": "rpm_dependent",
+   "idle_value": 19,
+   "high_rpm_value": 6
+  },
+  {
+   "signal": "stft_b1",
+   "type": "offset",
+   "value": 4
+  },
+  {
+   "signal": "map_kpa",
+   "type": "offset",
+   "value": 4,
+   "when": "rpm_below",
+   "threshold": 1200
+  }
+ ],
+ "freeze_frame": {
+  "dtc": "P0171",
+  "values": {
+   "engine_rpm": 760,
+   "vehicle_speed": 0,
+   "coolant_temp": 90,
+   "map_kpa": 36,
+   "engine_load": 21.2,
+   "stft_b1": 5.5,
+   "ltft_b1": 19.5,
+   "maf_gs": 3.1
+  }
+ }
+}

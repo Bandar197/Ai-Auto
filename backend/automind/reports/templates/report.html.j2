@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="{{ lang }}" dir="{{ t.dir }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ t.title }}</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1b1f24;--muted:#5b6470;--line:#e3e6ea;--ok:#1a7f4b;--warn:#b26b00;--bad:#c0262d;--crit:#7a0b10;--accent:#1f5fbf}
+@media (prefers-color-scheme:dark){:root{--bg:#121417;--card:#1b1e23;--ink:#e8eaed;--muted:#a3abb5;--line:#2c3138;--accent:#6aa3ff}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "Segoe UI","Noto Kufi Arabic","IBM Plex Sans Arabic",Tahoma,sans-serif}
+main{max-width:960px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem;margin:.2rem 0}h2{font-size:1.1rem;margin:1.4rem 0 .5rem;border-bottom:2px solid var(--line);padding-bottom:.3rem}
+h3{font-size:1rem;margin:.2rem 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:10px 0}
+.banner{padding:10px 14px;border-radius:8px;font-weight:700;margin:10px 0;text-align:center}
+.banner.demo{background:#fff1c2;color:#6b4b00;border:2px dashed #c99700}.banner.replay{background:#dfe9ff;color:#1c3d7a;border:2px dashed #4a76c9}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.kv span{color:var(--muted);display:block;font-size:.85rem}
+.score{font-size:2.4rem;font-weight:800}.band-good{color:var(--ok)}.band-fair{color:var(--warn)}.band-attention{color:var(--bad)}.band-critical{color:var(--crit)}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.8rem;border:1px solid var(--line);margin-inline-end:4px}
+.sev-critical{background:var(--crit);color:#fff}.sev-high{background:var(--bad);color:#fff}.sev-medium{background:#f3a712;color:#222}.sev-low{background:#d8e6ff;color:#173a73}.sev-info{background:#eee;color:#333}
+table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{padding:6px;border-bottom:1px solid var(--line);text-align:start;vertical-align:top}
+tr.measured td:first-child{border-inline-start:4px solid var(--accent)}tr.inferred td:first-child{border-inline-start:4px dashed var(--muted)}tr.inferred{color:var(--muted)}
+.ab{color:var(--bad);font-weight:600}.st-ok{color:var(--ok)}.st-warning{color:var(--warn)}.st-fault{color:var(--bad)}.st-unknown{color:var(--muted)}
+ol,ul{margin:.3rem 0;padding-inline-start:1.3rem}.muted{color:var(--muted)}.small{font-size:.85rem}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;width:120px;display:inline-block;vertical-align:middle}.bar i{display:block;height:100%;background:var(--accent)}
+.watermark{position:fixed;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;font-size:7rem;font-weight:900;opacity:.06;transform:rotate(-25deg)}
+@media print{.card{break-inside:avoid}body{background:#fff}}
+@media (max-width:480px){main{padding:10px}.score{font-size:2rem}table{font-size:.8rem}}
+</style>
+</head>
+<body>
+{% if r.data_mode == 'demo' %}<div class="watermark">DEMO</div>{% elif r.data_mode == 'replay' %}<div class="watermark">REPLAY</div>{% endif %}
+<main>
+<header>
+<h1>{{ t.title }}</h1>
+{% if r.data_mode == 'demo' %}<div class="banner demo">{{ t.demo_banner }}</div>{% elif r.data_mode == 'replay' %}<div class="banner replay">{{ t.replay_banner }}</div>{% endif %}
+<div class="card grid">
+  <div class="kv"><span>{{ t.vehicle }}</span>{{ m.vehicle.get('make') or '—' }} {{ m.vehicle.get('model') or '' }} {{ m.vehicle.get('model_year') or '' }}{% if m.vehicle.get('vin_masked') %}<br><small class="muted">VIN {{ m.vehicle.vin_masked }}</small>{% endif %}</div>
+  <div class="kv"><span>{{ t.mode }}</span>{{ t[r.data_mode] }}{% if m.demo_scenario %} <small class="muted">({{ m.demo_scenario }})</small>{% endif %}</div>
+  <div class="kv"><span>{{ t.protocol }}</span>{{ m.protocol_name or '—' }}</div>
+  <div class="kv"><span>{{ t.adapter }}</span>{{ m.adapter_firmware or '—' }}</div>
+  <div class="kv"><span>{{ t.session }}</span><small>{{ m.session_id or '—' }}</small><br><small class="muted">{{ m.started_at.strftime('%Y-%m-%d %H:%M UTC') if m.started_at else '' }}</small></div>
+  <div class="kv"><span>{{ t.generated }}</span><small>{{ generated.strftime('%Y-%m-%d %H:%M UTC') }} · engine {{ r.engine_version }} · KB {{ r.kb_version }}</small></div>
+</div>
+</header>
+
+<section class="card">
+  <div class="grid">
+    <div><span class="muted">{{ t.health }}</span><div class="score band-{{ r.health_band }}">{{ r.health_score }}<small>/100</small></div></div>
+    <div style="grid-column:span 2"><h3>{{ t.summary }}</h3><p>{{ r.summary[lang] }}</p></div>
+  </div>
+</section>
+
+{% if r.llm %}<section class="card"><h3>{{ t.ai }} <small class="muted">({{ r.llm.model }})</small></h3><p style="white-space:pre-line">{{ r.llm['narrative_' ~ lang] }}</p></section>{% endif %}
+
+<h2>{{ t.dtcs }}</h2>
+<div class="card">
+{% if r.dtcs %}<table><thead><tr><th>DTC</th><th></th><th>ECU</th><th></th></tr></thead><tbody>
+{% for d in r.dtcs %}<tr><td><b>{{ d.code }}</b></td><td><span class="pill">{{ d.status }}</span> <span class="pill sev-{{ d.severity }}">{{ d.severity }}</span></td><td>{{ d.ecu or '' }}</td>
+<td>{% if d.known %}{{ d['description_' ~ lang] }}{% else %}<i class="muted">{{ t.unknown_code }}</i>{% endif %}</td></tr>{% endfor %}
+</tbody></table>{% else %}<p>{{ t.no_dtcs }}</p>{% endif %}
+</div>
+
+<h2>{{ t.findings }}</h2>
+{% if not r.findings %}<div class="card">{{ t.no_findings }}</div>{% endif %}
+{% for f in r.findings %}
+<article class="card">
+  <h3><span class="pill sev-{{ f.severity }}">{{ f.severity }}</span> {{ f['title_' ~ lang] }}</h3>
+  <div class="small muted">{{ f.status }} · {{ t.confidence }} {{ '%.0f' % (f.confidence * 100) }}% · {{ f.rule_id }} v{{ f.rule_version }}{% if f.related_dtcs %} · {{ f.related_dtcs|join(', ') }}{% endif %}</div>
+  {% if f.causes %}<h4>{{ t.causes }}</h4><ol>{% for c in f.causes %}<li>{{ c['title_' ~ lang] }} <span class="bar"><i style="width:{{ (c.likelihood * 100)|round|int }}%"></i></span> <small>{{ '%.0f' % (c.likelihood * 100) }}%</small></li>{% endfor %}</ol>{% endif %}
+  <h4>{{ t.evidence }}</h4>
+  <table><tbody>
+  {% for e in f.evidence %}<tr class="{{ 'measured' if e.is_measured else 'inferred' }}"><td><small>{{ t.measured if e.is_measured else t.inferred }}</small></td>
+  <td class="{{ 'ab' if e.assessment == 'abnormal' else '' }}">{{ e['note_' ~ lang] or e.observed_text or '' }}</td>
+  <td><small>{% if e.expected_min is not none or e.expected_max is not none %}{{ t.expected }}: {{ e.expected_min if e.expected_min is not none else '…' }} – {{ e.expected_max if e.expected_max is not none else '…' }} {{ e.unit or '' }}{% endif %}</small></td></tr>{% endfor %}
+  </tbody></table>
+  {% if f.missing_data %}<h4>{{ t.missing }}</h4><ul>{% for md in f.missing_data %}<li>{{ md['description_' ~ lang] }}</li>{% endfor %}</ul>{% endif %}
+  {% if f.tests %}<h4>{{ t.tests }}</h4><ol>{% for ts in f.tests %}<li><b>{{ ts['title_' ~ lang] }}</b> — {{ ts['how_' ~ lang] }}{% if ts['expected_' ~ lang] %}<br><small class="muted">{{ t.expected }}: {{ ts['expected_' ~ lang] }}</small>{% endif %}</li>{% endfor %}</ol>{% endif %}
+  {% if f.actions %}<h4>{{ t.actions }}</h4><ul>{% for a in f.actions %}<li>{{ a['title_' ~ lang] }}</li>{% endfor %}</ul>{% endif %}
+  {% if f.parts_candidates %}<h4>{{ t.parts }}</h4><ul>{% for p in f.parts_candidates %}<li><b>{{ p['name_' ~ lang] }}</b> — <small>{{ p['condition_' ~ lang] }}</small></li>{% endfor %}</ul>{% endif %}
+</article>
+{% endfor %}
+
+<h2>{{ t.systems }}</h2>
+<div class="card"><table><tbody>{% for s in r.system_status %}<tr><td class="st-{{ s.status }}"><b>{{ s.status }}</b></td><td>{{ s['note_' ~ lang] }}</td></tr>{% endfor %}</tbody></table></div>
+
+<h2>{{ t.quality }}</h2>
+<div class="card grid">
+  <div class="kv"><span>{{ t.samples }}</span>{{ r.data_quality.sample_count }}</div>
+  <div class="kv"><span>{{ t.duration }}</span>{{ r.data_quality.duration_s }}</div>
+  <div class="kv"><span>{{ t.conditions }}</span>{{ r.data_quality.conditions_seen|join(', ') or '—' }}</div>
+  <div class="kv" style="grid-column:1/-1"><span>{{ t.signals }}</span><small>{{ r.data_quality.signals|join(', ') or '—' }}</small></div>
+  {% for w in r.data_quality.warnings %}<div style="grid-column:1/-1" class="ab">⚠ {{ w[lang] }}</div>{% endfor %}
+</div>
+
+<h2>{{ t.disclaimers }}</h2>
+<div class="card small">{% for d in r.disclaimers %}<p>{{ d[lang] }}</p>{% endfor %}</div>
+<footer class="small muted">AutoMind AI · input sha256 {{ r.input_sha256[:16] }}…</footer>
+</main>
+</body>
+</html>

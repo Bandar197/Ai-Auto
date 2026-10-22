@@ -1,0 +1,118 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
+/// User-adjustable settings persisted in SharedPreferences (no secrets here;
+/// tokens live in flutter_secure_storage).
+class AppSettings {
+  const AppSettings({
+    this.locale = 'ar',
+    this.backendUrl = defaultBackendUrl,
+    this.wifiHost = '192.168.0.10',
+    this.wifiPort = 35000,
+    this.protocol = '0',
+    this.commandTimeoutMs = 2500,
+    this.searchTimeoutMs = 10000,
+    this.bleService = '',
+    this.bleNotify = '',
+    this.bleWrite = '',
+    this.includeVin = false,
+    this.captureSeconds = 45,
+    this.onboardingDone = false,
+    this.offlineMode = false,
+    this.selectedVehicleId,
+  });
+
+  /// Android emulator → host machine. Change in Settings for a device.
+  static const String defaultBackendUrl = 'http://10.0.2.2:8000/api/v1';
+
+  final String locale;
+  final String backendUrl;
+  final String wifiHost;
+  final int wifiPort;
+  final String protocol;
+  final int commandTimeoutMs;
+  final int searchTimeoutMs;
+  final String bleService;
+  final String bleNotify;
+  final String bleWrite;
+  final bool includeVin;
+  final int captureSeconds;
+  final bool onboardingDone;
+  final bool offlineMode;
+  final String? selectedVehicleId;
+
+  AppSettings copyWith({
+    String? locale,
+    String? backendUrl,
+    String? wifiHost,
+    int? wifiPort,
+    String? protocol,
+    int? commandTimeoutMs,
+    int? searchTimeoutMs,
+    String? bleService,
+    String? bleNotify,
+    String? bleWrite,
+    bool? includeVin,
+    int? captureSeconds,
+    bool? onboardingDone,
+    bool? offlineMode,
+    String? selectedVehicleId,
+    bool clearVehicle = false,
+  }) =>
+      AppSettings(
+        locale: locale ?? this.locale,
+        backendUrl: backendUrl ?? this.backendUrl,
+        wifiHost: wifiHost ?? this.wifiHost,
+        wifiPort: wifiPort ?? this.wifiPort,
+        protocol: protocol ?? this.protocol,
+        commandTimeoutMs: commandTimeoutMs ?? this.commandTimeoutMs,
+        searchTimeoutMs: searchTimeoutMs ?? this.searchTimeoutMs,
+        bleService: bleService ?? this.bleService,
+        bleNotify: bleNotify ?? this.bleNotify,
+        bleWrite: bleWrite ?? this.bleWrite,
+        includeVin: includeVin ?? this.includeVin,
+        captureSeconds: captureSeconds ?? this.captureSeconds,
+        onboardingDone: onboardingDone ?? this.onboardingDone,
+        offlineMode: offlineMode ?? this.offlineMode,
+        selectedVehicleId: clearVehicle ? null : (selectedVehicleId ?? this.selectedVehicleId),
+      );
+
+  static AppSettings load(SharedPreferences p) => AppSettings(
+        locale: p.getString('locale') ?? 'ar',
+        backendUrl: p.getString('backendUrl') ?? defaultBackendUrl,
+        wifiHost: p.getString('wifiHost') ?? '192.168.0.10',
+        wifiPort: p.getInt('wifiPort') ?? 35000,
+        protocol: p.getString('protocol') ?? '0',
+        commandTimeoutMs: p.getInt('commandTimeoutMs') ?? 2500,
+        searchTimeoutMs: p.getInt('searchTimeoutMs') ?? 10000,
+        bleService: p.getString('bleService') ?? '',
+        bleNotify: p.getString('bleNotify') ?? '',
+        bleWrite: p.getString('bleWrite') ?? '',
+        includeVin: p.getBool('includeVin') ?? false,
+        captureSeconds: p.getInt('captureSeconds') ?? 45,
+        onboardingDone: p.getBool('onboardingDone') ?? false,
+        offlineMode: p.getBool('offlineMode') ?? false,
+        selectedVehicleId: p.getString('selectedVehicleId'),
+      );
+
+  Future<void> save(SharedPreferences p) async {
+    await p.setString('locale', locale);
+    await p.setString('backendUrl', backendUrl);
+    await p.setString('wifiHost', wifiHost);
+    await p.setInt('wifiPort', wifiPort);
+    await p.setString('protocol', protocol);
+    await p.setInt('commandTimeoutMs', commandTimeoutMs);
+    await p.setInt('searchTimeoutMs', searchTimeoutMs);
+    await p.setString('bleService', bleService);
+    await p.setString('bleNotify', bleNotify);
+    await p.setString('bleWrite', bleWrite);
+    await p.setBool('includeVin', includeVin);
+    await p.setInt('captureSeconds', captureSeconds);
+    await p.setBool('onboardingDone', onboardingDone);
+    await p.setBool('offlineMode', offlineMode);
+    if (selectedVehicleId == null) {
+      await p.remove('selectedVehicleId');
+    } else {
+      await p.setString('selectedVehicleId', selectedVehicleId!);
+    }
+  }
+}

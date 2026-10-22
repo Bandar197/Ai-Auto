@@ -1,0 +1,306 @@
+{
+  "@@locale": "en",
+  "appTitle": "AutoMind AI",
+  "ok": "OK",
+  "cancel": "Cancel",
+  "save": "Save",
+  "delete": "Delete",
+  "edit": "Edit",
+  "retry": "Retry",
+  "close": "Close",
+  "next": "Next",
+  "loading": "Loading…",
+  "errorGeneric": "Something went wrong: {error}",
+  "@errorGeneric": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "unknown": "Unknown",
+  "done": "Done",
+  "share": "Share",
+  "exportJson": "Export JSON",
+  "exportCsv": "Export CSV",
+  "notAvailable": "Not available",
+  "modeLive": "Live",
+  "modeDemo": "Demo",
+  "modeReplay": "Replay",
+  "demoBanner": "DEMO — simulated data, not from a real vehicle",
+  "replayBanner": "REPLAY of a {mode} recording",
+  "@replayBanner": {
+    "placeholders": {
+      "mode": {}
+    }
+  },
+  "simulatorLabel": "Simulator",
+  "demoWatermark": "DEMO",
+  "replayWatermark": "REPLAY",
+  "onboardingTitle1": "Understand your car",
+  "onboardingBody1": "Plug an ELM327 OBD-II adapter into your car and read real fault codes and live sensor data.",
+  "onboardingTitle2": "Evidence, not guesses",
+  "onboardingBody2": "Every finding shows what was measured and what was inferred, with tests to confirm before buying parts.",
+  "onboardingTitle3": "Works offline",
+  "onboardingBody3": "Wi-Fi adapters may cut your internet. Scans are saved on the phone and uploaded later.",
+  "getStarted": "Get started",
+  "continueOffline": "Continue without an account",
+  "login": "Log in",
+  "register": "Create account",
+  "email": "Email",
+  "password": "Password",
+  "fullName": "Full name",
+  "acceptTerms": "I accept the Terms of Service (v{version})",
+  "@acceptTerms": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "acceptPrivacy": "I accept the Privacy Policy (v{version}) and the processing of my vehicle data",
+  "@acceptPrivacy": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "consentRequired": "Both consents are required to create an account.",
+  "passwordPolicy": "At least 10 characters, different from your email.",
+  "logout": "Log out",
+  "noAccount": "No account? Create one",
+  "haveAccount": "Already registered? Log in",
+  "mfaCode": "Authenticator code",
+  "invalidEmail": "Enter a valid email",
+  "homeTitle": "Home",
+  "vehicleNone": "No vehicle selected",
+  "addVehicle": "Add vehicle",
+  "adapterLabel": "Adapter",
+  "ecuLabel": "Car (ECU)",
+  "healthScore": "Vehicle health",
+  "healthUnknown": "No diagnosis yet",
+  "healthBand_good": "Good",
+  "healthBand_fair": "Fair",
+  "healthBand_attention": "Needs attention",
+  "healthBand_critical": "Critical",
+  "dtcCount": "{count, plural, =0{No fault codes} =1{1 fault code} other{{count} fault codes}}",
+  "@dtcCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importantAlerts": "Important alerts",
+  "noAlerts": "No important alerts",
+  "lastScan": "Last scan: {when}",
+  "@lastScan": {
+    "placeholders": {
+      "when": {}
+    }
+  },
+  "never": "never",
+  "startScan": "Start scan",
+  "liveData": "Live data",
+  "maintenanceHistory": "Maintenance",
+  "sessionsHistory": "Scan history",
+  "connect": "Connect",
+  "pendingUploads": "{count, plural, =1{1 scan waiting to upload} other{{count} scans waiting to upload}}",
+  "@pendingUploads": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "uploadNow": "Upload now",
+  "adapterDisconnected": "Not connected",
+  "adapterConnecting": "Connecting…",
+  "adapterConnected": "Connected",
+  "adapterError": "Error",
+  "ecuUnknown": "Not checked",
+  "ecuSearching": "Searching…",
+  "ecuConnected": "Responding",
+  "ecuNoResponse": "No response",
+  "ecuBusError": "Bus error",
+  "linkIdle": "Choose how to connect.",
+  "linkConnectingAdapter": "Phone → adapter: connecting…",
+  "linkAdapterUnreachable": "The phone cannot reach the adapter. Check that you joined the adapter's Wi-Fi (or Bluetooth is on) and the IP/port.",
+  "linkAdapterTimeout": "The adapter did not answer in time (phone → adapter link).",
+  "linkAdapterNotElm": "The device answered but is not an ELM327-compatible adapter.",
+  "linkInitializing": "Adapter found, initialising…",
+  "linkSearchingProtocol": "Adapter → car: searching for the OBD protocol (ignition must be ON)…",
+  "linkEcuConnected": "Adapter and car are talking.",
+  "linkEcuNoResponse": "The adapter works but the car did not answer. Turn the ignition ON (or start the engine) and check the adapter is fully seated.",
+  "linkEcuBusError": "The adapter reports a bus error on the car side. Try another protocol or check wiring.",
+  "linkLost": "Connection to the adapter was lost.",
+  "linkReconnecting": "Reconnecting…",
+  "linkReconnected": "Reconnected.",
+  "linkDisconnected": "Disconnected.",
+  "connectTitle": "Connect",
+  "transportWifi": "Wi-Fi",
+  "transportBle": "Bluetooth LE",
+  "wifiHost": "Adapter IP",
+  "wifiPort": "Port",
+  "protocol": "Protocol",
+  "protocolAuto": "Automatic",
+  "bleScan": "Scan for adapters",
+  "bleScanning": "Scanning…",
+  "bleNoDevices": "No Bluetooth adapters found yet.",
+  "bleClassicNote": "Classic Bluetooth (SPP) adapters are not supported: use a Wi-Fi or Bluetooth LE adapter.",
+  "wifiInternetNote": "When the phone joins the adapter's Wi-Fi it may lose internet. The scan is saved on the phone and uploaded automatically later.",
+  "demoScenarios": "Demo scenarios",
+  "demoExplain": "Demo uses a built-in simulator. Results are clearly labelled DEMO.",
+  "replayFromFile": "Open recording file",
+  "replayFromServer": "Recordings on the server",
+  "replayLocal": "Recordings on this phone",
+  "noRecordings": "No recordings yet.",
+  "connectButton": "Connect",
+  "disconnect": "Disconnect",
+  "simulateEngineOff": "Simulate engine off",
+  "scanTitle": "Scan",
+  "stepAdapter": "Connect to adapter",
+  "stepInit": "Initialise adapter",
+  "stepProtocol": "Detect protocol",
+  "stepEcu": "Find control units",
+  "stepSupported": "Read supported sensors",
+  "stepVin": "Read VIN",
+  "stepDtcs": "Read fault codes (03/07/0A)",
+  "stepFreeze": "Read freeze frame",
+  "stepCapture": "Capture live data",
+  "stepUpload": "Upload & diagnose",
+  "captureProgress": "{seconds} s left",
+  "@captureProgress": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "viewReport": "View report",
+  "scanFailed": "Scan stopped: {reason}",
+  "@scanFailed": {
+    "placeholders": {
+      "reason": {}
+    }
+  },
+  "cancelScan": "Stop",
+  "scanSkipped": "Skipped",
+  "scanQueued": "Saved — will upload when online",
+  "reportTitle": "Diagnosis report",
+  "summary": "Summary",
+  "technicianSummary": "For the technician",
+  "dtcsTitle": "Fault codes",
+  "noDtcs": "No fault codes reported.",
+  "findings": "Findings",
+  "severity_low": "Low",
+  "severity_medium": "Medium",
+  "severity_high": "High",
+  "severity_critical": "Critical",
+  "severity_info": "Info",
+  "confidence": "Confidence {value}%",
+  "@confidence": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "probableCauses": "Probable causes",
+  "likelihood": "{value}%",
+  "@likelihood": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "evidence": "Evidence",
+  "measured": "Measured",
+  "inferred": "Inferred",
+  "observed": "Observed",
+  "expected": "Expected",
+  "tests": "Recommended tests",
+  "actions": "Actions",
+  "partsToConfirm": "Parts (confirm first)",
+  "requiresConfirmation": "Requires confirmation",
+  "missingData": "Missing data",
+  "disclaimers": "Disclaimers",
+  "systemStatus": "Systems",
+  "dataQuality": "Data quality",
+  "offlineReportNote": "Offline: showing fault-code meanings from the built-in knowledge base only. Full analysis needs the server; this scan is queued for upload.",
+  "kbUnknownCode": "Description not in the knowledge base.",
+  "analyzeNow": "Analyse on server",
+  "freezeFrame": "Freeze frame",
+  "vinLabel": "VIN",
+  "howTo": "How",
+  "expectedResult": "Expected result",
+  "liveTitle": "Live data",
+  "chooseSignals": "Signals",
+  "record": "Record",
+  "stopRecording": "Stop",
+  "recordingSaved": "Recording saved",
+  "compareWith": "Compare with recording",
+  "clearCompare": "Remove comparison",
+  "sampleRate": "{rate} samples/s",
+  "@sampleRate": {
+    "placeholders": {
+      "rate": {}
+    }
+  },
+  "outOfRange": "Out of range",
+  "noSupportedSignals": "No supported signals reported by the car.",
+  "notConnected": "Not connected. Connect first.",
+  "historyTitle": "Scan history",
+  "noSessions": "No scans yet.",
+  "localOnly": "On phone only",
+  "synced": "Uploaded",
+  "vehiclesTitle": "Vehicles",
+  "make": "Make",
+  "model": "Model",
+  "year": "Year",
+  "plate": "Plate",
+  "nickname": "Nickname",
+  "odometer": "Odometer (km)",
+  "fuelTypeLabel": "Fuel type",
+  "engineLabel": "Engine",
+  "transmission": "Transmission",
+  "selectVehicle": "Use this vehicle",
+  "maintenanceTitle": "Maintenance log",
+  "addRecord": "Add record",
+  "serviceType": "Service",
+  "date": "Date",
+  "notes": "Notes",
+  "cost": "Cost (SAR)",
+  "noMaintenance": "No maintenance records.",
+  "settingsTitle": "Settings",
+  "language": "Language",
+  "arabic": "العربية",
+  "english": "English",
+  "backendUrl": "Backend URL",
+  "adapterSettings": "Adapter",
+  "commandTimeout": "Command timeout (ms)",
+  "searchTimeout": "Protocol search timeout (ms)",
+  "bleUuidOverride": "BLE UUID override (service / notify / write)",
+  "includeVin": "Include VIN in uploads",
+  "captureDuration": "Live capture during scan (s)",
+  "account": "Account",
+  "notLoggedIn": "Not logged in",
+  "clearDtcsTitle": "Clear fault codes",
+  "clearDtcsWarning": "Clearing codes turns off the check-engine light but does NOT fix the fault. All readiness monitors reset, so the car may fail an inspection until it completes a full drive cycle, and freeze-frame data is erased. Codes will return if the fault is still present.",
+  "clearDtcsChecklist": "Engine OFF, ignition ON, vehicle stopped.",
+  "clearDtcsConfirm": "I understand — clear codes",
+  "clearRequiresServer": "Clearing codes needs server approval. Connect to the internet and log in.",
+  "clearConditionsFailed": "Refused: {reason}",
+  "@clearConditionsFailed": {
+    "placeholders": {
+      "reason": {}
+    }
+  },
+  "clearSuccess": "Fault codes cleared.",
+  "clearFailed": "The car did not confirm the clear request.",
+  "clearRejected": "The server rejected the request: {reason}",
+  "@clearRejected": {
+    "placeholders": {
+      "reason": {}
+    }
+  },
+  "clearDemoNote": "Demo/simulator: no command reaches a real vehicle.",
+  "selectAll": "All",
+  "seconds": "s"
+}

@@ -1,0 +1,70 @@
+# Local development stack:  cp .env.example .env  (fill secrets)  &&  docker compose up --build
+#   API      http://localhost:8000/api/v1   (docs: /docs)
+#   Admin    http://localhost:3000
+#   ECU sim  tcp://localhost:35000          (point the app or CLI at it; data is labelled DEMO)
+# Production uses Supabase Postgres instead of the `db` service.
+
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: automind
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Migrations run once, in filename order, on first start of an empty volume.
+      - ./supabase/migrations:/docker-entrypoint-initdb.d:ro
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d automind"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:8-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      AUTOMIND_ENVIRONMENT: dev
+      AUTOMIND_DATABASE_URL: postgresql+asyncpg://postgres:${POSTGRES_PASSWORD}@db:5432/automind
+      AUTOMIND_REDIS_URL: redis://redis:6379/0
+      AUTOMIND_JWT_SECRET: ${AUTOMIND_JWT_SECRET:?set AUTOMIND_JWT_SECRET in .env}
+      AUTOMIND_DATA_ENCRYPTION_KEY: ${AUTOMIND_DATA_ENCRYPTION_KEY:?set AUTOMIND_DATA_ENCRYPTION_KEY in .env}
+      AUTOMIND_BLIND_INDEX_KEY: ${AUTOMIND_BLIND_INDEX_KEY:?set AUTOMIND_BLIND_INDEX_KEY in .env}
+      AUTOMIND_CORS_ORIGINS: http://localhost:3000
+      AUTOMIND_ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    depends_on:
+      db: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    ports: ["8000:8000"]
+
+  web:
+    build:
+      context: ./web
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api/v1}
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api/v1}
+      API_INTERNAL_BASE_URL: http://api:8000/api/v1
+      SESSION_COOKIE_SECURE: "false"   # plain http on localhost only
+    depends_on: [api]
+    ports: ["3000:3000"]
+
+  simulator:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    command: ["automind", "simulate", "--host", "0.0.0.0", "--port", "35000", "--scenario", "p0106_map_sensor"]
+    ports: ["35000:35000"]
+
+volumes:
+  pgdata:

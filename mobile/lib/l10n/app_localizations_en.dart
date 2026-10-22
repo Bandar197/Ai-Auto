@@ -1,0 +1,739 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for English (`en`).
+class AppLocalizationsEn extends AppLocalizations {
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
+
+  @override
+  String get appTitle => 'AutoMind AI';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get loading => 'Loading…';
+
+  @override
+  String errorGeneric(Object error) {
+    return 'Something went wrong: $error';
+  }
+
+  @override
+  String get unknown => 'Unknown';
+
+  @override
+  String get done => 'Done';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get exportJson => 'Export JSON';
+
+  @override
+  String get exportCsv => 'Export CSV';
+
+  @override
+  String get notAvailable => 'Not available';
+
+  @override
+  String get modeLive => 'Live';
+
+  @override
+  String get modeDemo => 'Demo';
+
+  @override
+  String get modeReplay => 'Replay';
+
+  @override
+  String get demoBanner => 'DEMO — simulated data, not from a real vehicle';
+
+  @override
+  String replayBanner(Object mode) {
+    return 'REPLAY of a $mode recording';
+  }
+
+  @override
+  String get simulatorLabel => 'Simulator';
+
+  @override
+  String get demoWatermark => 'DEMO';
+
+  @override
+  String get replayWatermark => 'REPLAY';
+
+  @override
+  String get onboardingTitle1 => 'Understand your car';
+
+  @override
+  String get onboardingBody1 =>
+      'Plug an ELM327 OBD-II adapter into your car and read real fault codes and live sensor data.';
+
+  @override
+  String get onboardingTitle2 => 'Evidence, not guesses';
+
+  @override
+  String get onboardingBody2 =>
+      'Every finding shows what was measured and what was inferred, with tests to confirm before buying parts.';
+
+  @override
+  String get onboardingTitle3 => 'Works offline';
+
+  @override
+  String get onboardingBody3 =>
+      'Wi-Fi adapters may cut your internet. Scans are saved on the phone and uploaded later.';
+
+  @override
+  String get getStarted => 'Get started';
+
+  @override
+  String get continueOffline => 'Continue without an account';
+
+  @override
+  String get login => 'Log in';
+
+  @override
+  String get register => 'Create account';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get fullName => 'Full name';
+
+  @override
+  String acceptTerms(Object version) {
+    return 'I accept the Terms of Service (v$version)';
+  }
+
+  @override
+  String acceptPrivacy(Object version) {
+    return 'I accept the Privacy Policy (v$version) and the processing of my vehicle data';
+  }
+
+  @override
+  String get consentRequired =>
+      'Both consents are required to create an account.';
+
+  @override
+  String get passwordPolicy =>
+      'At least 10 characters, different from your email.';
+
+  @override
+  String get logout => 'Log out';
+
+  @override
+  String get noAccount => 'No account? Create one';
+
+  @override
+  String get haveAccount => 'Already registered? Log in';
+
+  @override
+  String get mfaCode => 'Authenticator code';
+
+  @override
+  String get invalidEmail => 'Enter a valid email';
+
+  @override
+  String get homeTitle => 'Home';
+
+  @override
+  String get vehicleNone => 'No vehicle selected';
+
+  @override
+  String get addVehicle => 'Add vehicle';
+
+  @override
+  String get adapterLabel => 'Adapter';
+
+  @override
+  String get ecuLabel => 'Car (ECU)';
+
+  @override
+  String get healthScore => 'Vehicle health';
+
+  @override
+  String get healthUnknown => 'No diagnosis yet';
+
+  @override
+  String get healthBand_good => 'Good';
+
+  @override
+  String get healthBand_fair => 'Fair';
+
+  @override
+  String get healthBand_attention => 'Needs attention';
+
+  @override
+  String get healthBand_critical => 'Critical';
+
+  @override
+  String dtcCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fault codes',
+      one: '1 fault code',
+      zero: 'No fault codes',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importantAlerts => 'Important alerts';
+
+  @override
+  String get noAlerts => 'No important alerts';
+
+  @override
+  String lastScan(Object when) {
+    return 'Last scan: $when';
+  }
+
+  @override
+  String get never => 'never';
+
+  @override
+  String get startScan => 'Start scan';
+
+  @override
+  String get liveData => 'Live data';
+
+  @override
+  String get maintenanceHistory => 'Maintenance';
+
+  @override
+  String get sessionsHistory => 'Scan history';
+
+  @override
+  String get connect => 'Connect';
+
+  @override
+  String pendingUploads(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count scans waiting to upload',
+      one: '1 scan waiting to upload',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get uploadNow => 'Upload now';
+
+  @override
+  String get adapterDisconnected => 'Not connected';
+
+  @override
+  String get adapterConnecting => 'Connecting…';
+
+  @override
+  String get adapterConnected => 'Connected';
+
+  @override
+  String get adapterError => 'Error';
+
+  @override
+  String get ecuUnknown => 'Not checked';
+
+  @override
+  String get ecuSearching => 'Searching…';
+
+  @override
+  String get ecuConnected => 'Responding';
+
+  @override
+  String get ecuNoResponse => 'No response';
+
+  @override
+  String get ecuBusError => 'Bus error';
+
+  @override
+  String get linkIdle => 'Choose how to connect.';
+
+  @override
+  String get linkConnectingAdapter => 'Phone → adapter: connecting…';
+
+  @override
+  String get linkAdapterUnreachable =>
+      'The phone cannot reach the adapter. Check that you joined the adapter\'s Wi-Fi (or Bluetooth is on) and the IP/port.';
+
+  @override
+  String get linkAdapterTimeout =>
+      'The adapter did not answer in time (phone → adapter link).';
+
+  @override
+  String get linkAdapterNotElm =>
+      'The device answered but is not an ELM327-compatible adapter.';
+
+  @override
+  String get linkInitializing => 'Adapter found, initialising…';
+
+  @override
+  String get linkSearchingProtocol =>
+      'Adapter → car: searching for the OBD protocol (ignition must be ON)…';
+
+  @override
+  String get linkEcuConnected => 'Adapter and car are talking.';
+
+  @override
+  String get linkEcuNoResponse =>
+      'The adapter works but the car did not answer. Turn the ignition ON (or start the engine) and check the adapter is fully seated.';
+
+  @override
+  String get linkEcuBusError =>
+      'The adapter reports a bus error on the car side. Try another protocol or check wiring.';
+
+  @override
+  String get linkLost => 'Connection to the adapter was lost.';
+
+  @override
+  String get linkReconnecting => 'Reconnecting…';
+
+  @override
+  String get linkReconnected => 'Reconnected.';
+
+  @override
+  String get linkDisconnected => 'Disconnected.';
+
+  @override
+  String get connectTitle => 'Connect';
+
+  @override
+  String get transportWifi => 'Wi-Fi';
+
+  @override
+  String get transportBle => 'Bluetooth LE';
+
+  @override
+  String get wifiHost => 'Adapter IP';
+
+  @override
+  String get wifiPort => 'Port';
+
+  @override
+  String get protocol => 'Protocol';
+
+  @override
+  String get protocolAuto => 'Automatic';
+
+  @override
+  String get bleScan => 'Scan for adapters';
+
+  @override
+  String get bleScanning => 'Scanning…';
+
+  @override
+  String get bleNoDevices => 'No Bluetooth adapters found yet.';
+
+  @override
+  String get bleClassicNote =>
+      'Classic Bluetooth (SPP) adapters are not supported: use a Wi-Fi or Bluetooth LE adapter.';
+
+  @override
+  String get wifiInternetNote =>
+      'When the phone joins the adapter\'s Wi-Fi it may lose internet. The scan is saved on the phone and uploaded automatically later.';
+
+  @override
+  String get demoScenarios => 'Demo scenarios';
+
+  @override
+  String get demoExplain =>
+      'Demo uses a built-in simulator. Results are clearly labelled DEMO.';
+
+  @override
+  String get replayFromFile => 'Open recording file';
+
+  @override
+  String get replayFromServer => 'Recordings on the server';
+
+  @override
+  String get replayLocal => 'Recordings on this phone';
+
+  @override
+  String get noRecordings => 'No recordings yet.';
+
+  @override
+  String get connectButton => 'Connect';
+
+  @override
+  String get disconnect => 'Disconnect';
+
+  @override
+  String get simulateEngineOff => 'Simulate engine off';
+
+  @override
+  String get scanTitle => 'Scan';
+
+  @override
+  String get stepAdapter => 'Connect to adapter';
+
+  @override
+  String get stepInit => 'Initialise adapter';
+
+  @override
+  String get stepProtocol => 'Detect protocol';
+
+  @override
+  String get stepEcu => 'Find control units';
+
+  @override
+  String get stepSupported => 'Read supported sensors';
+
+  @override
+  String get stepVin => 'Read VIN';
+
+  @override
+  String get stepDtcs => 'Read fault codes (03/07/0A)';
+
+  @override
+  String get stepFreeze => 'Read freeze frame';
+
+  @override
+  String get stepCapture => 'Capture live data';
+
+  @override
+  String get stepUpload => 'Upload & diagnose';
+
+  @override
+  String captureProgress(int seconds) {
+    return '$seconds s left';
+  }
+
+  @override
+  String get viewReport => 'View report';
+
+  @override
+  String scanFailed(Object reason) {
+    return 'Scan stopped: $reason';
+  }
+
+  @override
+  String get cancelScan => 'Stop';
+
+  @override
+  String get scanSkipped => 'Skipped';
+
+  @override
+  String get scanQueued => 'Saved — will upload when online';
+
+  @override
+  String get reportTitle => 'Diagnosis report';
+
+  @override
+  String get summary => 'Summary';
+
+  @override
+  String get technicianSummary => 'For the technician';
+
+  @override
+  String get dtcsTitle => 'Fault codes';
+
+  @override
+  String get noDtcs => 'No fault codes reported.';
+
+  @override
+  String get findings => 'Findings';
+
+  @override
+  String get severity_low => 'Low';
+
+  @override
+  String get severity_medium => 'Medium';
+
+  @override
+  String get severity_high => 'High';
+
+  @override
+  String get severity_critical => 'Critical';
+
+  @override
+  String get severity_info => 'Info';
+
+  @override
+  String confidence(int value) {
+    return 'Confidence $value%';
+  }
+
+  @override
+  String get probableCauses => 'Probable causes';
+
+  @override
+  String likelihood(int value) {
+    return '$value%';
+  }
+
+  @override
+  String get evidence => 'Evidence';
+
+  @override
+  String get measured => 'Measured';
+
+  @override
+  String get inferred => 'Inferred';
+
+  @override
+  String get observed => 'Observed';
+
+  @override
+  String get expected => 'Expected';
+
+  @override
+  String get tests => 'Recommended tests';
+
+  @override
+  String get actions => 'Actions';
+
+  @override
+  String get partsToConfirm => 'Parts (confirm first)';
+
+  @override
+  String get requiresConfirmation => 'Requires confirmation';
+
+  @override
+  String get missingData => 'Missing data';
+
+  @override
+  String get disclaimers => 'Disclaimers';
+
+  @override
+  String get systemStatus => 'Systems';
+
+  @override
+  String get dataQuality => 'Data quality';
+
+  @override
+  String get offlineReportNote =>
+      'Offline: showing fault-code meanings from the built-in knowledge base only. Full analysis needs the server; this scan is queued for upload.';
+
+  @override
+  String get kbUnknownCode => 'Description not in the knowledge base.';
+
+  @override
+  String get analyzeNow => 'Analyse on server';
+
+  @override
+  String get freezeFrame => 'Freeze frame';
+
+  @override
+  String get vinLabel => 'VIN';
+
+  @override
+  String get howTo => 'How';
+
+  @override
+  String get expectedResult => 'Expected result';
+
+  @override
+  String get liveTitle => 'Live data';
+
+  @override
+  String get chooseSignals => 'Signals';
+
+  @override
+  String get record => 'Record';
+
+  @override
+  String get stopRecording => 'Stop';
+
+  @override
+  String get recordingSaved => 'Recording saved';
+
+  @override
+  String get compareWith => 'Compare with recording';
+
+  @override
+  String get clearCompare => 'Remove comparison';
+
+  @override
+  String sampleRate(Object rate) {
+    return '$rate samples/s';
+  }
+
+  @override
+  String get outOfRange => 'Out of range';
+
+  @override
+  String get noSupportedSignals => 'No supported signals reported by the car.';
+
+  @override
+  String get notConnected => 'Not connected. Connect first.';
+
+  @override
+  String get historyTitle => 'Scan history';
+
+  @override
+  String get noSessions => 'No scans yet.';
+
+  @override
+  String get localOnly => 'On phone only';
+
+  @override
+  String get synced => 'Uploaded';
+
+  @override
+  String get vehiclesTitle => 'Vehicles';
+
+  @override
+  String get make => 'Make';
+
+  @override
+  String get model => 'Model';
+
+  @override
+  String get year => 'Year';
+
+  @override
+  String get plate => 'Plate';
+
+  @override
+  String get nickname => 'Nickname';
+
+  @override
+  String get odometer => 'Odometer (km)';
+
+  @override
+  String get fuelTypeLabel => 'Fuel type';
+
+  @override
+  String get engineLabel => 'Engine';
+
+  @override
+  String get transmission => 'Transmission';
+
+  @override
+  String get selectVehicle => 'Use this vehicle';
+
+  @override
+  String get maintenanceTitle => 'Maintenance log';
+
+  @override
+  String get addRecord => 'Add record';
+
+  @override
+  String get serviceType => 'Service';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get notes => 'Notes';
+
+  @override
+  String get cost => 'Cost (SAR)';
+
+  @override
+  String get noMaintenance => 'No maintenance records.';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get arabic => 'العربية';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get backendUrl => 'Backend URL';
+
+  @override
+  String get adapterSettings => 'Adapter';
+
+  @override
+  String get commandTimeout => 'Command timeout (ms)';
+
+  @override
+  String get searchTimeout => 'Protocol search timeout (ms)';
+
+  @override
+  String get bleUuidOverride => 'BLE UUID override (service / notify / write)';
+
+  @override
+  String get includeVin => 'Include VIN in uploads';
+
+  @override
+  String get captureDuration => 'Live capture during scan (s)';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get notLoggedIn => 'Not logged in';
+
+  @override
+  String get clearDtcsTitle => 'Clear fault codes';
+
+  @override
+  String get clearDtcsWarning =>
+      'Clearing codes turns off the check-engine light but does NOT fix the fault. All readiness monitors reset, so the car may fail an inspection until it completes a full drive cycle, and freeze-frame data is erased. Codes will return if the fault is still present.';
+
+  @override
+  String get clearDtcsChecklist => 'Engine OFF, ignition ON, vehicle stopped.';
+
+  @override
+  String get clearDtcsConfirm => 'I understand — clear codes';
+
+  @override
+  String get clearRequiresServer =>
+      'Clearing codes needs server approval. Connect to the internet and log in.';
+
+  @override
+  String clearConditionsFailed(Object reason) {
+    return 'Refused: $reason';
+  }
+
+  @override
+  String get clearSuccess => 'Fault codes cleared.';
+
+  @override
+  String get clearFailed => 'The car did not confirm the clear request.';
+
+  @override
+  String clearRejected(Object reason) {
+    return 'The server rejected the request: $reason';
+  }
+
+  @override
+  String get clearDemoNote =>
+      'Demo/simulator: no command reaches a real vehicle.';
+
+  @override
+  String get selectAll => 'All';
+
+  @override
+  String get seconds => 's';
+}
