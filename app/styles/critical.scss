@@ -6,6 +6,7 @@
 @tailwind utilities;
 
 @import './01-settings/global';
+@import './01-settings/brand';
 @import './01-settings/breakpoints';
 
 @import './02-generic/reset';
@@ -14,6 +15,7 @@
 @import './02-generic/rtl';
 @import './02-generic/ltr';
 @import './02-generic/mixins';
+@import './02-generic/brand-base';
 
 @import './vendor/swiper.css';
 

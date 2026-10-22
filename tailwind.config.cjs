@@ -21,16 +21,17 @@ module.exports = {
   ],
   darkMode: 'class', // or 'media' or 'class'
   theme: {
+    // ZUKHR: 1320px content width; gutters match --zk-gutter (brand.scss).
     container: {
       center: true,
-      padding: '10px',
+      padding: { DEFAULT: '16px', md: '24px', xl: '32px' },
       screens: {
-        '2xl': '1280px',
+        '2xl': '1320px',
       },
     },
     fontFamily: {
-      sans: ['var(--font-main)', '-apple-system', 'BlinkMacSystemFont'],
-      primary: 'var(--font-main)',
+      sans: ['var(--zk-font)'],
+      primary: 'var(--zk-font)',
     },
     extend: {
       transitionTimingFunction: {
@@ -40,6 +41,20 @@ module.exports = {
         'auto-fill': 'repeat(auto-fill, 290px)',
       },
       colors: {
+        // ZUKHR palette (brand.scss holds the source values as CSS variables).
+        zk: {
+          navy: '#0B1320',
+          glacier: '#0F2D4D',
+          silver: '#C8D2DC',
+          ice: '#8FCDEA',
+          'ice-soft': '#BFDFFF',
+          frost: '#E8F0F6',
+          pearl: '#F8FAFC',
+          muted: '#4A5868',
+          subtle: '#6B7886',
+          border: '#DDE5EC',
+          sale: '#B4232F',
+        },
         dark: '#1D1F1F',
         darker: '#0E0F0F',
         danger: '#AE0A0A',

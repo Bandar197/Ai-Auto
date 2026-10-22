@@ -51,6 +51,7 @@
 // Note: Tailwind directives are in app.css, not here
 
 @import './01-settings/global';
+@import './01-settings/brand';
 @import './01-settings/breakpoints';
 
 @import './02-generic/reset';
@@ -60,6 +61,7 @@
 @import './02-generic/rtl';
 @import './02-generic/ltr';
 @import './02-generic/mixins';
+@import './02-generic/brand-base';
 
 // Vendored Swiper stylesheet — before the component layers so theme rules
 // override it, matching the cascade the per-chunk link used to have.
