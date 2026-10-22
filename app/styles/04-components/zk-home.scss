@@ -1,0 +1,382 @@
+/* =========================================================================
+   ZUKHR home blocks — markup: app/components/zukhr/home/*.tsx
+   Rhythm: light Pearl sections, broken by a few navy bands (hero, campaign).
+   ========================================================================= */
+
+/* ---- Hero --------------------------------------------------------------- */
+.zk-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.zk-hero--dark {
+  background:
+    radial-gradient(120% 90% at 15% 100%, rgba(15, 45, 77, 0.95) 0%, rgba(11, 19, 32, 0) 60%),
+    linear-gradient(160deg, var(--zk-navy) 0%, #0d1a2b 55%, var(--zk-glacier) 100%);
+  color: var(--zk-text-inverse);
+}
+
+.zk-hero--light {
+  background: linear-gradient(160deg, var(--zk-pearl) 0%, var(--zk-frost) 100%);
+  color: var(--zk-text);
+}
+
+.zk-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.zk-hero__inner {
+  display: grid;
+  align-items: center;
+  gap: 32px;
+  min-height: clamp(520px, 62vw, 680px);
+  padding-block: clamp(40px, 6vw, 88px);
+
+  @media (min-width: 1024px) {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 48px;
+  }
+}
+
+/* DOM order brand → stage; in RTL the brand sits on the right (start). */
+.zk-hero__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  max-width: 520px;
+}
+
+.zk-hero__logo {
+  height: clamp(56px, 6vw, 84px);
+  width: auto;
+  margin-bottom: 8px;
+  object-fit: contain;
+}
+
+.zk-hero__logo-hint {
+  min-height: 72px;
+  width: 100%;
+}
+
+.zk-hero__tagline {
+  margin: 0;
+  font-size: var(--zk-fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+
+  .zk-hero--dark & {
+    color: var(--zk-ice);
+  }
+
+  .zk-hero--light & {
+    color: var(--zk-glacier);
+  }
+}
+
+.zk-hero__title {
+  margin: 0;
+  font-size: var(--zk-fs-3xl);
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.zk-hero__cta {
+  margin-top: 12px;
+  min-width: 160px;
+}
+
+.zk-hero__stage {
+  position: relative;
+  min-height: 280px;
+
+  .zk-editor-hint {
+    min-height: 320px;
+    border-color: rgba(200, 210, 220, 0.4);
+  }
+
+  .zk-hero--dark & .zk-editor-hint {
+    color: var(--zk-silver);
+  }
+}
+
+.zk-hero__stage-skeleton {
+  min-height: 320px;
+  background: rgba(232, 240, 246, 0.08);
+}
+
+/* Product stage — a calm row on a soft light pool; Stage 4 adds the final
+   composition (platforms, lighting, depth). */
+.zk-hero__products {
+  display: grid;
+  grid-template-columns: repeat(var(--zk-stage-cols, 3), minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 24px);
+  align-items: end;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &--4 {
+    --zk-stage-cols: 4;
+  }
+
+  &--5 {
+    --zk-stage-cols: 5;
+  }
+
+  &--1 {
+    --zk-stage-cols: 1;
+  }
+
+  &--2 {
+    --zk-stage-cols: 2;
+  }
+}
+
+.zk-hero__product-link {
+  display: block;
+  aspect-ratio: 1;
+  padding: 12%;
+  border-radius: var(--zk-radius-lg);
+  background: radial-gradient(70% 60% at 50% 40%, var(--zk-pearl) 0%, var(--zk-frost) 100%);
+  box-shadow: var(--zk-shadow);
+  transition: transform var(--zk-dur) var(--zk-ease);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 12px 16px rgba(11, 19, 32, 0.12));
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+}
+
+@media (max-width: 1023px) {
+  .zk-hero__inner {
+    min-height: 0;
+  }
+
+  .zk-hero__stage {
+    min-height: 0;
+  }
+
+  /* Phones scroll the stage sideways instead of shrinking products. */
+  .zk-hero__products {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .zk-hero__product {
+    flex: 0 0 42%;
+    scroll-snap-align: start;
+  }
+}
+
+/* ---- Product rails ------------------------------------------------------ */
+.zk-rail {
+  /* desktop: 4 cards; tablet: 3; phones: ~1.7–2.2 depending on width */
+  --zk-rail-per-view: 1.7;
+  --zk-rail-gap: 16px;
+
+  @media (min-width: 420px) {
+    --zk-rail-per-view: 2.2;
+  }
+
+  @media (min-width: 768px) {
+    --zk-rail-per-view: 3;
+    --zk-rail-gap: 20px;
+  }
+
+  @media (min-width: 1024px) {
+    --zk-rail-per-view: 4;
+    --zk-rail-gap: 24px;
+  }
+}
+
+.zk-rail__slide {
+  flex: 0 0 calc((100% - (var(--zk-rail-per-view) - 1) * var(--zk-rail-gap)) / var(--zk-rail-per-view));
+  min-width: 0;
+}
+
+.zk-rail--skeleton {
+  display: flex;
+  gap: var(--zk-rail-gap);
+  overflow: hidden;
+}
+
+.zk-products .zk-rail {
+  gap: var(--zk-rail-gap);
+}
+
+/* ---- Quick categories --------------------------------------------------- */
+.zk-categories__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+.zk-categories__tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+  padding: 20px 12px;
+  border-radius: var(--zk-radius);
+  background: var(--zk-surface);
+  box-shadow: var(--zk-shadow-sm);
+  color: var(--zk-navy);
+  text-align: center;
+  transition:
+    box-shadow var(--zk-dur) var(--zk-ease),
+    transform var(--zk-dur) var(--zk-ease);
+
+  &:hover {
+    box-shadow: var(--zk-shadow);
+    transform: translateY(-2px);
+  }
+
+  &.is-unlinked {
+    opacity: 0.6;
+    outline: 1px dashed var(--zk-border-strong);
+  }
+}
+
+.zk-categories__media {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--zk-frost);
+  color: var(--zk-glacier);
+
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+
+.zk-categories__label {
+  font-size: var(--zk-fs-sm);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* ---- Campaign ----------------------------------------------------------- */
+.zk-campaign__inner {
+  display: grid;
+  align-items: center;
+  gap: 32px;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 56px;
+  }
+}
+
+.zk-campaign__media {
+  img,
+  .zk-campaign__media-empty {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--zk-radius-lg);
+    object-fit: cover;
+  }
+
+  .zk-campaign__media-empty {
+    background: linear-gradient(140deg, var(--zk-glacier), rgba(143, 205, 234, 0.25));
+  }
+}
+
+/* ---- Why ZUKHR ---------------------------------------------------------- */
+.zk-why__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+  }
+}
+
+.zk-why__item {
+  padding: 24px 20px;
+  border-radius: var(--zk-radius);
+  background: var(--zk-surface);
+  box-shadow: var(--zk-shadow-sm);
+}
+
+.zk-why__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+  border-radius: 14px;
+  background: var(--zk-navy);
+  color: var(--zk-ice);
+}
+
+.zk-why__title {
+  font-size: var(--zk-fs-base);
+  font-weight: 800;
+  color: var(--zk-navy);
+}
+
+.zk-why__text {
+  margin-top: 6px;
+  font-size: var(--zk-fs-sm);
+  line-height: 1.7;
+  color: var(--zk-text-muted);
+}
+
+/* ---- Newsletter / follow ------------------------------------------------ */
+.zk-newsletter__card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: clamp(28px, 4vw, 48px);
+  border-radius: var(--zk-radius-lg);
+  background: var(--zk-frost);
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

@@ -82,5 +82,19 @@
   "blocks.order_options.subtitle": "Choose from the available options.",
   "blocks.order_options.continue": "Continue",
   "blocks.order_options.total": "Total",
-  "blocks.order_options.required_message": "Please fill in the required fields"
+  "blocks.order_options.required_message": "Please fill in the required fields",
+  "common.skip_to_content": "Skip to content",
+  "blocks.header.search_hint": "Search products, brands, categories",
+  "blocks.header.wishlist": "Wishlist",
+  "zukhr.editor.pick_products": "Pick the products for this section in the theme editor.",
+  "zukhr.editor.no_products": "No products from this source in the store yet.",
+  "zukhr.editor.hero_logo": "Upload the light master logo in the hero settings.",
+  "zukhr.editor.hero_products": "Pick 4–5 in-stock products for the hero.",
+  "zukhr.editor.link_category": "Link this tile to a category in the theme editor.",
+  "zukhr.editor.campaign": "Add the campaign title, image and link in the theme editor.",
+  "zukhr.home.shop_by_category": "Shop by category",
+  "zukhr.home.why": "Why ZUKHR",
+  "zukhr.home.newsletter_title": "Stay close to ZUKHR picks",
+  "zukhr.home.newsletter_text": "Follow us to hear first about new picks and selected offers.",
+  "blocks.home.display_all": "View all"
 }

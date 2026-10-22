@@ -28,6 +28,14 @@ import {
 } from './components/home/FeaturedProducts';
 import { PhotosSliderWithText } from './components/home/PhotosSliderWithText';
 import { registerThemeHooks } from './hooks';
+import {
+  ZkCampaign,
+  ZkCategories,
+  ZkHero,
+  ZkNewsletter,
+  ZkProducts,
+  ZkWhy,
+} from './components/zukhr/home';
 import { ProductListSkeleton } from './components/product/ProductListSkeleton';
 
 const ProductListPage = lazy(() =>
@@ -74,12 +82,35 @@ registerHomeComponents({
   'slider-products-with-header': SliderProductsWithHeader,
   'enhanced-square-banners': EnhancedSquareBanners,
   blog: Blog,
+  // ZUKHR home blocks (twilight.json `home.zk-*`).
+  'zk-hero': ZkHero,
+  'zk-products': ZkProducts,
+  'zk-categories': ZkCategories,
+  'zk-campaign': ZkCampaign,
+  'zk-why': ZkWhy,
+  'zk-newsletter': ZkNewsletter,
+});
+
+// ZUKHR blocks own their spacing (`.zk-section`), so their wrapper skips
+// `s-block`'s top margin. Heights reserve space for lazy (below-the-fold)
+// placements so the page doesn't shift when they mount.
+const zkPlaceholder = <div className="zk-container"><div className="zk-skeleton h-full min-h-[200px]" /></div>;
+const zkBlock = (key: string, height: string) => ({
+  className: `zk-block zk-block--${key}`,
+  height,
+  placeholder: zkPlaceholder,
 });
 
 // Wrapper `<section>` classes for `featured-products` — the engine only styles
 // the literal `styleN` values; this covers the semantic `view_style`s too.
 // `custom-testimonials` gets `s-block--full-bg` so the gray band runs edge-to-edge.
 registerHomeComponentConfig({
+  'zk-hero': zkBlock('zk-hero', 'clamp(560px, 62vw, 700px)'),
+  'zk-products': zkBlock('zk-products', '520px'),
+  'zk-categories': zkBlock('zk-categories', '240px'),
+  'zk-campaign': zkBlock('zk-campaign', '520px'),
+  'zk-why': zkBlock('zk-why', '320px'),
+  'zk-newsletter': zkBlock('zk-newsletter', '260px'),
   'featured-products': featuredProductsConfig,
   'featured-products-special-offer': featuredProductsConfig,
   'featured-products-special-product': featuredProductsConfig,

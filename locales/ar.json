@@ -82,5 +82,19 @@
   "blocks.order_options.subtitle": "اختر من الخيارات المتاحة.",
   "blocks.order_options.continue": "متابعة",
   "blocks.order_options.total": "الإجمالي",
-  "blocks.order_options.required_message": "يرجى تعبئة الحقول المطلوبة"
+  "blocks.order_options.required_message": "يرجى تعبئة الحقول المطلوبة",
+  "common.skip_to_content": "تخطَّ إلى المحتوى",
+  "blocks.header.search_hint": "ابحث عن منتج، علامة أو فئة",
+  "blocks.header.wishlist": "المفضلة",
+  "zukhr.editor.pick_products": "اختر منتجات هذا القسم من محرر الثيم.",
+  "zukhr.editor.no_products": "لا توجد منتجات من هذا المصدر في المتجر حالياً.",
+  "zukhr.editor.hero_logo": "ارفع نسخة الشعار الفاتحة من إعدادات البانر.",
+  "zukhr.editor.hero_products": "اختر 4–5 منتجات متوفرة لعرضها في البانر.",
+  "zukhr.editor.link_category": "اربط هذه الفئة بتصنيف من محرر الثيم.",
+  "zukhr.editor.campaign": "أضف عنوان الحملة وصورتها ورابطها من محرر الثيم.",
+  "zukhr.home.shop_by_category": "تسوق حسب الفئة",
+  "zukhr.home.why": "ليش زخر؟",
+  "zukhr.home.newsletter_title": "خلك قريب من اختيارات زخر",
+  "zukhr.home.newsletter_text": "تابعنا لتعرف أول بأول عن المنتجات الجديدة والعروض المختارة.",
+  "blocks.home.display_all": "عرض الكل"
 }

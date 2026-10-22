@@ -1,0 +1,171 @@
+{
+  "enabled": true,
+  "settings": {},
+  "layout": [
+    {
+      "id": "zk-hero",
+      "path": "home.zk-hero",
+      "fields": {
+        "theme": "dark",
+        "logo": null,
+        "tagline": "اختيارات تستاهل",
+        "title": "منتجات مختارة بعناية للشيء اللي فعلا يستاهل",
+        "cta_text": "تسوق الآن",
+        "cta_url": null,
+        "products": [],
+        "image_desktop": null,
+        "image_mobile": null
+      }
+    },
+    {
+      "id": "zk-categories",
+      "path": "home.zk-categories",
+      "fields": {
+        "title": "تسوق حسب الفئة",
+        "items": [
+          {
+            "items.title": "الشواحن",
+            "items.icon": "charger"
+          },
+          {
+            "items.title": "الكيابل",
+            "items.icon": "cable"
+          },
+          {
+            "items.title": "الصوتيات",
+            "items.icon": "audio"
+          },
+          {
+            "items.title": "العناية والأجهزة",
+            "items.icon": "care"
+          },
+          {
+            "items.title": "الهدايا",
+            "items.icon": "gift"
+          },
+          {
+            "items.title": "العروض",
+            "items.icon": "offers"
+          }
+        ]
+      }
+    },
+    {
+      "id": "zk-picks",
+      "path": "home.zk-products",
+      "fields": {
+        "eyebrow": "ZUKHR PICKS",
+        "title": "اختيارات زخر",
+        "subtitle": null,
+        "source": "selected",
+        "products": [],
+        "limit": 8,
+        "surface": "pearl",
+        "display_all_url": null
+      }
+    },
+    {
+      "id": "zk-best",
+      "path": "home.zk-products",
+      "fields": {
+        "eyebrow": "BEST SELLERS",
+        "title": "الأكثر طلباً",
+        "subtitle": null,
+        "source": "sales",
+        "products": [],
+        "limit": 8,
+        "surface": "frost",
+        "display_all_url": null
+      }
+    },
+    {
+      "id": "zk-campaign",
+      "path": "home.zk-campaign",
+      "fields": {
+        "theme": "dark",
+        "eyebrow": null,
+        "title": null,
+        "text": null,
+        "cta_text": null,
+        "cta_url": null,
+        "image": null,
+        "image_mobile": null
+      }
+    },
+    {
+      "id": "zk-offers",
+      "path": "home.zk-products",
+      "fields": {
+        "eyebrow": "OFFERS",
+        "title": "العروض",
+        "subtitle": null,
+        "source": "offers",
+        "products": [],
+        "limit": 8,
+        "surface": "pearl",
+        "display_all_url": null
+      }
+    },
+    {
+      "id": "zk-gifts",
+      "path": "home.zk-products",
+      "fields": {
+        "eyebrow": "GIFTS",
+        "title": "هدايا تستاهل",
+        "subtitle": null,
+        "source": "selected",
+        "products": [],
+        "limit": 8,
+        "surface": "frost",
+        "display_all_url": null
+      }
+    },
+    {
+      "id": "zk-why",
+      "path": "home.zk-why",
+      "fields": {
+        "title": "ليش زخر؟",
+        "subtitle": null,
+        "items": [
+          {
+            "items.icon": "select",
+            "items.title": "مختارة بعناية",
+            "items.text": "ما نعرض كل شيء. نختار اللي يستاهل."
+          },
+          {
+            "items.icon": "quality",
+            "items.title": "جودة نثق فيها",
+            "items.text": "منتجات من علامات معروفة بأدائها."
+          },
+          {
+            "items.icon": "value",
+            "items.title": "قيمة تستاهل",
+            "items.text": "سعر عادل مقابل منتج يخدمك فعلاً."
+          },
+          {
+            "items.icon": "secure",
+            "items.title": "شراء سهل وآمن",
+            "items.text": "دفع وطلب عبر منصة سلة الموثوقة."
+          }
+        ]
+      }
+    },
+    {
+      "id": "zk-reviews",
+      "path": "testimonial",
+      "fields": {
+        "type": "store",
+        "sort": "latest",
+        "limit": 8
+      }
+    },
+    {
+      "id": "zk-newsletter",
+      "path": "home.zk-newsletter",
+      "fields": {
+        "title": "خلك قريب من اختيارات زخر",
+        "text": "تابعنا لتعرف أول بأول عن المنتجات الجديدة والعروض المختارة."
+      }
+    }
+  ]
+}
