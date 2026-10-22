@@ -716,11 +716,71 @@ abstract class AppLocalizations {
   /// **'No Bluetooth adapters found yet.'**
   String get bleNoDevices;
 
-  /// No description provided for @bleClassicNote.
+  /// No description provided for @bleNote.
   ///
   /// In en, this message translates to:
-  /// **'Classic Bluetooth (SPP) adapters are not supported: use a Wi-Fi or Bluetooth LE adapter.'**
-  String get bleClassicNote;
+  /// **'Bluetooth LE adapters are found by scanning — no pairing in system settings needed.'**
+  String get bleNote;
+
+  /// No description provided for @transportClassic.
+  ///
+  /// In en, this message translates to:
+  /// **'Bluetooth Classic'**
+  String get transportClassic;
+
+  /// No description provided for @transportSerial.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial / COM (Bluetooth Classic or USB)'**
+  String get transportSerial;
+
+  /// No description provided for @classicIosNote.
+  ///
+  /// In en, this message translates to:
+  /// **'iPhone does not allow Bluetooth Classic (SPP) OBD adapters in normal apps (Apple requires MFi accessories). Use a Bluetooth LE or Wi-Fi adapter.'**
+  String get classicIosNote;
+
+  /// No description provided for @classicAndroidNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Pair the adapter first in Android Settings → Bluetooth (PIN usually 1234 or 0000), then choose it here.'**
+  String get classicAndroidNote;
+
+  /// No description provided for @classicDesktopNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Windows: pair the adapter in Settings → Bluetooth & devices (PIN usually 1234 or 0000). Windows then creates an outgoing COM port — choose it here. USB adapters also appear as COM ports.'**
+  String get classicDesktopNote;
+
+  /// No description provided for @classicNoDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'No paired adapters / COM ports found.'**
+  String get classicNoDevices;
+
+  /// No description provided for @classicBluetoothOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Bluetooth is off or not available.'**
+  String get classicBluetoothOff;
+
+  /// No description provided for @baudRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Baud rate'**
+  String get baudRate;
+
+  /// No description provided for @refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
+
+  /// No description provided for @lastUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Last used'**
+  String get lastUsed;
 
   /// No description provided for @wifiInternetNote.
   ///
@@ -1693,12 +1753,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'not complete'**
   String get monitorIncomplete;
-
-  /// Shown instead of the Wi-Fi/BLE selector on desktop platforms without BLE support
-  ///
-  /// In en, this message translates to:
-  /// **'On Windows use a Wi-Fi adapter (e.g. ELM327 Wi-Fi). Bluetooth adapters work from the phone app.'**
-  String get bleDesktopNote;
 }
 
 class _AppLocalizationsDelegate

@@ -357,8 +357,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bleNoDevices => 'No Bluetooth adapters found yet.';
 
   @override
-  String get bleClassicNote =>
-      'Classic Bluetooth (SPP) adapters are not supported: use a Wi-Fi or Bluetooth LE adapter.';
+  String get bleNote =>
+      'Bluetooth LE adapters are found by scanning — no pairing in system settings needed.';
+
+  @override
+  String get transportClassic => 'Bluetooth Classic';
+
+  @override
+  String get transportSerial => 'Serial / COM (Bluetooth Classic or USB)';
+
+  @override
+  String get classicIosNote =>
+      'iPhone does not allow Bluetooth Classic (SPP) OBD adapters in normal apps (Apple requires MFi accessories). Use a Bluetooth LE or Wi-Fi adapter.';
+
+  @override
+  String get classicAndroidNote =>
+      'Pair the adapter first in Android Settings → Bluetooth (PIN usually 1234 or 0000), then choose it here.';
+
+  @override
+  String get classicDesktopNote =>
+      'Windows: pair the adapter in Settings → Bluetooth & devices (PIN usually 1234 or 0000). Windows then creates an outgoing COM port — choose it here. USB adapters also appear as COM ports.';
+
+  @override
+  String get classicNoDevices => 'No paired adapters / COM ports found.';
+
+  @override
+  String get classicBluetoothOff => 'Bluetooth is off or not available.';
+
+  @override
+  String get baudRate => 'Baud rate';
+
+  @override
+  String get refresh => 'Refresh';
+
+  @override
+  String get lastUsed => 'Last used';
 
   @override
   String get wifiInternetNote =>
@@ -893,8 +926,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get monitorIncomplete => 'not complete';
-
-  @override
-  String get bleDesktopNote =>
-      'On Windows use a Wi-Fi adapter (e.g. ELM327 Wi-Fi). Bluetooth adapters work from the phone app.';
 }

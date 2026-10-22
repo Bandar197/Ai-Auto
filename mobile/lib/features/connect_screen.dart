@@ -1,16 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' show Platform;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:universal_ble/universal_ble.dart' show BleDevice;
 
 import '../core/api/api_client.dart';
 import '../obd/obd.dart';
 import '../platform/ble_transport.dart';
+import '../platform/host_platform.dart';
+import '../platform/serial_transport.dart';
+import '../state/adapter_providers.dart';
 import '../state/connection_controller.dart';
 import '../state/providers.dart';
 import '../ui/l10n_helpers.dart';
@@ -25,11 +27,11 @@ class ConnectScreen extends ConsumerStatefulWidget {
 
 class _ConnectScreenState extends ConsumerState<ConnectScreen> {
   DataMode _mode = DataMode.live;
-  bool _ble = false;
+  late AdapterLink _link;
   late final TextEditingController _host;
   late final TextEditingController _port;
-  StreamSubscription<List<ScanResult>>? _scanSub;
-  List<ScanResult> _bleResults = [];
+  StreamSubscription<List<BleDevice>>? _scanSub;
+  List<BleDevice> _bleResults = [];
   bool _scanning = false;
   String? _error;
 
@@ -39,6 +41,9 @@ class _ConnectScreenState extends ConsumerState<ConnectScreen> {
     final s = ref.read(settingsProvider);
     _host = TextEditingController(text: s.wifiHost);
     _port = TextEditingController(text: '${s.wifiPort}');
+    final host = ref.read(hostPlatformProvider);
+    final last = AdapterLink.values.firstWhere((l) => l.name == s.lastLink, orElse: () => AdapterLink.wifi);
+    _link = host.supports(last) ? last : AdapterLink.wifi;
   }
 
   @override
@@ -72,19 +77,28 @@ class _ConnectScreenState extends ConsumerState<ConnectScreen> {
       _bleResults = [];
       _scanning = true;
     });
-    try {
-      if (await FlutterBluePlus.isSupported == false) throw Exception('Bluetooth LE not supported');
-      await _scanSub?.cancel();
-      _scanSub = BleTransport.scan().listen((r) => setState(() => _bleResults = r));
-      await Future<void>.delayed(const Duration(seconds: 8));
-    } on Object catch (e) {
-      setState(() => _error = e.toString());
-    } finally {
-      if (mounted) setState(() => _scanning = false);
-    }
+    await _scanSub?.cancel();
+    _scanSub = BleTransport.scan().listen(
+      (r) {
+        if (mounted) setState(() => _bleResults = r);
+      },
+      onError: (Object e) {
+        if (mounted) setState(() => _error = e.toString());
+      },
+      onDone: () {
+        if (mounted) setState(() => _scanning = false);
+      },
+    );
   }
 
-  Future<void> _connectBle(BluetoothDevice d) async {
+  Future<void> _connectClassic(ClassicTarget t) async {
+    final host = ref.read(hostPlatformProvider);
+    final ctrl = ref.read(connectionProvider.notifier);
+    final r = host == HostPlatform.android ? await ctrl.connectBtClassic(t.id, name: t.title) : await ctrl.connectSerial(t.id);
+    _afterConnect(r);
+  }
+
+  Future<void> _connectBle(BleDevice d) async {
     await BleTransport.stopScan();
     final r = await ref.read(connectionProvider.notifier).connectBle(d);
     _afterConnect(r);
@@ -168,24 +182,29 @@ class _ConnectScreenState extends ConsumerState<ConnectScreen> {
 
   List<Widget> _live(BuildContext context, ConnState conn, String protocol) {
     final l = context.l10n;
+    final host = ref.watch(hostPlatformProvider);
+    final small = Theme.of(context).textTheme.bodySmall;
     return [
-      if (BleTransport.isAvailable)
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: SegmentedButton<bool>(
-            segments: [
-              ButtonSegment(value: false, label: Text(l.transportWifi), icon: const Icon(Icons.wifi)),
-              ButtonSegment(value: true, label: Text(l.transportBle), icon: const Icon(Icons.bluetooth)),
-            ],
-            selected: {_ble},
-            onSelectionChanged: (s) => setState(() => _ble = s.first),
-          ),
-        )
-      else
-        Padding(
-          padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-          child: Text(l.bleDesktopNote, style: Theme.of(context).textTheme.bodySmall),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: SegmentedButton<AdapterLink>(
+          key: const Key('link-selector'),
+          segments: [
+            ButtonSegment(value: AdapterLink.wifi, label: Text(l.transportWifi), icon: const Icon(Icons.wifi)),
+            ButtonSegment(value: AdapterLink.ble, label: Text(l.transportBle), icon: const Icon(Icons.bluetooth), enabled: host.supportsBle),
+            ButtonSegment(
+              value: AdapterLink.classic,
+              label: Text(l.transportClassic),
+              icon: Icon(host.isDesktop ? Icons.usb : Icons.bluetooth_connected),
+              enabled: host.supportsClassic,
+            ),
+          ],
+          selected: {_link},
+          onSelectionChanged: (sel) => setState(() => _link = sel.first),
         ),
+      ),
+      if (host == HostPlatform.ios)
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: Text(l.classicIosNote, key: const Key('classic-ios-note'), style: small)),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: DropdownButtonFormField<String>(
@@ -198,62 +217,130 @@ class _ConnectScreenState extends ConsumerState<ConnectScreen> {
           onChanged: (v) => ref.read(settingsProvider.notifier).change((s) => s.copyWith(protocol: v ?? '0')),
         ),
       ),
-      if (!_ble) ...[
-        Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(children: [
-            Expanded(
-              flex: 3,
-              child: TextField(
-                controller: _host,
-                textDirection: TextDirection.ltr,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(labelText: l.wifiHost),
-              ),
+      ...switch (_link) {
+        AdapterLink.wifi => _wifi(context, conn),
+        AdapterLink.ble => _bleSection(context, conn),
+        AdapterLink.classic => _classic(context, conn, host),
+      },
+    ];
+  }
+
+  List<Widget> _wifi(BuildContext context, ConnState conn) {
+    final l = context.l10n;
+    return [
+      Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(children: [
+          Expanded(
+            flex: 3,
+            child: TextField(
+              controller: _host,
+              textDirection: TextDirection.ltr,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(labelText: l.wifiHost),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: TextField(
-                controller: _port,
-                textDirection: TextDirection.ltr,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: l.wifiPort),
-              ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: TextField(
+              controller: _port,
+              textDirection: TextDirection.ltr,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: l.wifiPort),
             ),
-          ]),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Text(l.wifiInternetNote, style: Theme.of(context).textTheme.bodySmall),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(12),
-          child: FilledButton.icon(
-            icon: const Icon(Icons.link),
-            label: Text(l.connectButton),
-            onPressed: conn.busy ? null : _connectWifi,
           ),
+        ]),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Text(l.wifiInternetNote, style: Theme.of(context).textTheme.bodySmall),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(12),
+        child: FilledButton.icon(
+          key: const Key('wifi-connect'),
+          icon: const Icon(Icons.link),
+          label: Text(l.connectButton),
+          onPressed: conn.busy ? null : _connectWifi,
         ),
-      ] else ...[
-        if (Platform.isIOS || Platform.isAndroid)
-          Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: Text(l.bleClassicNote, style: Theme.of(context).textTheme.bodySmall)),
-        Padding(
-          padding: const EdgeInsets.all(12),
-          child: OutlinedButton.icon(
-            icon: _scanning ? const SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.bluetooth_searching),
-            label: Text(_scanning ? l.bleScanning : l.bleScan),
-            onPressed: _scanning ? null : _scanBle,
-          ),
+      ),
+    ];
+  }
+
+  List<Widget> _bleSection(BuildContext context, ConnState conn) {
+    final l = context.l10n;
+    final last = ref.watch(settingsProvider).lastBleDevice;
+    final list = [..._bleResults]..sort((a, b) => ((b.name ?? '').isNotEmpty ? 1 : 0).compareTo((a.name ?? '').isNotEmpty ? 1 : 0));
+    return [
+      Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: Text(l.bleNote, style: Theme.of(context).textTheme.bodySmall)),
+      Padding(
+        padding: const EdgeInsets.all(12),
+        child: OutlinedButton.icon(
+          key: const Key('ble-scan'),
+          icon: _scanning ? const SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.bluetooth_searching),
+          label: Text(_scanning ? l.bleScanning : l.bleScan),
+          onPressed: _scanning ? null : _scanBle,
         ),
-        if (_bleResults.isEmpty && !_scanning) Padding(padding: const EdgeInsets.all(12), child: Text(l.bleNoDevices)),
-        for (final r in _bleResults.where((r) => r.device.platformName.isNotEmpty || r.advertisementData.advName.isNotEmpty))
-          ListTile(
-            leading: const Icon(Icons.bluetooth),
-            title: Text(r.device.platformName.isNotEmpty ? r.device.platformName : r.advertisementData.advName),
-            subtitle: Text('${r.device.remoteId.str} · ${r.rssi} dBm', textDirection: TextDirection.ltr),
-            onTap: conn.busy ? null : () => _connectBle(r.device),
-          ),
-      ],
+      ),
+      if (list.isEmpty && !_scanning) Padding(padding: const EdgeInsets.all(12), child: Text(l.bleNoDevices)),
+      for (final d in list)
+        ListTile(
+          leading: Icon(Icons.bluetooth, color: d.deviceId == last ? Theme.of(context).colorScheme.primary : null),
+          title: Text(BleTransport.displayName(d)),
+          subtitle: Text('${d.deviceId}${d.rssi != null ? ' · ${d.rssi} dBm' : ''}${d.deviceId == last ? ' · ${l.lastUsed}' : ''}',
+              textDirection: TextDirection.ltr),
+          onTap: conn.busy ? null : () => _connectBle(d),
+        ),
+    ];
+  }
+
+  List<Widget> _classic(BuildContext context, ConnState conn, HostPlatform host) {
+    final l = context.l10n;
+    final settings = ref.watch(settingsProvider);
+    final targets = ref.watch(classicTargetsProvider);
+    return [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Text(host.isDesktop ? '${l.transportSerial}\n${l.classicDesktopNote}' : l.classicAndroidNote,
+            key: const Key('classic-note'), style: Theme.of(context).textTheme.bodySmall),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Row(children: [
+          if (host.isDesktop)
+            Expanded(
+              child: DropdownButtonFormField<int>(
+                key: const Key('baud-rate'),
+                initialValue: SerialTransport.baudRates.contains(settings.serialBaud) ? settings.serialBaud : SerialTransport.defaultBaud,
+                decoration: InputDecoration(labelText: l.baudRate),
+                items: [for (final b in SerialTransport.baudRates) DropdownMenuItem(value: b, child: Text('$b'))],
+                onChanged: (v) => ref.read(settingsProvider.notifier).change((s) => s.copyWith(serialBaud: v ?? SerialTransport.defaultBaud)),
+              ),
+            )
+          else
+            const Spacer(),
+          TextButton.icon(onPressed: () => ref.invalidate(classicTargetsProvider), icon: const Icon(Icons.refresh), label: Text(l.refresh)),
+        ]),
+      ),
+      ...targets.when(
+        loading: () => [const LinearProgressIndicator()],
+        error: (e, _) => [
+          Padding(padding: const EdgeInsets.all(12), child: Text(e is StateError ? l.classicBluetoothOff : '$e', style: const TextStyle(color: Colors.red))),
+        ],
+        data: (list) => list.isEmpty
+            ? [Padding(padding: const EdgeInsets.all(12), child: Text(l.classicNoDevices))]
+            : [
+                for (final t in list)
+                  ListTile(
+                    key: Key('classic-${t.id}'),
+                    leading: Icon(host.isDesktop ? Icons.usb : Icons.bluetooth_connected,
+                        color: t.id == settings.lastClassicDevice ? Theme.of(context).colorScheme.primary : null),
+                    title: Text(t.title, textDirection: TextDirection.ltr),
+                    subtitle: Text([t.subtitle, if (t.id == settings.lastClassicDevice) l.lastUsed].where((x) => x.isNotEmpty).join(' · ')),
+                    onTap: conn.busy ? null : () => _connectClassic(t),
+                  ),
+              ],
+      ),
     ];
   }
 

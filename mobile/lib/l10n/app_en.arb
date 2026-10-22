@@ -142,7 +142,17 @@
   "bleScan": "Scan for adapters",
   "bleScanning": "Scanning…",
   "bleNoDevices": "No Bluetooth adapters found yet.",
-  "bleClassicNote": "Classic Bluetooth (SPP) adapters are not supported: use a Wi-Fi or Bluetooth LE adapter.",
+  "bleNote": "Bluetooth LE adapters are found by scanning — no pairing in system settings needed.",
+  "transportClassic": "Bluetooth Classic",
+  "transportSerial": "Serial / COM (Bluetooth Classic or USB)",
+  "classicIosNote": "iPhone does not allow Bluetooth Classic (SPP) OBD adapters in normal apps (Apple requires MFi accessories). Use a Bluetooth LE or Wi-Fi adapter.",
+  "classicAndroidNote": "Pair the adapter first in Android Settings → Bluetooth (PIN usually 1234 or 0000), then choose it here.",
+  "classicDesktopNote": "Windows: pair the adapter in Settings → Bluetooth & devices (PIN usually 1234 or 0000). Windows then creates an outgoing COM port — choose it here. USB adapters also appear as COM ports.",
+  "classicNoDevices": "No paired adapters / COM ports found.",
+  "classicBluetoothOff": "Bluetooth is off or not available.",
+  "baudRate": "Baud rate",
+  "refresh": "Refresh",
+  "lastUsed": "Last used",
   "wifiInternetNote": "When the phone joins the adapter's Wi-Fi it may lose internet. The scan is saved on the phone and uploaded automatically later.",
   "demoScenarios": "Demo scenarios",
   "demoExplain": "Demo uses a built-in simulator. Results are clearly labelled DEMO.",
@@ -379,9 +389,5 @@
   "srsNote": "Airbag (SRS) codes are never cleared by this app.",
   "autoStartAfterClear": "Demo: start the engine automatically after clearing",
   "monitorComplete": "complete",
-  "monitorIncomplete": "not complete",
-  "bleDesktopNote": "On Windows use a Wi-Fi adapter (e.g. ELM327 Wi-Fi). Bluetooth adapters work from the phone app.",
-  "@bleDesktopNote": {
-    "description": "Shown instead of the Wi-Fi/BLE selector on desktop platforms without BLE support"
-  }
+  "monitorIncomplete": "not complete"
 }

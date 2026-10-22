@@ -15,7 +15,7 @@ subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
-// Some plugins (e.g. flutter_blue_plus 1.x, BSD-licensed) still declare compileSdk 33, while their
+// Some plugins (e.g. universal_ble, flutter_libserialport) declare an older compileSdk, while their
 // AndroidX dependencies require 34+. Compile every Android library module against the app's SDK.
 // compileSdk only selects the API headers used at build time; minSdk/targetSdk are unchanged.
 // Registered before evaluationDependsOn(":app") so the hook exists before any module is evaluated.

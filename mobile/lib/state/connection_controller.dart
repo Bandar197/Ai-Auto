@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:universal_ble/universal_ble.dart' show BleDevice;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../obd/obd.dart';
 import '../platform/ble_transport.dart';
+import '../platform/bt_classic_transport.dart';
+import '../platform/serial_transport.dart';
 import 'providers.dart';
 
 class ConnState {
@@ -125,15 +127,33 @@ class ConnectionController extends Notifier<ConnState> {
     return r;
   }
 
-  Future<ConnectResult> connectWifi(String host, int port) =>
-      _connect(TcpTransport(host: host, port: port), kind: 'elm327_wifi');
+  Future<ConnectResult> connectWifi(String host, int port) {
+    unawaited(ref.read(settingsProvider.notifier).change((x) => x.copyWith(lastLink: 'wifi')));
+    return _connect(TcpTransport(host: host, port: port), kind: 'elm327_wifi');
+  }
 
-  Future<ConnectResult> connectBle(BluetoothDevice device) {
+  Future<ConnectResult> connectBle(BleDevice device) {
     final s = ref.read(settingsProvider);
     final override = s.bleService.isNotEmpty && s.bleNotify.isNotEmpty && s.bleWrite.isNotEmpty
         ? BleUartProfile(name: 'manual', service: s.bleService, notify: s.bleNotify, write: s.bleWrite)
         : null;
+    unawaited(ref.read(settingsProvider.notifier).change((x) => x.copyWith(lastLink: 'ble', lastBleDevice: device.deviceId)));
     return _connect(BleTransport(device, uuidOverride: override), kind: 'elm327_ble');
+  }
+
+  /// Desktop: Bluetooth Classic (paired in the OS → COM port) or USB adapter.
+  Future<ConnectResult> connectSerial(String portName, {int? baudRate}) {
+    final baud = baudRate ?? ref.read(settingsProvider).serialBaud;
+    unawaited(ref
+        .read(settingsProvider.notifier)
+        .change((x) => x.copyWith(lastLink: 'classic', lastClassicDevice: portName, serialBaud: baud)));
+    return _connect(SerialTransport(portName, baudRate: baud), kind: 'elm327_serial');
+  }
+
+  /// Android: Bluetooth Classic SPP to a device paired in Android settings.
+  Future<ConnectResult> connectBtClassic(String address, {String name = ''}) {
+    unawaited(ref.read(settingsProvider.notifier).change((x) => x.copyWith(lastLink: 'classic', lastClassicDevice: address)));
+    return _connect(BtClassicTransport(address, name: name), kind: 'elm327_serial');
   }
 
   Future<ConnectResult> connectDemo(Scenario scenario) {

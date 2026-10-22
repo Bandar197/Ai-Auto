@@ -4,8 +4,10 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
+  flutter_libserialport
   flutter_secure_storage_windows
   share_plus
+  universal_ble
   url_launcher_windows
 )
 

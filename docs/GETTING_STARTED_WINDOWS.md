@@ -95,7 +95,10 @@ automind verify clear_record.json --host 192.168.0.10 --port 35000
 1. من GitHub: **Actions** ← آخر تشغيل لـ **CI** ← قسم **Artifacts** ← نزّل **automind-windows**.
 2. فك الضغط في مجلد، وشغّل `automind_app.exe`. إذا ظهر تحذير Windows SmartScreen اختر **More info ← Run anyway** (النسخة غير موقّعة بعد).
 3. **الوضع التجريبي** يعمل فورا. **الوضع الحي**: اربط اللابتوب بشبكة واي فاي جهاز ELM327 ثم اتصل على `192.168.0.10:35000`.
-4. البلوتوث غير مدعوم في نسخة ويندوز — استخدم جهاز Wi-Fi.
+4. **البلوتوث / Bluetooth** — في شاشة الاتصال اختر نوع القارئ / pick the adapter type on the Connect screen:
+   - **Bluetooth LE** (أغلب القارئات التي تعمل مع الآيفون / most adapters that work with an iPhone): اضغط «ابحث عن القارئات» واختره من القائمة — لا حاجة للإقران من ويندوز. / Tap *Scan for adapters* and pick it — no pairing in Windows needed. يحتاج اللابتوب بلوتوث 4.0 أو أحدث / needs Bluetooth 4.0+.
+   - **Bluetooth Classic** (قارئات SPP القديمة / older SPP adapters): اقرن القارئ أولا من **الإعدادات ← Bluetooth والأجهزة ← إضافة جهاز** (الرمز غالبا `1234` أو `0000`). ينشئ ويندوز منفذ **COM** صادر (تجده في *More Bluetooth settings ← COM Ports*). في التطبيق اختر **Bluetooth Classic** ثم منفذ COM، والسرعة 38400 (جرّب 9600 أو 115200 إن لم يرد). / Pair it in **Settings → Bluetooth & devices → Add device** (PIN usually `1234` or `0000`); Windows creates an outgoing **COM** port (*More Bluetooth settings → COM Ports*). In the app choose **Bluetooth Classic**, then the COM port, baud 38400 (try 9600 or 115200 if it does not answer).
+   - قارئات **USB** تظهر أيضا كمنفذ COM في نفس القائمة. / **USB** adapters appear as COM ports in the same list.
 
 ### النظام الكامل (الخادم + لوحة الإدارة + المحاكي) / Full stack
 

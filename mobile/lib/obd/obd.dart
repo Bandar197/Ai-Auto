@@ -18,6 +18,8 @@ export 'recording/recording.dart';
 export 'recording/replay_source.dart';
 export 'services/obd_services.dart';
 export 'transport/ble_profiles.dart';
+export 'transport/byte_channel_transport.dart';
+export 'transport/gatt_uart_transport.dart';
 export 'transport/demo_transport.dart';
 export 'transport/obd_transport.dart';
 export 'transport/tcp_transport.dart';

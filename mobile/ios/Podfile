@@ -1,4 +1,4 @@
-# AutoMind AI — minimum iOS 15 (BLE via flutter_blue_plus, Wi-Fi TCP sockets).
+# AutoMind AI — minimum iOS 15 (BLE via universal_ble, Wi-Fi TCP sockets).
 platform :ios, '15.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.

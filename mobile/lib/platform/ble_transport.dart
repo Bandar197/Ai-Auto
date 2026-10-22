@@ -1,137 +1,118 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io' show Platform;
 
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:universal_ble/universal_ble.dart';
 
 import '../obd/errors.dart';
 import '../obd/transport/ble_profiles.dart';
-import '../obd/transport/obd_transport.dart';
+import '../obd/transport/gatt_uart_transport.dart';
+import 'host_platform.dart';
 
-/// ELM327 over Bluetooth Low Energy (works on iOS and Android).
-/// Classic Bluetooth SPP adapters are not supported (iOS forbids SPP for
-/// normal apps; Android SPP is a documented future option).
-class BleTransport implements ObdTransport {
-  /// flutter_blue_plus 1.x has no Windows implementation; Wi-Fi adapters work everywhere.
-  static bool get isAvailable => Platform.isAndroid || Platform.isIOS || Platform.isMacOS || Platform.isLinux;
+/// ELM327 over Bluetooth Low Energy using universal_ble (BSD-3) — one BLE
+/// stack for Android, iOS, macOS, Windows and Linux.
+class BleTransport extends GattUartTransport {
+  BleTransport(BleDevice device, {super.uuidOverride, super.connectTimeout}) : super(UniversalBleLink(device));
 
-  BleTransport(this.device, {this.uuidOverride, this.connectTimeout = const Duration(seconds: 12)});
+  static bool get isAvailable => detectHostPlatform().supportsBle;
 
-  final BluetoothDevice device;
-
-  /// Manual UUIDs from settings (service/notify/write).
-  final BleUartProfile? uuidOverride;
-  final Duration connectTimeout;
-
-  BluetoothCharacteristic? _write;
-  BluetoothCharacteristic? _notify;
-  StreamSubscription<List<int>>? _notifySub;
-  StreamSubscription<BluetoothConnectionState>? _stateSub;
-  StreamController<String>? _controller;
-  BleUartProfile? profile;
-  int _mtu = 23;
-
-  @override
-  TransportKind get kind => TransportKind.ble;
-
-  @override
-  String get description => device.platformName.isEmpty ? device.remoteId.str : device.platformName;
-
-  @override
-  bool get isConnected => _controller != null;
-
-  @override
-  Stream<String> get incoming {
-    final c = _controller;
-    if (c == null) throw TransportException('not connected');
-    return c.stream;
-  }
-
-  /// Scans for nearby BLE devices (the UI lists them; ELM clones often have
-  /// names like "OBDII", "OBDBLE", "IOS-Vlink", "V-LINK", "Android-Vlink").
-  static Stream<List<ScanResult>> scan({Duration timeout = const Duration(seconds: 8)}) {
-    unawaited(FlutterBluePlus.startScan(timeout: timeout));
-    return FlutterBluePlus.scanResults;
-  }
-
-  static Future<void> stopScan() => FlutterBluePlus.stopScan();
-
-  @override
-  Future<void> connect() async {
-    await close();
-    try {
-      await device.connect(timeout: connectTimeout, mtu: null);
-    } on Object catch (e) {
-      throw TransportException('BLE connect failed: $e', code: e is TimeoutException ? 'timeout' : 'unreachable');
-    }
-    try {
+  /// Scans for nearby BLE devices; emits the accumulated list (ELM clones are
+  /// often named "OBDII", "OBDBLE", "IOS-Vlink", "V-LINK", "Android-Vlink").
+  static Stream<List<BleDevice>> scan({Duration timeout = const Duration(seconds: 8)}) async* {
+    final state = await UniversalBle.getBluetoothAvailabilityState();
+    if (state == AvailabilityState.unsupported) throw TransportException('Bluetooth LE is not supported on this device', code: 'rejected');
+    if (state == AvailabilityState.poweredOff) throw TransportException('Bluetooth is off', code: 'unreachable');
+    if (state == AvailabilityState.unauthorized) {
       try {
-        _mtu = await device.requestMtu(185);
-      } on Object catch (_) {
-        _mtu = device.mtuNow;
-      }
-      final services = await device.discoverServices();
-      final map = <String, List<String>>{
-        for (final s in services) s.uuid.str128: [for (final c in s.characteristics) c.uuid.str128],
-      };
-      final p = pickBleProfile(map, override: uuidOverride);
-      if (p == null) {
-        throw TransportException('no known ELM327 GATT layout (FFF0/FFE0/18F0); set UUIDs in settings', code: 'rejected');
-      }
-      profile = p;
-      for (final s in services) {
-        if (!BleUartProfile.sameUuid(s.uuid.str128, p.service)) continue;
-        for (final c in s.characteristics) {
-          if (BleUartProfile.sameUuid(c.uuid.str128, p.notify)) _notify = c;
-          if (BleUartProfile.sameUuid(c.uuid.str128, p.write)) _write = c;
-        }
-      }
-      final controller = StreamController<String>.broadcast();
-      _controller = controller;
-      await _notify!.setNotifyValue(true);
-      _notifySub = _notify!.onValueReceived.listen((v) => controller.add(latin1.decode(v, allowInvalid: true)));
-      _stateSub = device.connectionState.listen((s) {
-        if (s == BluetoothConnectionState.disconnected) _teardown();
-      });
-    } on TransportException {
-      await device.disconnect();
-      rethrow;
-    } on Object catch (e) {
-      await device.disconnect();
-      throw TransportException('BLE setup failed: $e', code: 'error');
+        await UniversalBle.requestPermissions();
+      } on Object catch (_) {}
+    }
+    final found = <String, BleDevice>{};
+    final out = StreamController<List<BleDevice>>();
+    final sub = UniversalBle.scanStream.listen((d) {
+      found[d.deviceId] = d;
+      out.add(found.values.toList()..sort((a, b) => (b.rssi ?? -999).compareTo(a.rssi ?? -999)));
+    });
+    final timer = Timer(timeout, () async {
+      await stopScan();
+      await out.close();
+    });
+    try {
+      await UniversalBle.startScan();
+      yield* out.stream;
+    } finally {
+      timer.cancel();
+      await sub.cancel();
+      await stopScan();
     }
   }
 
-  void _teardown() {
-    _notifySub?.cancel();
-    _stateSub?.cancel();
-    _notifySub = null;
-    _stateSub = null;
-    final c = _controller;
-    _controller = null;
-    if (c != null && !c.isClosed) c.close();
-  }
-
-  @override
-  Future<void> write(String data) async {
-    final w = _write;
-    if (w == null || _controller == null) throw TransportException('BLE not connected', code: 'socket_closed');
-    final noResp = w.properties.writeWithoutResponse && !w.properties.write;
+  static Future<void> stopScan() async {
     try {
-      for (final chunk in chunkForMtu(latin1.encode(data), _mtu)) {
-        await w.write(chunk, withoutResponse: noResp);
-      }
-    } on Object catch (e) {
-      _teardown();
-      throw TransportException('BLE write failed: $e', code: 'socket_closed');
-    }
-  }
-
-  @override
-  Future<void> close() async {
-    _teardown();
-    try {
-      await device.disconnect();
+      await UniversalBle.stopScan();
     } on Object catch (_) {}
   }
+
+  static String displayName(BleDevice d) => (d.name ?? '').isNotEmpty ? d.name! : d.deviceId;
+}
+
+/// [GattLink] implemented with universal_ble.
+class UniversalBleLink implements GattLink {
+  UniversalBleLink(this.device);
+  final BleDevice device;
+
+  @override
+  String get description => BleTransport.displayName(device);
+
+  @override
+  Stream<bool> get connection => device.connectionStream;
+
+  @override
+  Future<void> connect(Duration timeout) => device.connect(timeout: timeout);
+
+  @override
+  Future<int> requestMtu(int mtu) async {
+    try {
+      return await device.requestMtu(mtu); // Windows/Apple: OS-managed, returns the effective value
+    } on Object catch (_) {
+      return 23;
+    }
+  }
+
+  @override
+  Future<Map<String, List<GattCharacteristicInfo>>> discover() async {
+    final services = await device.discoverServices();
+    return {
+      for (final s in services)
+        s.uuid: [
+          for (final c in s.characteristics)
+            GattCharacteristicInfo(
+              c.uuid,
+              write: c.properties.contains(CharacteristicProperty.write),
+              writeWithoutResponse: c.properties.contains(CharacteristicProperty.writeWithoutResponse),
+              notify: c.properties.contains(CharacteristicProperty.notify),
+              indicate: c.properties.contains(CharacteristicProperty.indicate),
+            ),
+        ],
+    };
+  }
+
+  @override
+  Future<Stream<List<int>>> subscribe(String service, String characteristic, {bool indicate = false}) async {
+    final c = await device.getCharacteristic(BleUartProfile.expand(characteristic), service: BleUartProfile.expand(service));
+    final stream = c.onValueReceived; // listen before subscribing so no reply is lost
+    if (indicate) {
+      await c.indications.subscribe();
+    } else {
+      await c.notifications.subscribe();
+    }
+    return stream;
+  }
+
+  @override
+  Future<void> write(String service, String characteristic, List<int> data, {required bool withResponse}) async {
+    final c = await device.getCharacteristic(BleUartProfile.expand(characteristic), service: BleUartProfile.expand(service));
+    await c.write(data, withResponse: withResponse);
+  }
+
+  @override
+  Future<void> disconnect() => device.disconnect();
 }

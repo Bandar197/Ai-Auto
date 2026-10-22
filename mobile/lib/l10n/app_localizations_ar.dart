@@ -361,8 +361,42 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bleNoDevices => 'لم يتم العثور على قارئات بلوتوث بعد.';
 
   @override
-  String get bleClassicNote =>
-      'قارئات البلوتوث الكلاسيكي (SPP) غير مدعومة: استخدم قارئ Wi-Fi أو بلوتوث LE.';
+  String get bleNote =>
+      'قارئات البلوتوث LE تظهر بالبحث — لا حاجة للإقران من إعدادات النظام.';
+
+  @override
+  String get transportClassic => 'بلوتوث كلاسيكي';
+
+  @override
+  String get transportSerial => 'منفذ COM (بلوتوث كلاسيكي أو USB)';
+
+  @override
+  String get classicIosNote =>
+      'لا يسمح الآيفون باستخدام قارئات البلوتوث الكلاسيكي (SPP) في التطبيقات العادية (تشترط Apple ملحقات MFi). استخدم قارئ بلوتوث LE أو Wi-Fi.';
+
+  @override
+  String get classicAndroidNote =>
+      'اقرن القارئ أولًا من إعدادات أندرويد ← البلوتوث (الرمز غالبًا 1234 أو 0000)، ثم اختره هنا.';
+
+  @override
+  String get classicDesktopNote =>
+      'ويندوز: اقرن القارئ من الإعدادات ← Bluetooth والأجهزة (الرمز غالبًا 1234 أو 0000). ينشئ ويندوز منفذ COM صادر — اختره هنا. قارئات USB تظهر أيضًا كمنافذ COM.';
+
+  @override
+  String get classicNoDevices =>
+      'لم يتم العثور على قارئات مقترنة أو منافذ COM.';
+
+  @override
+  String get classicBluetoothOff => 'البلوتوث مطفأ أو غير متوفر.';
+
+  @override
+  String get baudRate => 'سرعة المنفذ (Baud)';
+
+  @override
+  String get refresh => 'تحديث';
+
+  @override
+  String get lastUsed => 'آخر استخدام';
 
   @override
   String get wifiInternetNote =>
@@ -898,8 +932,4 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get monitorIncomplete => 'غير مكتمل';
-
-  @override
-  String get bleDesktopNote =>
-      'على ويندوز استخدم قارئ Wi-Fi (مثل ELM327 Wi-Fi). قارئات البلوتوث تعمل من تطبيق الجوال.';
 }

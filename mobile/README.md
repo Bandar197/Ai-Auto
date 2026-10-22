@@ -1,11 +1,11 @@
 # AutoMind AI — Mobile (Flutter) · أوتومايند — تطبيق الجوال
 
 Arabic-first (RTL) OBD-II diagnostics app for iOS and Android. It talks to a
-real ELM327 adapter (Wi-Fi TCP or Bluetooth LE), records the session,
+real ELM327 adapter (Wi-Fi, Bluetooth LE or Bluetooth Classic/USB), records the session,
 uploads it to the AutoMind backend for diagnosis, and works offline.
 
 تطبيق تشخيص سيارات عبر منفذ OBD-II، عربي أولًا (من اليمين لليسار) لنظامي iOS
-وأندرويد. يتصل بقارئ ELM327 حقيقي (Wi-Fi أو بلوتوث LE)، يسجّل الجلسة، ويرفعها
+وأندرويد. يتصل بقارئ ELM327 حقيقي (Wi-Fi أو بلوتوث LE أو بلوتوث كلاسيكي/USB)، يسجّل الجلسة، ويرفعها
 إلى خادم أوتومايند للتشخيص، ويعمل بدون إنترنت.
 
 ---
@@ -27,7 +27,8 @@ lib/
     live/         LivePoller (round-robin over supported PIDs, sample rate)
     recording/    Recording v1 model, Recorder, ReplaySource (1x/2x/4x, pause, seek, re-decode from raw)
     emulator/     ELM327 emulator + scenario signal model (parity with backend/automind/simulator)
-  platform/       BleTransport (flutter_blue_plus) — the only Flutter-dependent transport
+  platform/       BleTransport (universal_ble), SerialTransport (flutter_libserialport, desktop COM),
+                  BtClassicTransport (Android SPP via the app's Kotlin channel)
   core/           Settings, API client (dio + refresh-once interceptor), token store (flutter_secure_storage),
                   local file store, offline upload queue, bundled DTC knowledge base
   state/          Riverpod providers and controllers (connection, scan)
@@ -107,9 +108,22 @@ AUTOMIND_SIM=127.0.0.1:35091 AUTOMIND_SIM_SCENARIO=p0106_map_sensor flutter test
    is saved on the phone and uploaded automatically when connectivity returns
    (or pull to refresh on Home/History).
 
-BLE adapters: Connect → Live → Bluetooth LE → Scan. Supported GATT layouts:
-FFF0 (FFF1 notify / FFF2 write), FFE0 (FFE1), 18F0 (2AF0 / 2AF1); custom UUIDs
-in Settings → Adapter.
+### Adapter types (Connect → Live → Wi-Fi / Bluetooth LE / Bluetooth Classic)
+
+| | Wi-Fi | Bluetooth LE | Bluetooth Classic (SPP) |
+|---|---|---|---|
+| Android | ✓ | ✓ universal_ble | ✓ paired devices, RFCOMM via the app's Kotlin channel (`BtClassicPlugin.kt`) |
+| iOS | ✓ | ✓ universal_ble | ✗ shown disabled — Apple allows SPP only for MFi accessories |
+| Windows / macOS / Linux | ✓ | ✓ universal_ble (Bluetooth 4.0+) | ✓ via the serial/COM port the OS creates after pairing (also USB adapters) |
+
+* **BLE**: Scan and pick the adapter — no OS pairing needed. GATT layouts: FFF0 (FFF1 notify /
+  FFF2 write), FFE0 (FFE1), 18F0 (2AF0 / 2AF1); custom UUIDs in Settings → Adapter.
+* **Classic on Android**: pair the adapter in Android Settings → Bluetooth (PIN 1234 or 0000),
+  then pick it from the paired list (v1 does not scan for unpaired devices).
+* **Classic on Windows**: pair in Settings → Bluetooth & devices; Windows creates an outgoing COM
+  port; pick it (baud 38400 default, 9600/115200 selectable).
+* The last link and device are remembered. All links use the same ELM327 engine; a dropped
+  link triggers the client's auto-reconnect during live data.
 
 ### Building
 
@@ -167,9 +181,9 @@ AUTOMIND_SIM=127.0.0.1:35444 AUTOMIND_SIM_SCENARIO=old_code_repaired AUTOMIND_SI
 
 ### Known limitations
 
-* **Bluetooth Classic (SPP)** adapters are not supported. iOS does not allow SPP
-  for normal apps (MFi only); on Android SPP is a possible future transport
-  (`ObdTransport` makes it a drop-in addition).
+* Bluetooth Classic is impossible on iOS (MFi only). Android Classic lists paired devices only.
+* Opening a serial port is a blocking call in libserialport; the UI may pause while Windows
+  connects a Bluetooth Classic COM port.
 * The APK could not be built in the CI sandbox used to create this app (Android
   SDK download host blocked); `flutter analyze` and `flutter test` pass.
   iOS was not built (needs macOS).
@@ -189,7 +203,14 @@ AUTOMIND_SIM=127.0.0.1:35444 AUTOMIND_SIM_SCENARIO=old_code_repaired AUTOMIND_SI
   (CAN 11/29 بت، J1850/ISO 9141/KWP مع checksum، تجميع ISO-TP)، فك ترميز PID
   والأكواد، الخدمات، عميل الاتصال مع إعادة المحاولة وإعادة الاتصال، المسجّل
   وإعادة التشغيل، ومحاكي ELM327 مطابق لمحاكي بايثون.
-* `lib/platform/` ناقل البلوتوث LE.
+* `lib/platform/` نواقل البلوتوث LE (universal_ble) والبلوتوث الكلاسيكي على أندرويد ومنفذ COM على الحاسوب.
+
+### أنواع القارئات
+
+* **Wi-Fi**: على كل الأنظمة.
+* **بلوتوث LE**: أندرويد وآيفون وويندوز وماك ولينكس — ابحث واختر القارئ دون إقران من النظام.
+* **بلوتوث كلاسيكي**: أندرويد (اقرن القارئ من الإعدادات أولًا، الرمز 1234 أو 0000)، وعلى ويندوز اقرنه ثم اختر منفذ COM
+  الذي ينشئه ويندوز (وقارئات USB أيضًا). غير متاح على الآيفون مع توضيح السبب.
 * `lib/core/` الإعدادات، عميل API مع تحديث الرمز تلقائيًا، التخزين الآمن للرموز،
   التخزين المحلي، قائمة الرفع بدون إنترنت، قاعدة معرفة الأكواد.
 * `lib/state/` و `lib/features/` إدارة الحالة (Riverpod) والشاشات.
@@ -241,7 +262,16 @@ flutter run
 
 ### القيود المعروفة
 
-* قارئات البلوتوث الكلاسيكي (SPP) غير مدعومة (ممنوعة على iOS، ومستقبلية على أندرويد).
+* البلوتوث الكلاسيكي غير ممكن على الآيفون (تشترط Apple ملحقات MFi). على أندرويد تظهر الأجهزة المقترنة فقط.
 * لم يُبنَ ملف APK في بيئة الإنشاء بسبب حجب خادم تنزيل Android SDK.
 * اسم التطبيق على الشاشة الرئيسية في iOS بالإنجليزية حاليًا (يلزم إضافة
   `InfoPlist.strings` عربي عبر Xcode).
+
+---
+
+## Third-party notices / إشعارات الطرف الثالث
+
+* `universal_ble` — BSD-3-Clause (Navideck).
+* `flutter_libserialport` — MIT; it loads **libserialport** (LGPL-3.0) as a separate dynamic
+  library, so it can be replaced by the user as the LGPL requires.
+* IBM Plex Sans Arabic — SIL Open Font License 1.1 (`assets/fonts/OFL.txt`).

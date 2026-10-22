@@ -18,6 +18,8 @@
 	</array>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>AutoMind AI uses Bluetooth to connect to your OBD-II (ELM327 BLE) adapter and read diagnostic data from your car. / يستخدم أوتومايند البلوتوث للاتصال بقارئ OBD-II وقراءة بيانات تشخيص سيارتك.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>AutoMind AI uses Bluetooth LE to talk to your OBD-II adapter. / يستخدم أوتومايند البلوتوث LE للتواصل مع قارئ OBD-II.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>AutoMind AI connects to your Wi-Fi OBD-II adapter (usually 192.168.0.10) on the local network to read diagnostic data. / يتصل أوتومايند بقارئ OBD-II عبر شبكة Wi-Fi المحلية لقراءة بيانات التشخيص.</string>
 	<key>NSAppTransportSecurity</key>

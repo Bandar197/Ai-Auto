@@ -16,6 +16,10 @@ class AppSettings {
     this.bleService = '',
     this.bleNotify = '',
     this.bleWrite = '',
+    this.lastLink = 'wifi',
+    this.lastBleDevice = '',
+    this.lastClassicDevice = '',
+    this.serialBaud = 38400,
     this.includeVin = false,
     this.captureSeconds = 45,
     this.onboardingDone = false,
@@ -42,6 +46,16 @@ class AppSettings {
   final String bleService;
   final String bleNotify;
   final String bleWrite;
+
+  /// Last adapter link used: wifi | ble | classic.
+  final String lastLink;
+
+  /// Last BLE device id / Classic address or COM port (pre-selected next time).
+  final String lastBleDevice;
+  final String lastClassicDevice;
+
+  /// Serial (COM) baud rate for desktop Classic/USB adapters.
+  final int serialBaud;
   final bool includeVin;
   final int captureSeconds;
   final bool onboardingDone;
@@ -59,6 +73,10 @@ class AppSettings {
     String? bleService,
     String? bleNotify,
     String? bleWrite,
+    String? lastLink,
+    String? lastBleDevice,
+    String? lastClassicDevice,
+    int? serialBaud,
     bool? includeVin,
     int? captureSeconds,
     bool? onboardingDone,
@@ -77,6 +95,10 @@ class AppSettings {
         bleService: bleService ?? this.bleService,
         bleNotify: bleNotify ?? this.bleNotify,
         bleWrite: bleWrite ?? this.bleWrite,
+        lastLink: lastLink ?? this.lastLink,
+        lastBleDevice: lastBleDevice ?? this.lastBleDevice,
+        lastClassicDevice: lastClassicDevice ?? this.lastClassicDevice,
+        serialBaud: serialBaud ?? this.serialBaud,
         includeVin: includeVin ?? this.includeVin,
         captureSeconds: captureSeconds ?? this.captureSeconds,
         onboardingDone: onboardingDone ?? this.onboardingDone,
@@ -95,6 +117,10 @@ class AppSettings {
         bleService: p.getString('bleService') ?? '',
         bleNotify: p.getString('bleNotify') ?? '',
         bleWrite: p.getString('bleWrite') ?? '',
+        lastLink: p.getString('lastLink') ?? 'wifi',
+        lastBleDevice: p.getString('lastBleDevice') ?? '',
+        lastClassicDevice: p.getString('lastClassicDevice') ?? '',
+        serialBaud: p.getInt('serialBaud') ?? 38400,
         includeVin: p.getBool('includeVin') ?? false,
         captureSeconds: p.getInt('captureSeconds') ?? 45,
         onboardingDone: p.getBool('onboardingDone') ?? false,
@@ -113,6 +139,10 @@ class AppSettings {
     await p.setString('bleService', bleService);
     await p.setString('bleNotify', bleNotify);
     await p.setString('bleWrite', bleWrite);
+    await p.setString('lastLink', lastLink);
+    await p.setString('lastBleDevice', lastBleDevice);
+    await p.setString('lastClassicDevice', lastClassicDevice);
+    await p.setInt('serialBaud', serialBaud);
     await p.setBool('includeVin', includeVin);
     await p.setInt('captureSeconds', captureSeconds);
     await p.setBool('onboardingDone', onboardingDone);

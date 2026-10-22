@@ -18,7 +18,7 @@ android {
         applicationId = "ai.automind.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        // flutter_secure_storage / flutter_blue_plus need API 23+.
+        // flutter_secure_storage needs API 23+ (universal_ble 21+).
         minSdk = maxOf(flutter.minSdkVersion, 23)
         targetSdk = flutter.targetSdkVersion
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
