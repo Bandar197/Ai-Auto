@@ -1,6 +1,6 @@
 {
  "$comment": "AutoMind AI bilingual DTC knowledge base, shared by the Python diagnosis engine and the Dart mobile app. Generic (SAE-defined) codes only; manufacturer-specific ranges are intentionally excluded. severity: info|low|medium|high|critical (critical = stop driving). related_signals reference outputs[].key in shared/obd/pids.json. Validate with: python3 tools/validate_kb.py shared/kb/dtc_definitions.json shared/obd/pids.json",
- "kb_version": "2026.10",
+ "kb_version": "2026.10.2",
  "source": "Generic code descriptions per SAE J2012 / ISO 15031-6 (publicly documented generic DTC meanings). Common causes are general automotive knowledge, not vehicle-specific data.",
  "codes": {
   "C0035": {
@@ -628,6 +628,90 @@
     {
      "en": "Stretched timing chain or timing belt/chain jumped a tooth",
      "ar": "تمدد جنزير التوقيت (الكاتينة) أو قفز سير/جنزير التوقيت سنًا"
+    }
+   ]
+  },
+  "P0026": {
+   "system": "powertrain",
+   "subsystem": "engine",
+   "en": "Intake Valve Control Solenoid Circuit Range/Performance (Bank 1)",
+   "ar": "أداء/مدى غير صحيح لملف التحكم بصمام السحب المتغير (البنك 1)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "timing_advance",
+    "oil_temp",
+    "coolant_temp"
+   ],
+   "common_causes": [
+    {
+     "en": "Stuck or clogged intake camshaft (VVT) oil control valve, bank 1",
+     "ar": "ملف/صمام زيت توقيت كامة السحب (VVT) عالق أو مسدود - البنك 1"
+    },
+    {
+     "en": "Low or dirty engine oil restricting VVT operation",
+     "ar": "زيت محرك منخفض أو متسخ يعيق عمل نظام التوقيت المتغير"
+    },
+    {
+     "en": "Wiring or connector fault to the solenoid",
+     "ar": "عطل في أسلاك أو وصلة الملف"
+    }
+   ]
+  },
+  "P0027": {
+   "system": "powertrain",
+   "subsystem": "engine",
+   "en": "Exhaust Valve Control Solenoid Circuit Range/Performance (Bank 1)",
+   "ar": "أداء/مدى غير صحيح لملف التحكم بصمام العادم المتغير (البنك 1)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "timing_advance",
+    "oil_temp",
+    "coolant_temp"
+   ],
+   "common_causes": [
+    {
+     "en": "Stuck or clogged exhaust camshaft (VVT) oil control valve, bank 1",
+     "ar": "ملف/صمام زيت توقيت كامة العادم (VVT) عالق أو مسدود - البنك 1"
+    },
+    {
+     "en": "Low or dirty engine oil restricting VVT operation",
+     "ar": "زيت محرك منخفض أو متسخ يعيق عمل نظام التوقيت المتغير"
+    },
+    {
+     "en": "Wiring or connector fault to the solenoid",
+     "ar": "عطل في أسلاك أو وصلة الملف"
+    }
+   ]
+  },
+  "P0028": {
+   "system": "powertrain",
+   "subsystem": "engine",
+   "en": "Intake Valve Control Solenoid Circuit Range/Performance (Bank 2)",
+   "ar": "أداء/مدى غير صحيح لملف التحكم بصمام السحب المتغير (البنك 2)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "timing_advance",
+    "oil_temp",
+    "coolant_temp"
+   ],
+   "common_causes": [
+    {
+     "en": "Stuck or clogged intake camshaft (VVT) oil control valve, bank 2",
+     "ar": "ملف/صمام زيت توقيت كامة السحب (VVT) عالق أو مسدود - البنك 2"
+    },
+    {
+     "en": "Low or dirty engine oil restricting VVT operation",
+     "ar": "زيت محرك منخفض أو متسخ يعيق عمل نظام التوقيت المتغير"
+    },
+    {
+     "en": "Wiring or connector fault to the solenoid",
+     "ar": "عطل في أسلاك أو وصلة الملف"
     }
    ]
   },
@@ -2104,6 +2188,74 @@
     {
      "en": "Faulty fuel rail pressure sensor or pressure relief valve",
      "ar": "عطل في حساس ضغط السكة أو صمام تنفيس الضغط"
+    }
+   ]
+  },
+  "P0097": {
+   "system": "powertrain",
+   "subsystem": "air_intake",
+   "en": "Intake Air Temperature Sensor 2 Circuit Low (Bank 1)",
+   "ar": "دائرة حساس حرارة هواء السحب 2 - جهد منخفض (البنك 1)",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "intake_air_temp",
+    "engine_rpm",
+    "coolant_temp"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground in the IAT 2 sensor circuit",
+     "ar": "قصر أرضي في دائرة حساس حرارة الهواء 2"
+    },
+    {
+     "en": "Faulty intake air temperature sensor 2",
+     "ar": "عطل في حساس حرارة هواء السحب 2"
+    }
+   ]
+  },
+  "P0098": {
+   "system": "powertrain",
+   "subsystem": "air_intake",
+   "en": "Intake Air Temperature Sensor 2 Circuit High (Bank 1)",
+   "ar": "دائرة حساس حرارة هواء السحب 2 - جهد مرتفع (البنك 1)",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "intake_air_temp",
+    "engine_rpm",
+    "coolant_temp"
+   ],
+   "common_causes": [
+    {
+     "en": "Open circuit or high resistance in the IAT 2 circuit",
+     "ar": "دائرة مفتوحة أو مقاومة عالية في حساس حرارة الهواء 2"
+    },
+    {
+     "en": "Faulty intake air temperature sensor 2",
+     "ar": "عطل في حساس حرارة هواء السحب 2"
+    }
+   ]
+  },
+  "P0099": {
+   "system": "powertrain",
+   "subsystem": "air_intake",
+   "en": "Intake Air Temperature Sensor 2 Circuit Intermittent/Erratic (Bank 1)",
+   "ar": "حساس حرارة هواء السحب 2 - قراءة متقطعة/غير مستقرة (البنك 1)",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "intake_air_temp",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Loose or corroded connector at the IAT 2 sensor",
+     "ar": "وصلة حساس حرارة الهواء 2 مرتخية أو متآكلة"
+    },
+    {
+     "en": "Chafed or intermittently shorting wiring",
+     "ar": "أسلاك متآكلة أو تقصُر بشكل متقطع"
     }
    ]
   },
@@ -4955,6 +5107,126 @@
     }
    ]
   },
+  "P0209": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Injector Circuit/Open - Cylinder 9",
+   "ar": "دائرة البخاخ مفتوحة أو بها عطل - الأسطوانة (السلندر) 9",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2",
+    "engine_load"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty cylinder 9 fuel injector",
+     "ar": "عطل في بخاخ الأسطوانة (السلندر) 9"
+    },
+    {
+     "en": "Open, shorted or corroded wiring/connector to the cylinder 9 injector",
+     "ar": "سلك أو وصلة البخاخ مقطوعة أو مقصورة أو متآكلة - الأسطوانة (السلندر) 9"
+    },
+    {
+     "en": "Injector driver fault inside the ECM/PCM",
+     "ar": "عطل في دائرة قيادة البخاخ داخل كمبيوتر المحرك ECM/PCM"
+    }
+   ]
+  },
+  "P0210": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Injector Circuit/Open - Cylinder 10",
+   "ar": "دائرة البخاخ مفتوحة أو بها عطل - الأسطوانة (السلندر) 10",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2",
+    "engine_load"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty cylinder 10 fuel injector",
+     "ar": "عطل في بخاخ الأسطوانة (السلندر) 10"
+    },
+    {
+     "en": "Open, shorted or corroded wiring/connector to the cylinder 10 injector",
+     "ar": "سلك أو وصلة البخاخ مقطوعة أو مقصورة أو متآكلة - الأسطوانة (السلندر) 10"
+    },
+    {
+     "en": "Injector driver fault inside the ECM/PCM",
+     "ar": "عطل في دائرة قيادة البخاخ داخل كمبيوتر المحرك ECM/PCM"
+    }
+   ]
+  },
+  "P0211": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Injector Circuit/Open - Cylinder 11",
+   "ar": "دائرة البخاخ مفتوحة أو بها عطل - الأسطوانة (السلندر) 11",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2",
+    "engine_load"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty cylinder 11 fuel injector",
+     "ar": "عطل في بخاخ الأسطوانة (السلندر) 11"
+    },
+    {
+     "en": "Open, shorted or corroded wiring/connector to the cylinder 11 injector",
+     "ar": "سلك أو وصلة البخاخ مقطوعة أو مقصورة أو متآكلة - الأسطوانة (السلندر) 11"
+    },
+    {
+     "en": "Injector driver fault inside the ECM/PCM",
+     "ar": "عطل في دائرة قيادة البخاخ داخل كمبيوتر المحرك ECM/PCM"
+    }
+   ]
+  },
+  "P0212": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Injector Circuit/Open - Cylinder 12",
+   "ar": "دائرة البخاخ مفتوحة أو بها عطل - الأسطوانة (السلندر) 12",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2",
+    "engine_load"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty cylinder 12 fuel injector",
+     "ar": "عطل في بخاخ الأسطوانة (السلندر) 12"
+    },
+    {
+     "en": "Open, shorted or corroded wiring/connector to the cylinder 12 injector",
+     "ar": "سلك أو وصلة البخاخ مقطوعة أو مقصورة أو متآكلة - الأسطوانة (السلندر) 12"
+    },
+    {
+     "en": "Injector driver fault inside the ECM/PCM",
+     "ar": "عطل في دائرة قيادة البخاخ داخل كمبيوتر المحرك ECM/PCM"
+    }
+   ]
+  },
   "P0217": {
    "system": "powertrain",
    "subsystem": "cooling",
@@ -5463,6 +5735,54 @@
     }
    ]
   },
+  "P0235": {
+   "system": "powertrain",
+   "subsystem": "air_intake",
+   "en": "Turbocharger/Supercharger Boost Sensor \"A\" Circuit",
+   "ar": "دائرة حساس ضغط التوربو/الشاحن (Boost) - A",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "map_kpa",
+    "baro_kpa",
+    "engine_load",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty boost pressure sensor",
+     "ar": "عطل في حساس ضغط التوربو"
+    },
+    {
+     "en": "Wiring/connector fault or disconnected vacuum reference",
+     "ar": "عطل في الأسلاك/الوصلة أو خرطوم الضغط المرجعي مفصول"
+    }
+   ]
+  },
+  "P0243": {
+   "system": "powertrain",
+   "subsystem": "air_intake",
+   "en": "Turbocharger/Supercharger Wastegate Solenoid \"A\"",
+   "ar": "ملف صمام تصريف التوربو (Wastegate) - A",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "map_kpa",
+    "baro_kpa",
+    "engine_load",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty wastegate control solenoid",
+     "ar": "عطل في ملف التحكم بصمام التصريف"
+    },
+    {
+     "en": "Wiring/connector fault, or stuck wastegate actuator",
+     "ar": "عطل في الأسلاك/الوصلة أو عالق في محرّك صمام التصريف"
+    }
+   ]
+  },
   "P0261": {
    "system": "powertrain",
    "subsystem": "fuel",
@@ -5522,6 +5842,36 @@
     {
      "en": "Engine control module (ECM/PCM) fault — rare, check everything else first",
      "ar": "عطل في كمبيوتر المحرك (ECM/PCM) — نادر، يجب فحص بقية الاحتمالات أولًا"
+    }
+   ]
+  },
+  "P0263": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 1 Contribution/Balance Fault",
+   "ar": "عطل مساهمة/اتزان - الأسطوانة (السلندر) 1",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Weak, clogged or leaking cylinder 1 injector",
+     "ar": "بخاخ الأسطوانة (السلندر) 1 ضعيف أو مسدود أو يسرّب"
+    },
+    {
+     "en": "Low compression or mechanical fault in cylinder 1",
+     "ar": "ضغط انضغاط منخفض أو خلل ميكانيكي في الأسطوانة (السلندر) 1"
+    },
+    {
+     "en": "Fuel delivery problem (pressure/volume) affecting this cylinder",
+     "ar": "مشكلة في تغذية الوقود (ضغط/كمية) تؤثر على هذه الأسطوانة"
     }
    ]
   },
@@ -5587,6 +5937,36 @@
     }
    ]
   },
+  "P0266": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 2 Contribution/Balance Fault",
+   "ar": "عطل مساهمة/اتزان - الأسطوانة (السلندر) 2",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Weak, clogged or leaking cylinder 2 injector",
+     "ar": "بخاخ الأسطوانة (السلندر) 2 ضعيف أو مسدود أو يسرّب"
+    },
+    {
+     "en": "Low compression or mechanical fault in cylinder 2",
+     "ar": "ضغط انضغاط منخفض أو خلل ميكانيكي في الأسطوانة (السلندر) 2"
+    },
+    {
+     "en": "Fuel delivery problem (pressure/volume) affecting this cylinder",
+     "ar": "مشكلة في تغذية الوقود (ضغط/كمية) تؤثر على هذه الأسطوانة"
+    }
+   ]
+  },
   "P0267": {
    "system": "powertrain",
    "subsystem": "fuel",
@@ -5646,6 +6026,216 @@
     {
      "en": "Engine control module (ECM/PCM) fault — rare, check everything else first",
      "ar": "عطل في كمبيوتر المحرك (ECM/PCM) — نادر، يجب فحص بقية الاحتمالات أولًا"
+    }
+   ]
+  },
+  "P0269": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 3 Contribution/Balance Fault",
+   "ar": "عطل مساهمة/اتزان - الأسطوانة (السلندر) 3",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Weak, clogged or leaking cylinder 3 injector",
+     "ar": "بخاخ الأسطوانة (السلندر) 3 ضعيف أو مسدود أو يسرّب"
+    },
+    {
+     "en": "Low compression or mechanical fault in cylinder 3",
+     "ar": "ضغط انضغاط منخفض أو خلل ميكانيكي في الأسطوانة (السلندر) 3"
+    },
+    {
+     "en": "Fuel delivery problem (pressure/volume) affecting this cylinder",
+     "ar": "مشكلة في تغذية الوقود (ضغط/كمية) تؤثر على هذه الأسطوانة"
+    }
+   ]
+  },
+  "P026A": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 4 Injector Circuit Low",
+   "ar": "جهد منخفض في دائرة البخاخ - الأسطوانة (السلندر) 4",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground in the injector circuit / wiring",
+     "ar": "قصر أرضي في دائرة البخاخ أو أسلاكها"
+    },
+    {
+     "en": "Faulty cylinder 4 injector (low internal resistance)",
+     "ar": "عطل في بخاخ الأسطوانة (السلندر) 4 (مقاومة داخلية منخفضة)"
+    },
+    {
+     "en": "ECM/PCM injector driver fault",
+     "ar": "عطل في دائرة قيادة البخاخ داخل كمبيوتر المحرك"
+    }
+   ]
+  },
+  "P026B": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 4 Injector Circuit High",
+   "ar": "جهد مرتفع في دائرة البخاخ - الأسطوانة (السلندر) 4",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Open circuit or short to voltage in the injector wiring",
+     "ar": "دائرة مفتوحة أو قصر بالموجب في أسلاك البخاخ"
+    },
+    {
+     "en": "Faulty cylinder 4 injector or its connector",
+     "ar": "عطل في بخاخ الأسطوانة (السلندر) 4 أو وصلته"
+    },
+    {
+     "en": "ECM/PCM injector driver fault",
+     "ar": "عطل في دائرة قيادة البخاخ داخل كمبيوتر المحرك"
+    }
+   ]
+  },
+  "P026C": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 4 Contribution/Balance Fault",
+   "ar": "عطل مساهمة/اتزان - الأسطوانة (السلندر) 4",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Weak, clogged or leaking cylinder 4 injector",
+     "ar": "بخاخ الأسطوانة (السلندر) 4 ضعيف أو مسدود أو يسرّب"
+    },
+    {
+     "en": "Low compression or mechanical fault in cylinder 4",
+     "ar": "ضغط انضغاط منخفض أو خلل ميكانيكي في الأسطوانة (السلندر) 4"
+    },
+    {
+     "en": "Fuel delivery problem (pressure/volume) affecting this cylinder",
+     "ar": "مشكلة في تغذية الوقود (ضغط/كمية) تؤثر على هذه الأسطوانة"
+    }
+   ]
+  },
+  "P026D": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 5 Injector Circuit Low",
+   "ar": "جهد منخفض في دائرة البخاخ - الأسطوانة (السلندر) 5",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground in the injector circuit / wiring",
+     "ar": "قصر أرضي في دائرة البخاخ أو أسلاكها"
+    },
+    {
+     "en": "Faulty cylinder 5 injector (low internal resistance)",
+     "ar": "عطل في بخاخ الأسطوانة (السلندر) 5 (مقاومة داخلية منخفضة)"
+    },
+    {
+     "en": "ECM/PCM injector driver fault",
+     "ar": "عطل في دائرة قيادة البخاخ داخل كمبيوتر المحرك"
+    }
+   ]
+  },
+  "P026E": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 5 Injector Circuit High",
+   "ar": "جهد مرتفع في دائرة البخاخ - الأسطوانة (السلندر) 5",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Open circuit or short to voltage in the injector wiring",
+     "ar": "دائرة مفتوحة أو قصر بالموجب في أسلاك البخاخ"
+    },
+    {
+     "en": "Faulty cylinder 5 injector or its connector",
+     "ar": "عطل في بخاخ الأسطوانة (السلندر) 5 أو وصلته"
+    },
+    {
+     "en": "ECM/PCM injector driver fault",
+     "ar": "عطل في دائرة قيادة البخاخ داخل كمبيوتر المحرك"
+    }
+   ]
+  },
+  "P026F": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 5 Contribution/Balance Fault",
+   "ar": "عطل مساهمة/اتزان - الأسطوانة (السلندر) 5",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Weak, clogged or leaking cylinder 5 injector",
+     "ar": "بخاخ الأسطوانة (السلندر) 5 ضعيف أو مسدود أو يسرّب"
+    },
+    {
+     "en": "Low compression or mechanical fault in cylinder 5",
+     "ar": "ضغط انضغاط منخفض أو خلل ميكانيكي في الأسطوانة (السلندر) 5"
+    },
+    {
+     "en": "Fuel delivery problem (pressure/volume) affecting this cylinder",
+     "ar": "مشكلة في تغذية الوقود (ضغط/كمية) تؤثر على هذه الأسطوانة"
     }
    ]
   },
@@ -5711,6 +6301,36 @@
     }
    ]
   },
+  "P0272": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 6 Contribution/Balance Fault",
+   "ar": "عطل مساهمة/اتزان - الأسطوانة (السلندر) 6",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Weak, clogged or leaking cylinder 6 injector",
+     "ar": "بخاخ الأسطوانة (السلندر) 6 ضعيف أو مسدود أو يسرّب"
+    },
+    {
+     "en": "Low compression or mechanical fault in cylinder 6",
+     "ar": "ضغط انضغاط منخفض أو خلل ميكانيكي في الأسطوانة (السلندر) 6"
+    },
+    {
+     "en": "Fuel delivery problem (pressure/volume) affecting this cylinder",
+     "ar": "مشكلة في تغذية الوقود (ضغط/كمية) تؤثر على هذه الأسطوانة"
+    }
+   ]
+  },
   "P0273": {
    "system": "powertrain",
    "subsystem": "fuel",
@@ -5770,6 +6390,36 @@
     {
      "en": "Engine control module (ECM/PCM) fault — rare, check everything else first",
      "ar": "عطل في كمبيوتر المحرك (ECM/PCM) — نادر، يجب فحص بقية الاحتمالات أولًا"
+    }
+   ]
+  },
+  "P0275": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 7 Contribution/Balance Fault",
+   "ar": "عطل مساهمة/اتزان - الأسطوانة (السلندر) 7",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Weak, clogged or leaking cylinder 7 injector",
+     "ar": "بخاخ الأسطوانة (السلندر) 7 ضعيف أو مسدود أو يسرّب"
+    },
+    {
+     "en": "Low compression or mechanical fault in cylinder 7",
+     "ar": "ضغط انضغاط منخفض أو خلل ميكانيكي في الأسطوانة (السلندر) 7"
+    },
+    {
+     "en": "Fuel delivery problem (pressure/volume) affecting this cylinder",
+     "ar": "مشكلة في تغذية الوقود (ضغط/كمية) تؤثر على هذه الأسطوانة"
     }
    ]
   },
@@ -5835,6 +6485,36 @@
     }
    ]
   },
+  "P0278": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 8 Contribution/Balance Fault",
+   "ar": "عطل مساهمة/اتزان - الأسطوانة (السلندر) 8",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Weak, clogged or leaking cylinder 8 injector",
+     "ar": "بخاخ الأسطوانة (السلندر) 8 ضعيف أو مسدود أو يسرّب"
+    },
+    {
+     "en": "Low compression or mechanical fault in cylinder 8",
+     "ar": "ضغط انضغاط منخفض أو خلل ميكانيكي في الأسطوانة (السلندر) 8"
+    },
+    {
+     "en": "Fuel delivery problem (pressure/volume) affecting this cylinder",
+     "ar": "مشكلة في تغذية الوقود (ضغط/كمية) تؤثر على هذه الأسطوانة"
+    }
+   ]
+  },
   "P0279": {
    "system": "powertrain",
    "subsystem": "fuel",
@@ -5866,6 +6546,186 @@
     }
    ]
   },
+  "P027A": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 9 Injector Circuit High",
+   "ar": "جهد مرتفع في دائرة البخاخ - الأسطوانة (السلندر) 9",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Open circuit or short to voltage in the injector wiring",
+     "ar": "دائرة مفتوحة أو قصر بالموجب في أسلاك البخاخ"
+    },
+    {
+     "en": "Faulty cylinder 9 injector or its connector",
+     "ar": "عطل في بخاخ الأسطوانة (السلندر) 9 أو وصلته"
+    },
+    {
+     "en": "ECM/PCM injector driver fault",
+     "ar": "عطل في دائرة قيادة البخاخ داخل كمبيوتر المحرك"
+    }
+   ]
+  },
+  "P027B": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 9 Contribution/Balance Fault",
+   "ar": "عطل مساهمة/اتزان - الأسطوانة (السلندر) 9",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Weak, clogged or leaking cylinder 9 injector",
+     "ar": "بخاخ الأسطوانة (السلندر) 9 ضعيف أو مسدود أو يسرّب"
+    },
+    {
+     "en": "Low compression or mechanical fault in cylinder 9",
+     "ar": "ضغط انضغاط منخفض أو خلل ميكانيكي في الأسطوانة (السلندر) 9"
+    },
+    {
+     "en": "Fuel delivery problem (pressure/volume) affecting this cylinder",
+     "ar": "مشكلة في تغذية الوقود (ضغط/كمية) تؤثر على هذه الأسطوانة"
+    }
+   ]
+  },
+  "P027C": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 10 Injector Circuit Low",
+   "ar": "جهد منخفض في دائرة البخاخ - الأسطوانة (السلندر) 10",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground in the injector circuit / wiring",
+     "ar": "قصر أرضي في دائرة البخاخ أو أسلاكها"
+    },
+    {
+     "en": "Faulty cylinder 10 injector (low internal resistance)",
+     "ar": "عطل في بخاخ الأسطوانة (السلندر) 10 (مقاومة داخلية منخفضة)"
+    },
+    {
+     "en": "ECM/PCM injector driver fault",
+     "ar": "عطل في دائرة قيادة البخاخ داخل كمبيوتر المحرك"
+    }
+   ]
+  },
+  "P027D": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 10 Injector Circuit High",
+   "ar": "جهد مرتفع في دائرة البخاخ - الأسطوانة (السلندر) 10",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Open circuit or short to voltage in the injector wiring",
+     "ar": "دائرة مفتوحة أو قصر بالموجب في أسلاك البخاخ"
+    },
+    {
+     "en": "Faulty cylinder 10 injector or its connector",
+     "ar": "عطل في بخاخ الأسطوانة (السلندر) 10 أو وصلته"
+    },
+    {
+     "en": "ECM/PCM injector driver fault",
+     "ar": "عطل في دائرة قيادة البخاخ داخل كمبيوتر المحرك"
+    }
+   ]
+  },
+  "P027E": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 10 Contribution/Balance Fault",
+   "ar": "عطل مساهمة/اتزان - الأسطوانة (السلندر) 10",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Weak, clogged or leaking cylinder 10 injector",
+     "ar": "بخاخ الأسطوانة (السلندر) 10 ضعيف أو مسدود أو يسرّب"
+    },
+    {
+     "en": "Low compression or mechanical fault in cylinder 10",
+     "ar": "ضغط انضغاط منخفض أو خلل ميكانيكي في الأسطوانة (السلندر) 10"
+    },
+    {
+     "en": "Fuel delivery problem (pressure/volume) affecting this cylinder",
+     "ar": "مشكلة في تغذية الوقود (ضغط/كمية) تؤثر على هذه الأسطوانة"
+    }
+   ]
+  },
+  "P027F": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 11 Injector Circuit Low",
+   "ar": "جهد منخفض في دائرة البخاخ - الأسطوانة (السلندر) 11",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground in the injector circuit / wiring",
+     "ar": "قصر أرضي في دائرة البخاخ أو أسلاكها"
+    },
+    {
+     "en": "Faulty cylinder 11 injector (low internal resistance)",
+     "ar": "عطل في بخاخ الأسطوانة (السلندر) 11 (مقاومة داخلية منخفضة)"
+    },
+    {
+     "en": "ECM/PCM injector driver fault",
+     "ar": "عطل في دائرة قيادة البخاخ داخل كمبيوتر المحرك"
+    }
+   ]
+  },
   "P0280": {
    "system": "powertrain",
    "subsystem": "fuel",
@@ -5894,6 +6754,36 @@
     {
      "en": "Engine control module (ECM/PCM) fault — rare, check everything else first",
      "ar": "عطل في كمبيوتر المحرك (ECM/PCM) — نادر، يجب فحص بقية الاحتمالات أولًا"
+    }
+   ]
+  },
+  "P0281": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 11 Contribution/Balance Fault",
+   "ar": "عطل مساهمة/اتزان - الأسطوانة (السلندر) 11",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Weak, clogged or leaking cylinder 11 injector",
+     "ar": "بخاخ الأسطوانة (السلندر) 11 ضعيف أو مسدود أو يسرّب"
+    },
+    {
+     "en": "Low compression or mechanical fault in cylinder 11",
+     "ar": "ضغط انضغاط منخفض أو خلل ميكانيكي في الأسطوانة (السلندر) 11"
+    },
+    {
+     "en": "Fuel delivery problem (pressure/volume) affecting this cylinder",
+     "ar": "مشكلة في تغذية الوقود (ضغط/كمية) تؤثر على هذه الأسطوانة"
     }
    ]
   },
@@ -5956,6 +6846,36 @@
     {
      "en": "Engine control module (ECM/PCM) fault — rare, check everything else first",
      "ar": "عطل في كمبيوتر المحرك (ECM/PCM) — نادر، يجب فحص بقية الاحتمالات أولًا"
+    }
+   ]
+  },
+  "P0284": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "Cylinder 12 Contribution/Balance Fault",
+   "ar": "عطل مساهمة/اتزان - الأسطوانة (السلندر) 12",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "stft_b1",
+    "ltft_b1",
+    "stft_b2",
+    "ltft_b2"
+   ],
+   "common_causes": [
+    {
+     "en": "Weak, clogged or leaking cylinder 12 injector",
+     "ar": "بخاخ الأسطوانة (السلندر) 12 ضعيف أو مسدود أو يسرّب"
+    },
+    {
+     "en": "Low compression or mechanical fault in cylinder 12",
+     "ar": "ضغط انضغاط منخفض أو خلل ميكانيكي في الأسطوانة (السلندر) 12"
+    },
+    {
+     "en": "Fuel delivery problem (pressure/volume) affecting this cylinder",
+     "ar": "مشكلة في تغذية الوقود (ضغط/كمية) تؤثر على هذه الأسطوانة"
     }
    ]
   },
@@ -8848,6 +9768,30 @@
     }
    ]
   },
+  "P0424": {
+   "system": "powertrain",
+   "subsystem": "emissions",
+   "en": "Heated Catalyst Temperature Below Threshold (Bank 1)",
+   "ar": "حرارة المحول الحفاز المُسخّن (الدبة) أقل من الحد المطلوب (البنك 1)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "cat_temp_b1s1",
+    "o2_b1s1_voltage",
+    "o2_b1s2_voltage",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Aged or damaged catalytic converter",
+     "ar": "محول حفاز (دبة) متهالك أو تالف"
+    },
+    {
+     "en": "Catalyst heater circuit fault or exhaust leak upstream",
+     "ar": "عطل في دائرة تسخين الدبة أو تسريب عادم قبلها"
+    }
+   ]
+  },
   "P0430": {
    "system": "powertrain",
    "subsystem": "emissions",
@@ -9959,6 +10903,29 @@
     }
    ]
   },
+  "P0495": {
+   "system": "powertrain",
+   "subsystem": "cooling",
+   "en": "Fan Speed High",
+   "ar": "سرعة مروحة التبريد مرتفعة بشكل غير طبيعي",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "coolant_temp",
+    "engine_rpm",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Shorted fan control circuit or faulty fan relay",
+     "ar": "قصر في دائرة التحكم بالمروحة أو عطل في ريلّيه المروحة"
+    },
+    {
+     "en": "ECM/PCM fan driver fault",
+     "ar": "عطل في دائرة قيادة المروحة داخل الكمبيوتر"
+    }
+   ]
+  },
   "P0496": {
    "system": "powertrain",
    "subsystem": "evap",
@@ -10340,6 +11307,29 @@
     }
    ]
   },
+  "P0511": {
+   "system": "powertrain",
+   "subsystem": "idle_control",
+   "en": "Idle Air Control (IAC) Circuit",
+   "ar": "دائرة صمام التحكم بهواء الراحة (IAC)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "throttle_pos"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty or carbon-clogged idle air control valve",
+     "ar": "عطل أو تكلّس (كربون) في صمام هواء الراحة"
+    },
+    {
+     "en": "Wiring/connector fault to the IAC valve",
+     "ar": "عطل في أسلاك/وصلة صمام هواء الراحة"
+    }
+   ]
+  },
   "P0520": {
    "system": "powertrain",
    "subsystem": "engine",
@@ -10634,6 +11624,50 @@
     }
    ]
   },
+  "P0545": {
+   "system": "powertrain",
+   "subsystem": "exhaust",
+   "en": "Exhaust Gas Temperature Sensor Circuit Low (Bank 1 Sensor 1)",
+   "ar": "دائرة حساس حرارة غاز العادم - جهد منخفض (البنك 1، الحساس 1)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "cat_temp_b1s1",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground in the EGT sensor circuit",
+     "ar": "قصر أرضي في دائرة حساس حرارة العادم"
+    },
+    {
+     "en": "Faulty exhaust gas temperature sensor",
+     "ar": "عطل في حساس حرارة غاز العادم"
+    }
+   ]
+  },
+  "P0546": {
+   "system": "powertrain",
+   "subsystem": "exhaust",
+   "en": "Exhaust Gas Temperature Sensor Circuit High (Bank 1 Sensor 1)",
+   "ar": "دائرة حساس حرارة غاز العادم - جهد مرتفع (البنك 1، الحساس 1)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "cat_temp_b1s1",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Open circuit or high resistance in the EGT circuit",
+     "ar": "دائرة مفتوحة أو مقاومة عالية في حساس حرارة العادم"
+    },
+    {
+     "en": "Faulty exhaust gas temperature sensor",
+     "ar": "عطل في حساس حرارة غاز العادم"
+    }
+   ]
+  },
   "P0550": {
    "system": "powertrain",
    "subsystem": "sensors",
@@ -10869,6 +11903,28 @@
     {
      "en": "Improper jump-start or external charger connected",
      "ar": "اشتراك بطارية بطريقة خاطئة أو شاحن خارجي متصل"
+    }
+   ]
+  },
+  "P0564": {
+   "system": "powertrain",
+   "subsystem": "electrical",
+   "en": "Cruise Control Multi-Function Input \"A\" Circuit",
+   "ar": "دائرة مدخل مثبّت السرعة متعدد الوظائف - A",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "vehicle_speed",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty cruise control switch",
+     "ar": "عطل في مفتاح مثبّت السرعة"
+    },
+    {
+     "en": "Wiring/connector fault in the cruise switch circuit",
+     "ar": "عطل في أسلاك/وصلة دائرة مفتاح المثبّت"
     }
    ]
   },
@@ -11180,6 +12236,50 @@
     }
    ]
   },
+  "P0616": {
+   "system": "powertrain",
+   "subsystem": "electrical",
+   "en": "Starter Relay Circuit Low",
+   "ar": "دائرة ريلّيه السلف (البادئ) - جهد منخفض",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground or faulty starter relay",
+     "ar": "قصر أرضي أو عطل في ريلّيه السلف"
+    },
+    {
+     "en": "Wiring/connector fault in the starter relay control circuit",
+     "ar": "عطل في أسلاك/وصلة دائرة التحكم بريلّيه السلف"
+    }
+   ]
+  },
+  "P0617": {
+   "system": "powertrain",
+   "subsystem": "electrical",
+   "en": "Starter Relay Circuit High",
+   "ar": "دائرة ريلّيه السلف (البادئ) - جهد مرتفع",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Open circuit or short to voltage, or faulty starter relay",
+     "ar": "دائرة مفتوحة أو قصر بالموجب أو عطل في ريلّيه السلف"
+    },
+    {
+     "en": "Wiring/connector fault in the starter relay control circuit",
+     "ar": "عطل في أسلاك/وصلة دائرة التحكم بريلّيه السلف"
+    }
+   ]
+  },
   "P0620": {
    "system": "powertrain",
    "subsystem": "charging",
@@ -11270,6 +12370,50 @@
     {
      "en": "Engine control module (ECM/PCM) fault — rare, check everything else first",
      "ar": "عطل في كمبيوتر المحرك (ECM/PCM) — نادر، يجب فحص بقية الاحتمالات أولًا"
+    }
+   ]
+  },
+  "P0625": {
+   "system": "powertrain",
+   "subsystem": "charging",
+   "en": "Generator Field/F Terminal Circuit Low",
+   "ar": "دائرة طرف مجال المولّد (الدينمو) F - جهد منخفض",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty alternator (generator) or regulator",
+     "ar": "عطل في الدينمو أو منظّم الشحن"
+    },
+    {
+     "en": "Short to ground in the field terminal wiring",
+     "ar": "قصر أرضي في أسلاك طرف المجال"
+    }
+   ]
+  },
+  "P0626": {
+   "system": "powertrain",
+   "subsystem": "charging",
+   "en": "Generator Field/F Terminal Circuit High",
+   "ar": "دائرة طرف مجال المولّد (الدينمو) F - جهد مرتفع",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty alternator (generator) or regulator",
+     "ar": "عطل في الدينمو أو منظّم الشحن"
+    },
+    {
+     "en": "Open circuit or short to voltage in the field terminal wiring",
+     "ar": "دائرة مفتوحة أو قصر بالموجب في أسلاك طرف المجال"
     }
    ]
   },
@@ -11467,6 +12611,50 @@
     }
    ]
   },
+  "P0646": {
+   "system": "powertrain",
+   "subsystem": "ac",
+   "en": "A/C Clutch Relay Control Circuit Low",
+   "ar": "دائرة التحكم بريلّيه كلتش المكيّف - جهد منخفض",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground or faulty A/C clutch relay",
+     "ar": "قصر أرضي أو عطل في ريلّيه كلتش المكيّف"
+    },
+    {
+     "en": "Wiring/connector fault in the relay control circuit",
+     "ar": "عطل في أسلاك/وصلة دائرة التحكم بالريلّيه"
+    }
+   ]
+  },
+  "P0647": {
+   "system": "powertrain",
+   "subsystem": "ac",
+   "en": "A/C Clutch Relay Control Circuit High",
+   "ar": "دائرة التحكم بريلّيه كلتش المكيّف - جهد مرتفع",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Open circuit or short to voltage, or faulty A/C clutch relay",
+     "ar": "دائرة مفتوحة أو قصر بالموجب أو عطل في ريلّيه كلتش المكيّف"
+    },
+    {
+     "en": "Wiring/connector fault in the relay control circuit",
+     "ar": "عطل في أسلاك/وصلة دائرة التحكم بالريلّيه"
+    }
+   ]
+  },
   "P0650": {
    "system": "powertrain",
    "subsystem": "electrical",
@@ -11521,6 +12709,264 @@
     }
    ]
   },
+  "P0652": {
+   "system": "powertrain",
+   "subsystem": "electrical",
+   "en": "Sensor Reference Voltage \"B\" Circuit Low",
+   "ar": "دائرة الجهد المرجعي للحساسات B - جهد منخفض",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground on the 5V reference \"B\" line (often a shorted sensor)",
+     "ar": "قصر أرضي على خط الجهد المرجعي 5 فولت B (غالبًا حساس مقصور)"
+    },
+    {
+     "en": "Wiring fault; a single shorted sensor can pull the whole reference low",
+     "ar": "عطل أسلاك؛ حساس واحد مقصور قد يخفض الجهد المرجعي كاملًا"
+    }
+   ]
+  },
+  "P0653": {
+   "system": "powertrain",
+   "subsystem": "electrical",
+   "en": "Sensor Reference Voltage \"B\" Circuit High",
+   "ar": "دائرة الجهد المرجعي للحساسات B - جهد مرتفع",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to voltage on the 5V reference \"B\" line",
+     "ar": "قصر بالموجب على خط الجهد المرجعي 5 فولت B"
+    },
+    {
+     "en": "Wiring/connector fault, or ECM/PCM reference fault",
+     "ar": "عطل أسلاك/وصلة أو عطل في الجهد المرجعي داخل الكمبيوتر"
+    }
+   ]
+  },
+  "P0671": {
+   "system": "powertrain",
+   "subsystem": "ignition",
+   "en": "Glow Plug Circuit - Cylinder 1",
+   "ar": "دائرة شمعة التسخين (الديزل) - الأسطوانة (السلندر) 1",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "coolant_temp",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty cylinder 1 glow plug (open or shorted)",
+     "ar": "عطل في شمعة تسخين الأسطوانة (السلندر) 1 (مقطوعة أو مقصورة)"
+    },
+    {
+     "en": "Damaged glow plug wiring/connector",
+     "ar": "تلف في أسلاك أو وصلة شمعة التسخين"
+    },
+    {
+     "en": "Faulty glow plug control module",
+     "ar": "عطل في وحدة التحكم بشمعات التسخين"
+    }
+   ]
+  },
+  "P0672": {
+   "system": "powertrain",
+   "subsystem": "ignition",
+   "en": "Glow Plug Circuit - Cylinder 2",
+   "ar": "دائرة شمعة التسخين (الديزل) - الأسطوانة (السلندر) 2",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "coolant_temp",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty cylinder 2 glow plug (open or shorted)",
+     "ar": "عطل في شمعة تسخين الأسطوانة (السلندر) 2 (مقطوعة أو مقصورة)"
+    },
+    {
+     "en": "Damaged glow plug wiring/connector",
+     "ar": "تلف في أسلاك أو وصلة شمعة التسخين"
+    },
+    {
+     "en": "Faulty glow plug control module",
+     "ar": "عطل في وحدة التحكم بشمعات التسخين"
+    }
+   ]
+  },
+  "P0673": {
+   "system": "powertrain",
+   "subsystem": "ignition",
+   "en": "Glow Plug Circuit - Cylinder 3",
+   "ar": "دائرة شمعة التسخين (الديزل) - الأسطوانة (السلندر) 3",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "coolant_temp",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty cylinder 3 glow plug (open or shorted)",
+     "ar": "عطل في شمعة تسخين الأسطوانة (السلندر) 3 (مقطوعة أو مقصورة)"
+    },
+    {
+     "en": "Damaged glow plug wiring/connector",
+     "ar": "تلف في أسلاك أو وصلة شمعة التسخين"
+    },
+    {
+     "en": "Faulty glow plug control module",
+     "ar": "عطل في وحدة التحكم بشمعات التسخين"
+    }
+   ]
+  },
+  "P0674": {
+   "system": "powertrain",
+   "subsystem": "ignition",
+   "en": "Glow Plug Circuit - Cylinder 4",
+   "ar": "دائرة شمعة التسخين (الديزل) - الأسطوانة (السلندر) 4",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "coolant_temp",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty cylinder 4 glow plug (open or shorted)",
+     "ar": "عطل في شمعة تسخين الأسطوانة (السلندر) 4 (مقطوعة أو مقصورة)"
+    },
+    {
+     "en": "Damaged glow plug wiring/connector",
+     "ar": "تلف في أسلاك أو وصلة شمعة التسخين"
+    },
+    {
+     "en": "Faulty glow plug control module",
+     "ar": "عطل في وحدة التحكم بشمعات التسخين"
+    }
+   ]
+  },
+  "P0675": {
+   "system": "powertrain",
+   "subsystem": "ignition",
+   "en": "Glow Plug Circuit - Cylinder 5",
+   "ar": "دائرة شمعة التسخين (الديزل) - الأسطوانة (السلندر) 5",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "coolant_temp",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty cylinder 5 glow plug (open or shorted)",
+     "ar": "عطل في شمعة تسخين الأسطوانة (السلندر) 5 (مقطوعة أو مقصورة)"
+    },
+    {
+     "en": "Damaged glow plug wiring/connector",
+     "ar": "تلف في أسلاك أو وصلة شمعة التسخين"
+    },
+    {
+     "en": "Faulty glow plug control module",
+     "ar": "عطل في وحدة التحكم بشمعات التسخين"
+    }
+   ]
+  },
+  "P0676": {
+   "system": "powertrain",
+   "subsystem": "ignition",
+   "en": "Glow Plug Circuit - Cylinder 6",
+   "ar": "دائرة شمعة التسخين (الديزل) - الأسطوانة (السلندر) 6",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "coolant_temp",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty cylinder 6 glow plug (open or shorted)",
+     "ar": "عطل في شمعة تسخين الأسطوانة (السلندر) 6 (مقطوعة أو مقصورة)"
+    },
+    {
+     "en": "Damaged glow plug wiring/connector",
+     "ar": "تلف في أسلاك أو وصلة شمعة التسخين"
+    },
+    {
+     "en": "Faulty glow plug control module",
+     "ar": "عطل في وحدة التحكم بشمعات التسخين"
+    }
+   ]
+  },
+  "P0677": {
+   "system": "powertrain",
+   "subsystem": "ignition",
+   "en": "Glow Plug Circuit - Cylinder 7",
+   "ar": "دائرة شمعة التسخين (الديزل) - الأسطوانة (السلندر) 7",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "coolant_temp",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty cylinder 7 glow plug (open or shorted)",
+     "ar": "عطل في شمعة تسخين الأسطوانة (السلندر) 7 (مقطوعة أو مقصورة)"
+    },
+    {
+     "en": "Damaged glow plug wiring/connector",
+     "ar": "تلف في أسلاك أو وصلة شمعة التسخين"
+    },
+    {
+     "en": "Faulty glow plug control module",
+     "ar": "عطل في وحدة التحكم بشمعات التسخين"
+    }
+   ]
+  },
+  "P0678": {
+   "system": "powertrain",
+   "subsystem": "ignition",
+   "en": "Glow Plug Circuit - Cylinder 8",
+   "ar": "دائرة شمعة التسخين (الديزل) - الأسطوانة (السلندر) 8",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "coolant_temp",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty cylinder 8 glow plug (open or shorted)",
+     "ar": "عطل في شمعة تسخين الأسطوانة (السلندر) 8 (مقطوعة أو مقصورة)"
+    },
+    {
+     "en": "Damaged glow plug wiring/connector",
+     "ar": "تلف في أسلاك أو وصلة شمعة التسخين"
+    },
+    {
+     "en": "Faulty glow plug control module",
+     "ar": "عطل في وحدة التحكم بشمعات التسخين"
+    }
+   ]
+  },
   "P0685": {
    "system": "powertrain",
    "subsystem": "electrical",
@@ -11544,6 +12990,72 @@
     {
      "en": "Blown fuse or faulty relay in the circuit's power supply",
      "ar": "فيوز محروق أو ريليه (مرحّل) تالف في تغذية الدائرة"
+    }
+   ]
+  },
+  "P0686": {
+   "system": "powertrain",
+   "subsystem": "electrical",
+   "en": "ECM/PCM Power Relay Control Circuit Low",
+   "ar": "دائرة التحكم بريلّيه تغذية الكمبيوتر (ECM/PCM) - جهد منخفض",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground or faulty main (power) relay",
+     "ar": "قصر أرضي أو عطل في الريلّيه الرئيسي"
+    },
+    {
+     "en": "Wiring/connector fault in the power relay control circuit",
+     "ar": "عطل في أسلاك/وصلة دائرة التحكم بالريلّيه الرئيسي"
+    }
+   ]
+  },
+  "P0687": {
+   "system": "powertrain",
+   "subsystem": "electrical",
+   "en": "ECM/PCM Power Relay Control Circuit High",
+   "ar": "دائرة التحكم بريلّيه تغذية الكمبيوتر (ECM/PCM) - جهد مرتفع",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Open circuit or short to voltage, or faulty main (power) relay",
+     "ar": "دائرة مفتوحة أو قصر بالموجب أو عطل في الريلّيه الرئيسي"
+    },
+    {
+     "en": "Wiring/connector fault in the power relay control circuit",
+     "ar": "عطل في أسلاك/وصلة دائرة التحكم بالريلّيه الرئيسي"
+    }
+   ]
+  },
+  "P0688": {
+   "system": "powertrain",
+   "subsystem": "electrical",
+   "en": "ECM/PCM Power Relay Sense Circuit/Open",
+   "ar": "دائرة استشعار ريلّيه تغذية الكمبيوتر مفتوحة/بها عطل",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Open in the power-relay sense (feedback) circuit",
+     "ar": "دائرة استشعار الريلّيه الرئيسي مفتوحة"
+    },
+    {
+     "en": "Faulty main relay or ECM/PCM power feed",
+     "ar": "عطل في الريلّيه الرئيسي أو تغذية الكمبيوتر"
     }
    ]
   },
@@ -11600,6 +13112,115 @@
     {
      "en": "Engine control module (ECM/PCM) fault — rare, check everything else first",
      "ar": "عطل في كمبيوتر المحرك (ECM/PCM) — نادر، يجب فحص بقية الاحتمالات أولًا"
+    }
+   ]
+  },
+  "P0693": {
+   "system": "powertrain",
+   "subsystem": "cooling",
+   "en": "Fan 1 Control Circuit Low",
+   "ar": "دائرة التحكم بمروحة التبريد 1 - جهد منخفض",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "coolant_temp",
+    "engine_rpm",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground or faulty cooling fan relay/module",
+     "ar": "قصر أرضي أو عطل في ريلّيه/وحدة مروحة التبريد"
+    },
+    {
+     "en": "Wiring/connector fault in the fan control circuit",
+     "ar": "عطل في أسلاك/وصلة دائرة التحكم بالمروحة"
+    }
+   ]
+  },
+  "P0694": {
+   "system": "powertrain",
+   "subsystem": "cooling",
+   "en": "Fan 1 Control Circuit High",
+   "ar": "دائرة التحكم بمروحة التبريد 1 - جهد مرتفع",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "coolant_temp",
+    "engine_rpm",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Open circuit or short to voltage, or faulty fan relay/module",
+     "ar": "دائرة مفتوحة أو قصر بالموجب أو عطل في ريلّيه/وحدة المروحة"
+    },
+    {
+     "en": "Wiring/connector fault in the fan control circuit",
+     "ar": "عطل في أسلاك/وصلة دائرة التحكم بالمروحة"
+    }
+   ]
+  },
+  "P0697": {
+   "system": "powertrain",
+   "subsystem": "electrical",
+   "en": "Sensor Reference Voltage \"C\" Circuit/Open",
+   "ar": "دائرة الجهد المرجعي للحساسات C مفتوحة/بها عطل",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Open on the 5V reference \"C\" line",
+     "ar": "خط الجهد المرجعي 5 فولت C مفتوح"
+    },
+    {
+     "en": "Wiring/connector fault, or ECM/PCM reference fault",
+     "ar": "عطل أسلاك/وصلة أو عطل في الجهد المرجعي داخل الكمبيوتر"
+    }
+   ]
+  },
+  "P0698": {
+   "system": "powertrain",
+   "subsystem": "electrical",
+   "en": "Sensor Reference Voltage \"C\" Circuit Low",
+   "ar": "دائرة الجهد المرجعي للحساسات C - جهد منخفض",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground on the 5V reference \"C\" line (often a shorted sensor)",
+     "ar": "قصر أرضي على خط الجهد المرجعي 5 فولت C (غالبًا حساس مقصور)"
+    },
+    {
+     "en": "Wiring fault; a single shorted sensor can pull the reference low",
+     "ar": "عطل أسلاك؛ حساس واحد مقصور قد يخفض الجهد المرجعي"
+    }
+   ]
+  },
+  "P0699": {
+   "system": "powertrain",
+   "subsystem": "electrical",
+   "en": "Sensor Reference Voltage \"C\" Circuit High",
+   "ar": "دائرة الجهد المرجعي للحساسات C - جهد مرتفع",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to voltage on the 5V reference \"C\" line",
+     "ar": "قصر بالموجب على خط الجهد المرجعي 5 فولت C"
+    },
+    {
+     "en": "Wiring/connector fault, or ECM/PCM reference fault",
+     "ar": "عطل أسلاك/وصلة أو عطل في الجهد المرجعي داخل الكمبيوتر"
     }
    ]
   },
@@ -11684,6 +13305,28 @@
     {
      "en": "Transmission control module (TCM) fault — rare",
      "ar": "عطل في كمبيوتر ناقل الحركة (TCM) — نادر"
+    }
+   ]
+  },
+  "P0704": {
+   "system": "powertrain",
+   "subsystem": "transmission",
+   "en": "Clutch Switch Input Circuit Malfunction",
+   "ar": "عطل في دائرة مدخل مفتاح الكلتش (الدبرياج)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "vehicle_speed"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty clutch pedal position switch",
+     "ar": "عطل في مفتاح موضع دواسة الكلتش"
+    },
+    {
+     "en": "Wiring/connector fault in the clutch switch circuit",
+     "ar": "عطل في أسلاك/وصلة دائرة مفتاح الكلتش"
     }
    ]
   },
@@ -12003,6 +13646,28 @@
     }
    ]
   },
+  "P0719": {
+   "system": "powertrain",
+   "subsystem": "transmission",
+   "en": "Torque Converter/Brake Switch \"B\" Circuit Low",
+   "ar": "دائرة محوّل العزم/مفتاح الفرامل B - جهد منخفض",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "vehicle_speed",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty brake light switch",
+     "ar": "عطل في مفتاح لمبة الفرامل"
+    },
+    {
+     "en": "Short to ground in the brake switch circuit",
+     "ar": "قصر أرضي في دائرة مفتاح الفرامل"
+    }
+   ]
+  },
   "P0720": {
    "system": "powertrain",
    "subsystem": "transmission",
@@ -12091,6 +13756,28 @@
     }
    ]
   },
+  "P0724": {
+   "system": "powertrain",
+   "subsystem": "transmission",
+   "en": "Torque Converter/Brake Switch \"B\" Circuit High",
+   "ar": "دائرة محوّل العزم/مفتاح الفرامل B - جهد مرتفع",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "vehicle_speed",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty brake light switch or misadjusted pedal",
+     "ar": "عطل في مفتاح لمبة الفرامل أو ضبط الدواسة غير صحيح"
+    },
+    {
+     "en": "Open circuit or short to voltage in the brake switch circuit",
+     "ar": "دائرة مفتوحة أو قصر بالموجب في دائرة مفتاح الفرامل"
+    }
+   ]
+  },
   "P0725": {
    "system": "powertrain",
    "subsystem": "transmission",
@@ -12116,6 +13803,29 @@
     {
      "en": "Transmission control module (TCM) fault — rare",
      "ar": "عطل في كمبيوتر ناقل الحركة (TCM) — نادر"
+    }
+   ]
+  },
+  "P0729": {
+   "system": "powertrain",
+   "subsystem": "transmission",
+   "en": "Gear 6 Incorrect Ratio",
+   "ar": "نسبة غير صحيحة للغيار السادس (ناقل الحركة)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "vehicle_speed",
+    "engine_rpm",
+    "throttle_pos"
+   ],
+   "common_causes": [
+    {
+     "en": "Low transmission fluid or internal wear/slipping",
+     "ar": "زيت قير منخفض أو تآكل/انزلاق داخلي"
+    },
+    {
+     "en": "Faulty shift solenoid or clutch pack for 6th gear",
+     "ar": "عطل في ملف أو مجموعة كلتشات الغيار السادس"
     }
    ]
   },
@@ -13163,6 +14873,98 @@
     }
    ]
   },
+  "P0776": {
+   "system": "powertrain",
+   "subsystem": "transmission",
+   "en": "Pressure Control Solenoid \"B\" Performance/Stuck Off",
+   "ar": "ملف التحكم بالضغط B - أداء ضعيف/عالق مفتوح",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "vehicle_speed",
+    "engine_rpm",
+    "throttle_pos"
+   ],
+   "common_causes": [
+    {
+     "en": "Stuck or faulty pressure control solenoid B",
+     "ar": "ملف التحكم بالضغط B عالق أو تالف"
+    },
+    {
+     "en": "Low/dirty transmission fluid or internal hydraulic leak",
+     "ar": "زيت قير منخفض/متسخ أو تسريب هيدروليكي داخلي"
+    }
+   ]
+  },
+  "P0781": {
+   "system": "powertrain",
+   "subsystem": "transmission",
+   "en": "1-2 Shift (Malfunction)",
+   "ar": "عطل في النقل من الغيار الأول إلى الثاني",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "vehicle_speed",
+    "engine_rpm",
+    "throttle_pos"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty shift solenoid or valve body",
+     "ar": "عطل في ملف النقل أو جسم الصمامات (Valve body)"
+    },
+    {
+     "en": "Low/dirty transmission fluid or internal wear",
+     "ar": "زيت قير منخفض/متسخ أو تآكل داخلي"
+    }
+   ]
+  },
+  "P0796": {
+   "system": "powertrain",
+   "subsystem": "transmission",
+   "en": "Pressure Control Solenoid \"C\" Performance/Stuck Off",
+   "ar": "ملف التحكم بالضغط C - أداء ضعيف/عالق مفتوح",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "vehicle_speed",
+    "engine_rpm",
+    "throttle_pos"
+   ],
+   "common_causes": [
+    {
+     "en": "Stuck or faulty pressure control solenoid C",
+     "ar": "ملف التحكم بالضغط C عالق أو تالف"
+    },
+    {
+     "en": "Low/dirty transmission fluid or internal hydraulic leak",
+     "ar": "زيت قير منخفض/متسخ أو تسريب هيدروليكي داخلي"
+    }
+   ]
+  },
+  "P0797": {
+   "system": "powertrain",
+   "subsystem": "transmission",
+   "en": "Pressure Control Solenoid \"C\" Stuck On",
+   "ar": "ملف التحكم بالضغط C - عالق مغلق",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "vehicle_speed",
+    "engine_rpm",
+    "throttle_pos"
+   ],
+   "common_causes": [
+    {
+     "en": "Pressure control solenoid C stuck on / shorted",
+     "ar": "ملف التحكم بالضغط C عالق في وضع التشغيل أو مقصور"
+    },
+    {
+     "en": "Valve body fault or contaminated fluid",
+     "ar": "عطل في جسم الصمامات أو زيت ملوّث"
+    }
+   ]
+  },
   "P0A7F": {
    "system": "powertrain",
    "subsystem": "electrical",
@@ -13270,6 +15072,98 @@
     {
      "en": "Broken linkage or vacuum leak to the actuator",
      "ar": "كسر في الوصلة أو تسريب فاكيوم إلى المشغل"
+    }
+   ]
+  },
+  "P2006": {
+   "system": "powertrain",
+   "subsystem": "air_intake",
+   "en": "Intake Manifold Runner Control Stuck Closed (Bank 1)",
+   "ar": "مجرى هواء المانيفولد المتغير عالق في وضع الإغلاق (البنك 1)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "map_kpa",
+    "engine_rpm",
+    "engine_load"
+   ],
+   "common_causes": [
+    {
+     "en": "Carbon-seized or stuck intake manifold runner flap, bank 1",
+     "ar": "رفرف مجرى هواء المانيفولد عالق أو متكلّس (كربون) - البنك 1"
+    },
+    {
+     "en": "Faulty runner control actuator or linkage",
+     "ar": "عطل في محرّك أو وصلة التحكم بالمجرى"
+    }
+   ]
+  },
+  "P2008": {
+   "system": "powertrain",
+   "subsystem": "air_intake",
+   "en": "Intake Manifold Runner Control Circuit/Open (Bank 1)",
+   "ar": "دائرة التحكم بمجرى هواء المانيفولد مفتوحة/بها عطل (البنك 1)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "map_kpa",
+    "engine_rpm",
+    "engine_load"
+   ],
+   "common_causes": [
+    {
+     "en": "Open circuit to the runner control actuator",
+     "ar": "دائرة محرّك التحكم بالمجرى مفتوحة"
+    },
+    {
+     "en": "Faulty actuator or connector",
+     "ar": "عطل في المحرّك أو الوصلة"
+    }
+   ]
+  },
+  "P2009": {
+   "system": "powertrain",
+   "subsystem": "air_intake",
+   "en": "Intake Manifold Runner Control Circuit Low (Bank 1)",
+   "ar": "دائرة التحكم بمجرى هواء المانيفولد - جهد منخفض (البنك 1)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "map_kpa",
+    "engine_rpm",
+    "engine_load"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground in the runner control circuit",
+     "ar": "قصر أرضي في دائرة التحكم بالمجرى"
+    },
+    {
+     "en": "Faulty runner control actuator",
+     "ar": "عطل في محرّك التحكم بالمجرى"
+    }
+   ]
+  },
+  "P2015": {
+   "system": "powertrain",
+   "subsystem": "air_intake",
+   "en": "Intake Manifold Runner Position Sensor/Switch Circuit Range/Performance (Bank 1)",
+   "ar": "أداء/مدى غير صحيح لحساس موضع مجرى هواء المانيفولد (البنك 1)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "map_kpa",
+    "engine_rpm",
+    "engine_load"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty runner position sensor (common on some VAG engines)",
+     "ar": "عطل في حساس موضع المجرى (شائع في بعض محركات مجموعة فولكسفاجن)"
+    },
+    {
+     "en": "Broken runner flap linkage or connector fault",
+     "ar": "كسر في وصلة رفرف المجرى أو عطل في الموصّل"
     }
    ]
   },
@@ -14201,6 +16095,29 @@
     }
    ]
   },
+  "P2176": {
+   "system": "powertrain",
+   "subsystem": "air_intake",
+   "en": "Throttle Actuator Control System - Idle Position Not Learned",
+   "ar": "نظام التحكم بالخانق (البوابة) - لم يتم تعلّم وضع الراحة",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "throttle_pos",
+    "commanded_throttle",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Throttle relearn needed after cleaning or battery disconnect",
+     "ar": "يلزم إعادة تعلّم الخانق بعد التنظيف أو فصل البطارية"
+    },
+    {
+     "en": "Dirty or faulty throttle body",
+     "ar": "جسم خانق متسخ أو تالف"
+    }
+   ]
+  },
   "P2177": {
    "system": "powertrain",
    "subsystem": "fuel",
@@ -14502,6 +16419,62 @@
     {
      "en": "EVAP purge valve stuck open",
      "ar": "صمام التنفيس (Purge) عالق مفتوحًا"
+    }
+   ]
+  },
+  "P2191": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "System Too Lean at Higher Load (Bank 1)",
+   "ar": "خليط فقير جدًا عند الأحمال العالية (البنك 1)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "stft_b1",
+    "ltft_b1",
+    "o2_b1s1_voltage",
+    "maf_gs",
+    "map_kpa",
+    "engine_load",
+    "engine_rpm",
+    "fuel_pressure"
+   ],
+   "common_causes": [
+    {
+     "en": "Insufficient fuel delivery under load (pump, filter, pressure)",
+     "ar": "تغذية وقود غير كافية تحت الحمل (طرمبة/فلتر/ضغط)"
+    },
+    {
+     "en": "Boost/intake leak or weak injectors at high flow",
+     "ar": "تسريب في السحب/التوربو أو بخاخات ضعيفة عند التدفق العالي"
+    }
+   ]
+  },
+  "P2192": {
+   "system": "powertrain",
+   "subsystem": "fuel",
+   "en": "System Too Rich at Higher Load (Bank 1)",
+   "ar": "خليط غني جدًا عند الأحمال العالية (البنك 1)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "stft_b1",
+    "ltft_b1",
+    "o2_b1s1_voltage",
+    "maf_gs",
+    "map_kpa",
+    "engine_load",
+    "engine_rpm",
+    "fuel_pressure"
+   ],
+   "common_causes": [
+    {
+     "en": "Excess fuel delivery under load (high fuel pressure, leaking injectors)",
+     "ar": "تغذية وقود زائدة تحت الحمل (ضغط عالٍ أو بخاخات تسرّب)"
+    },
+    {
+     "en": "Faulty MAF or restricted air intake under load",
+     "ar": "عطل في حساس الهواء MAF أو انسداد مجرى الهواء تحت الحمل"
     }
    ]
   },
@@ -14881,6 +16854,55 @@
     }
    ]
   },
+  "P2282": {
+   "system": "powertrain",
+   "subsystem": "air_intake",
+   "en": "Air Leak Between Throttle Body and Intake Valves",
+   "ar": "تسريب هواء بين جسم الخانق وصمامات السحب",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "stft_b1",
+    "ltft_b1",
+    "map_kpa",
+    "maf_gs",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Leaking intake manifold gasket or cracked intake duct",
+     "ar": "تسريب في جلدة المانيفولد أو شرخ في مجرى السحب"
+    },
+    {
+     "en": "Loose clamps or disconnected vacuum/PCV hose",
+     "ar": "أطواق مرتخية أو خرطوم تفريغ/PCV مفصول"
+    }
+   ]
+  },
+  "P2297": {
+   "system": "powertrain",
+   "subsystem": "sensors",
+   "en": "O2 Sensor Out of Range During Deceleration (Bank 1 Sensor 1)",
+   "ar": "حساس الأكسجين خارج المدى أثناء تخفيف السرعة (البنك 1، الحساس 1)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "o2_b1s1_voltage",
+    "stft_b1",
+    "engine_rpm",
+    "vehicle_speed"
+   ],
+   "common_causes": [
+    {
+     "en": "Aging upstream O2 sensor (slow response)",
+     "ar": "حساس أكسجين أمامي متهالك (استجابة بطيئة)"
+    },
+    {
+     "en": "Intake or exhaust leak affecting the reading",
+     "ar": "تسريب سحب أو عادم يؤثر على القراءة"
+    }
+   ]
+  },
   "P2299": {
    "system": "powertrain",
    "subsystem": "air_intake",
@@ -14908,6 +16930,236 @@
     }
    ]
   },
+  "P2300": {
+   "system": "powertrain",
+   "subsystem": "ignition",
+   "en": "Ignition Coil \"A\" Primary Control Circuit Low",
+   "ar": "دائرة التحكم الابتدائية لكويل الإشعال A - جهد منخفض",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground in the coil A primary control circuit",
+     "ar": "قصر أرضي في دائرة التحكم الابتدائية للكويل A"
+    },
+    {
+     "en": "Faulty ignition coil A or connector",
+     "ar": "عطل في كويل الإشعال A أو وصلته"
+    }
+   ]
+  },
+  "P2301": {
+   "system": "powertrain",
+   "subsystem": "ignition",
+   "en": "Ignition Coil \"A\" Primary Control Circuit High",
+   "ar": "دائرة التحكم الابتدائية لكويل الإشعال A - جهد مرتفع",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Open circuit or short to voltage in the coil A primary circuit",
+     "ar": "دائرة مفتوحة أو قصر بالموجب في دائرة الكويل A الابتدائية"
+    },
+    {
+     "en": "Faulty ignition coil A or connector",
+     "ar": "عطل في كويل الإشعال A أو وصلته"
+    }
+   ]
+  },
+  "P2303": {
+   "system": "powertrain",
+   "subsystem": "ignition",
+   "en": "Ignition Coil \"B\" Primary Control Circuit Low",
+   "ar": "دائرة التحكم الابتدائية لكويل الإشعال B - جهد منخفض",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground in the coil B primary control circuit",
+     "ar": "قصر أرضي في دائرة التحكم الابتدائية للكويل B"
+    },
+    {
+     "en": "Faulty ignition coil B or connector",
+     "ar": "عطل في كويل الإشعال B أو وصلته"
+    }
+   ]
+  },
+  "P2304": {
+   "system": "powertrain",
+   "subsystem": "ignition",
+   "en": "Ignition Coil \"B\" Primary Control Circuit High",
+   "ar": "دائرة التحكم الابتدائية لكويل الإشعال B - جهد مرتفع",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "engine_rpm",
+    "engine_load",
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Open circuit or short to voltage in the coil B primary circuit",
+     "ar": "دائرة مفتوحة أو قصر بالموجب في دائرة الكويل B الابتدائية"
+    },
+    {
+     "en": "Faulty ignition coil B or connector",
+     "ar": "عطل في كويل الإشعال B أو وصلته"
+    }
+   ]
+  },
+  "P2401": {
+   "system": "powertrain",
+   "subsystem": "evap",
+   "en": "Evaporative Emission System Leak Detection Pump Control Circuit Low",
+   "ar": "دائرة التحكم بطرمبة كشف تسريب نظام الأبخرة (EVAP) - جهد منخفض",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "evap_vapor_pressure",
+    "evap_purge",
+    "fuel_level"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground or faulty leak detection pump",
+     "ar": "قصر أرضي أو عطل في طرمبة كشف التسريب"
+    },
+    {
+     "en": "Wiring/connector fault in the pump control circuit",
+     "ar": "عطل في أسلاك/وصلة دائرة التحكم بالطرمبة"
+    }
+   ]
+  },
+  "P2402": {
+   "system": "powertrain",
+   "subsystem": "evap",
+   "en": "Evaporative Emission System Leak Detection Pump Control Circuit High",
+   "ar": "دائرة التحكم بطرمبة كشف تسريب نظام الأبخرة (EVAP) - جهد مرتفع",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "evap_vapor_pressure",
+    "evap_purge",
+    "fuel_level"
+   ],
+   "common_causes": [
+    {
+     "en": "Open circuit or short to voltage, or faulty leak detection pump",
+     "ar": "دائرة مفتوحة أو قصر بالموجب أو عطل في طرمبة كشف التسريب"
+    },
+    {
+     "en": "Wiring/connector fault in the pump control circuit",
+     "ar": "عطل في أسلاك/وصلة دائرة التحكم بالطرمبة"
+    }
+   ]
+  },
+  "P2404": {
+   "system": "powertrain",
+   "subsystem": "evap",
+   "en": "Evaporative Emission System Leak Detection Pump Sense Circuit Range/Performance",
+   "ar": "أداء/مدى غير صحيح لدائرة استشعار طرمبة كشف تسريب الأبخرة (EVAP)",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "evap_vapor_pressure",
+    "evap_purge",
+    "fuel_level"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty leak detection pump sense element",
+     "ar": "عطل في عنصر استشعار طرمبة كشف التسريب"
+    },
+    {
+     "en": "EVAP system leak affecting the measurement",
+     "ar": "تسريب في نظام الأبخرة يؤثر على القياس"
+    }
+   ]
+  },
+  "P2414": {
+   "system": "powertrain",
+   "subsystem": "sensors",
+   "en": "O2 Sensor Exhaust Sample Error (Bank 1 Sensor 1)",
+   "ar": "خطأ في عيّنة العادم لحساس الأكسجين (البنك 1، الحساس 1)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "o2_b1s1_voltage",
+    "stft_b1",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Exhaust leak near the sensor or poor sensor mounting/seal",
+     "ar": "تسريب عادم قرب الحساس أو تركيب/إحكام سيء"
+    },
+    {
+     "en": "Aging or contaminated O2 sensor",
+     "ar": "حساس أكسجين متهالك أو ملوّث"
+    }
+   ]
+  },
+  "P2419": {
+   "system": "powertrain",
+   "subsystem": "evap",
+   "en": "Evaporative Emission System Switching Valve Control Circuit Low",
+   "ar": "دائرة التحكم بصمام تحويل نظام الأبخرة (EVAP) - جهد منخفض",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "evap_vapor_pressure",
+    "evap_purge",
+    "fuel_level"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground or faulty EVAP switching valve",
+     "ar": "قصر أرضي أو عطل في صمام تحويل الأبخرة"
+    },
+    {
+     "en": "Wiring/connector fault",
+     "ar": "عطل في الأسلاك/الوصلة"
+    }
+   ]
+  },
+  "P2420": {
+   "system": "powertrain",
+   "subsystem": "evap",
+   "en": "Evaporative Emission System Switching Valve Control Circuit High",
+   "ar": "دائرة التحكم بصمام تحويل نظام الأبخرة (EVAP) - جهد مرتفع",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "evap_vapor_pressure",
+    "evap_purge",
+    "fuel_level"
+   ],
+   "common_causes": [
+    {
+     "en": "Open circuit or short to voltage, or faulty switching valve",
+     "ar": "دائرة مفتوحة أو قصر بالموجب أو عطل في صمام التحويل"
+    },
+    {
+     "en": "Wiring/connector fault",
+     "ar": "عطل في الأسلاك/الوصلة"
+    }
+   ]
+  },
   "P242F": {
    "system": "powertrain",
    "subsystem": "exhaust",
@@ -14932,6 +17184,52 @@
     {
      "en": "Wrong engine oil (non low-ash spec)",
      "ar": "زيت محرك غير مطابق (ليس منخفض الرماد)"
+    }
+   ]
+  },
+  "P2431": {
+   "system": "powertrain",
+   "subsystem": "emissions",
+   "en": "Secondary Air Injection System Air Flow/Pressure Sensor Circuit Range/Performance (Bank 1)",
+   "ar": "أداء/مدى غير صحيح لحساس تدفق/ضغط نظام حقن الهواء الثانوي (البنك 1)",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "secondary_air_status",
+    "engine_rpm",
+    "map_kpa"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty secondary air injection flow/pressure sensor",
+     "ar": "عطل في حساس تدفق/ضغط الهواء الثانوي"
+    },
+    {
+     "en": "Blocked secondary air passages or hose",
+     "ar": "انسداد ممرات أو خرطوم الهواء الثانوي"
+    }
+   ]
+  },
+  "P2432": {
+   "system": "powertrain",
+   "subsystem": "emissions",
+   "en": "Secondary Air Injection System Air Flow/Pressure Sensor Circuit Low (Bank 1)",
+   "ar": "دائرة حساس تدفق/ضغط نظام حقن الهواء الثانوي - جهد منخفض (البنك 1)",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "secondary_air_status",
+    "engine_rpm",
+    "map_kpa"
+   ],
+   "common_causes": [
+    {
+     "en": "Short to ground in the sensor circuit",
+     "ar": "قصر أرضي في دائرة الحساس"
+    },
+    {
+     "en": "Faulty secondary air flow/pressure sensor",
+     "ar": "عطل في حساس تدفق/ضغط الهواء الثانوي"
     }
    ]
   },
@@ -15500,6 +17798,48 @@
     }
    ]
   },
+  "U0141": {
+   "system": "network",
+   "subsystem": "network",
+   "en": "Lost Communication With Body Control Module \"A\"",
+   "ar": "فقدان الاتصال مع وحدة التحكم بالهيكل BCM - A",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "CAN bus wiring fault (open/short) to the BCM",
+     "ar": "عطل أسلاك ناقل CAN (قطع/قصر) لوحدة الهيكل"
+    },
+    {
+     "en": "No power/ground to the BCM or faulty module",
+     "ar": "انقطاع تغذية/أرضي الوحدة أو عطل فيها"
+    }
+   ]
+  },
+  "U0146": {
+   "system": "network",
+   "subsystem": "network",
+   "en": "Lost Communication With Gateway \"A\"",
+   "ar": "فقدان الاتصال مع وحدة البوابة (Gateway) - A",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "CAN bus wiring fault to the gateway module",
+     "ar": "عطل أسلاك ناقل CAN لوحدة البوابة"
+    },
+    {
+     "en": "No power/ground to the gateway or faulty module",
+     "ar": "انقطاع تغذية/أرضي البوابة أو عطل فيها"
+    }
+   ]
+  },
   "U0151": {
    "system": "network",
    "subsystem": "network",
@@ -15597,6 +17937,133 @@
     }
    ]
   },
+  "U0184": {
+   "system": "network",
+   "subsystem": "network",
+   "en": "Lost Communication With Radio",
+   "ar": "فقدان الاتصال مع وحدة الراديو",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "CAN/LIN bus wiring fault to the radio",
+     "ar": "عطل أسلاك الناقل لوحدة الراديو"
+    },
+    {
+     "en": "No power/ground to the radio or faulty module",
+     "ar": "انقطاع تغذية/أرضي الراديو أو عطل فيه"
+    }
+   ]
+  },
+  "U0193": {
+   "system": "network",
+   "subsystem": "network",
+   "en": "Lost Communication With Digital Audio Control Module \"A\"",
+   "ar": "فقدان الاتصال مع وحدة التحكم بالصوت الرقمي - A",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Bus wiring fault to the audio module",
+     "ar": "عطل أسلاك الناقل لوحدة الصوت"
+    },
+    {
+     "en": "No power/ground to the module or faulty module",
+     "ar": "انقطاع تغذية/أرضي الوحدة أو عطل فيها"
+    }
+   ]
+  },
+  "U0199": {
+   "system": "network",
+   "subsystem": "network",
+   "en": "Lost Communication With Door Control Module \"A\"",
+   "ar": "فقدان الاتصال مع وحدة التحكم بالباب - A",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Bus wiring fault to the door module",
+     "ar": "عطل أسلاك الناقل لوحدة الباب"
+    },
+    {
+     "en": "No power/ground to the module or faulty module",
+     "ar": "انقطاع تغذية/أرضي الوحدة أو عطل فيها"
+    }
+   ]
+  },
+  "U0208": {
+   "system": "network",
+   "subsystem": "network",
+   "en": "Lost Communication With Seat Control Module \"B\"",
+   "ar": "فقدان الاتصال مع وحدة التحكم بالمقعد - B",
+   "severity": "low",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Bus wiring fault to the seat module",
+     "ar": "عطل أسلاك الناقل لوحدة المقعد"
+    },
+    {
+     "en": "No power/ground to the module or faulty module",
+     "ar": "انقطاع تغذية/أرضي الوحدة أو عطل فيها"
+    }
+   ]
+  },
+  "U0212": {
+   "system": "network",
+   "subsystem": "network",
+   "en": "Lost Communication With Steering Column Control Module",
+   "ar": "فقدان الاتصال مع وحدة التحكم بعمود المقود",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage",
+    "vehicle_speed"
+   ],
+   "common_causes": [
+    {
+     "en": "Bus wiring fault to the steering column module",
+     "ar": "عطل أسلاك الناقل لوحدة عمود المقود"
+    },
+    {
+     "en": "No power/ground to the module or faulty module",
+     "ar": "انقطاع تغذية/أرضي الوحدة أو عطل فيها"
+    }
+   ]
+  },
+  "U0300": {
+   "system": "network",
+   "subsystem": "network",
+   "en": "Internal Control Module Software Incompatibility",
+   "ar": "عدم توافق برمجيات وحدات التحكم الداخلية",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Mismatched module software versions after a partial update/replacement",
+     "ar": "اختلاف إصدارات برمجيات الوحدات بعد تحديث/استبدال جزئي"
+    },
+    {
+     "en": "Reprogramming/coding to matching versions required",
+     "ar": "يلزم إعادة برمجة/ترميز الوحدات لإصدارات متوافقة"
+    }
+   ]
+  },
   "U0401": {
    "system": "network",
    "subsystem": "network",
@@ -15675,6 +18142,93 @@
     {
      "en": "Damaged CAN bus wiring or connector (open, short, water ingress)",
      "ar": "تلف أسلاك أو فيشات شبكة CAN (انقطاع، تماس، دخول ماء)"
+    }
+   ]
+  },
+  "U0416": {
+   "system": "network",
+   "subsystem": "network",
+   "en": "Invalid Data Received From Vehicle Dynamics Control Module",
+   "ar": "بيانات غير صالحة من وحدة التحكم بديناميكية المركبة",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage",
+    "vehicle_speed"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty vehicle dynamics (stability) module or its sensors",
+     "ar": "عطل في وحدة الثبات/الديناميكية أو حساساتها"
+    },
+    {
+     "en": "Bus wiring fault causing corrupted data",
+     "ar": "عطل أسلاك الناقل يسبب بيانات تالفة"
+    }
+   ]
+  },
+  "U0418": {
+   "system": "network",
+   "subsystem": "network",
+   "en": "Invalid Data Received From Brake System Control Module",
+   "ar": "بيانات غير صالحة من وحدة التحكم بنظام الفرامل",
+   "severity": "high",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage",
+    "vehicle_speed"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty ABS/brake control module or wheel speed sensors",
+     "ar": "عطل في وحدة ABS/الفرامل أو حساسات سرعة العجلات"
+    },
+    {
+     "en": "Bus wiring fault causing corrupted data",
+     "ar": "عطل أسلاك الناقل يسبب بيانات تالفة"
+    }
+   ]
+  },
+  "U0422": {
+   "system": "network",
+   "subsystem": "network",
+   "en": "Invalid Data Received From Body Control Module",
+   "ar": "بيانات غير صالحة من وحدة التحكم بالهيكل (BCM)",
+   "severity": "medium",
+   "drivable": true,
+   "related_signals": [
+    "module_voltage"
+   ],
+   "common_causes": [
+    {
+     "en": "Faulty body control module",
+     "ar": "عطل في وحدة التحكم بالهيكل"
+    },
+    {
+     "en": "Bus wiring fault causing corrupted data",
+     "ar": "عطل أسلاك الناقل يسبب بيانات تالفة"
+    }
+   ]
+  },
+  "U0426": {
+   "system": "network",
+   "subsystem": "network",
+   "en": "Invalid Data Received From Immobilizer Control Module",
+   "ar": "بيانات غير صالحة من وحدة مانع الحركة (الإيموبلايزر)",
+   "severity": "medium",
+   "drivable": false,
+   "related_signals": [
+    "module_voltage",
+    "engine_rpm"
+   ],
+   "common_causes": [
+    {
+     "en": "Immobilizer/key authentication fault (engine may not start)",
+     "ar": "عطل في مصادقة مانع الحركة/المفتاح (قد لا يدور المحرك)"
+    },
+    {
+     "en": "Faulty immobilizer module or bus wiring fault",
+     "ar": "عطل في وحدة مانع الحركة أو في أسلاك الناقل"
     }
    ]
   }
