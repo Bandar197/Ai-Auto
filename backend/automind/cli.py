@@ -1,16 +1,16 @@
 """AutoMind command line (Windows / macOS / Linux).
 
-    automind connect --host 192.168.0.10 --port 35000        # real ELM327 Wi-Fi
-    automind scan --host 192.168.0.10 --duration 90 --out session.json --report report.html
-    automind live --host 192.168.0.10 --pids 0C,0D,05,0B
-    automind simulate --scenario p0106_map_sensor --port 35000
-    automind demo --scenario p0171_vacuum_leak --out demo.json
-    automind replay session.json --speed 4
-    automind diagnose session.json --lang ar --report report.html
-    automind ble-scan
-    automind kb P0106
-    automind clear --host 192.168.0.10 --out clear_record.json    # save codes, clear with consent, re-check
-    automind verify clear_record.json --host 192.168.0.10         # later: did the codes come back?
+automind connect --host 192.168.0.10 --port 35000        # real ELM327 Wi-Fi
+automind scan --host 192.168.0.10 --duration 90 --out session.json --report report.html
+automind live --host 192.168.0.10 --pids 0C,0D,05,0B
+automind simulate --scenario p0106_map_sensor --port 35000
+automind demo --scenario p0171_vacuum_leak --out demo.json
+automind replay session.json --speed 4
+automind diagnose session.json --lang ar --report report.html
+automind ble-scan
+automind kb P0106
+automind clear --host 192.168.0.10 --out clear_record.json    # save codes, clear with consent, re-check
+automind verify clear_record.json --host 192.168.0.10         # later: did the codes come back?
 """
 
 from __future__ import annotations
@@ -74,9 +74,11 @@ async def _connect(a: argparse.Namespace) -> ObdClient:
     print(f"  attempts={rep.attempts} time={rep.latency_ms} ms")
     if not rep.ok:
         await client.close()
-        hint = ("Check that this device is joined to the adapter's Wi-Fi and the IP/port are right."
-                if rep.adapter_status != "connected" else
-                "Adapter reachable but the car did not answer: switch the ignition ON (or start the engine) and retry.")
+        hint = (
+            "Check that this device is joined to the adapter's Wi-Fi and the IP/port are right."
+            if rep.adapter_status != "connected"
+            else "Adapter reachable but the car did not answer: switch the ignition ON (or start the engine) and retry."
+        )
         raise SystemExit(f"\nConnection failed. {hint}")
     return client
 
@@ -102,6 +104,49 @@ async def cmd_connect(a: argparse.Namespace) -> None:
         await c.close()
 
 
+async def cmd_uds_read(a: argparse.Namespace) -> None:
+    """Read a non-powertrain module's fault codes over UDS (service 0x19 0x02). Read-only.
+
+    Use this to capture real responses from a module (SRS/ABS/BCM) on your own car, so its
+    CAN addresses can be validated before the app offers it. Nothing is written or cleared.
+    """
+    from automind.obd.uds import UdsClient, UdsError, UdsModule
+
+    c = await _connect(a)
+    try:
+        req_id = int(a.request_id, 16)
+        resp_id = int(a.response_id, 16) if a.response_id else (req_id + 8)
+        module = UdsModule(
+            key=a.module,
+            name_en=a.module,
+            name_ar=a.module,
+            request_id=req_id,
+            response_id=resp_id,
+            id_bits=a.id_bits,
+            safety_category=a.category,
+        )
+        print(f"Module '{a.module}'  request {req_id:#05x} → response {resp_id:#05x} ({a.id_bits}-bit)")
+        uds = UdsClient(c.elm)
+        try:
+            res = await uds.read_module_dtcs(module)
+        except UdsError as e:
+            print(f"  UDS error: {e.code} — {e.detail}")
+            print("  raw: no usable answer; the address may be wrong for this vehicle")
+            return
+        print(f"  request:  {res.request}")
+        print(f"  raw resp: {res.response_raw!r}")
+        print(f"  codes: {len(res.dtcs) or 'none'}")
+        from automind.diagnosis.kb import get_kb
+
+        kb = get_kb()
+        for d in res.dtcs:
+            k = kb.lookup(d.code)
+            flags = ", ".join(d.flags) or "-"
+            print(f"    {d.display} [{flags}] {k['en'] if k else '(not in knowledge base)'}")
+    finally:
+        await c.close()
+
+
 async def cmd_scan(a: argparse.Namespace) -> None:
     from automind.diagnosis.engine import diagnose_async
     from automind.diagnosis.input_builder import from_recording
@@ -109,6 +154,7 @@ async def cmd_scan(a: argparse.Namespace) -> None:
 
     c = await _connect(a)
     try:
+
         def prog(step: str, kw: dict) -> None:
             print(f"  · {step} {kw if kw else ''}", flush=True)
 
@@ -147,11 +193,21 @@ async def cmd_live(a: argparse.Namespace) -> None:
 async def cmd_simulate(a: argparse.Namespace) -> None:
     from automind.simulator.server import SimulatorConfig, serve_forever
 
-    await serve_forever(SimulatorConfig(
-        scenario=a.scenario, host=a.host, port=a.port, time_scale=a.time_scale, seed=a.seed,
-        protocol=a.protocol, ignition_on=not a.ignition_off, engine_running=not a.engine_off,
-        drop_after=a.drop_after, latency_ms=a.latency_ms, start_engine_after_clear_s=a.start_engine_after_clear,
-    ))
+    await serve_forever(
+        SimulatorConfig(
+            scenario=a.scenario,
+            host=a.host,
+            port=a.port,
+            time_scale=a.time_scale,
+            seed=a.seed,
+            protocol=a.protocol,
+            ignition_on=not a.ignition_off,
+            engine_running=not a.engine_off,
+            drop_after=a.drop_after,
+            latency_ms=a.latency_ms,
+            start_engine_after_clear_s=a.start_engine_after_clear,
+        )
+    )
 
 
 async def cmd_demo(a: argparse.Namespace) -> None:
@@ -220,11 +276,15 @@ def cmd_kb(a: argparse.Namespace) -> None:
 
 # ---------------------------------------------------------------- clear & verify
 CLEAR_FORMAT = "automind.clear_record.v1"
-CONSENT_EN = ("I understand that clearing erases the stored trouble codes and freeze-frame data and resets the "
-              "readiness monitors (the vehicle may not pass an emissions inspection until it has been driven), and "
-              "that clearing does not repair any fault.")
-CONSENT_AR = ("أفهم أن المسح يحذف أكواد الأعطال المخزنة وبيانات الإطار المجمد ويعيد ضبط مؤشرات الجاهزية "
-              "(قد لا تجتاز السيارة فحص الانبعاثات حتى تتم قيادتها)، وأن المسح لا يصلح أي عطل.")
+CONSENT_EN = (
+    "I understand that clearing erases the stored trouble codes and freeze-frame data and resets the "
+    "readiness monitors (the vehicle may not pass an emissions inspection until it has been driven), and "
+    "that clearing does not repair any fault."
+)
+CONSENT_AR = (
+    "أفهم أن المسح يحذف أكواد الأعطال المخزنة وبيانات الإطار المجمد ويعيد ضبط مؤشرات الجاهزية "
+    "(قد لا تجتاز السيارة فحص الانبعاثات حتى تتم قيادتها)، وأن المسح لا يصلح أي عطل."
+)
 
 
 async def _snapshot(c: ObdClient):  # noqa: ANN202
@@ -243,19 +303,28 @@ async def _snapshot(c: ObdClient):  # noqa: ANN202
             except Exception:  # noqa: BLE001,S110 - optional evidence
                 pass
     return ScanSnapshot(
-        taken_at=datetime.now(UTC), dtcs=dtcs, readiness=readiness or None,
-        warmups_since_clear=vals.get("warmups_since_clear"), distance_since_clear_km=vals.get("distance_since_clear"),
+        taken_at=datetime.now(UTC),
+        dtcs=dtcs,
+        readiness=readiness or None,
+        warmups_since_clear=vals.get("warmups_since_clear"),
+        distance_since_clear_km=vals.get("distance_since_clear"),
         engine_running=(vals["engine_rpm"] > 300) if vals.get("engine_rpm") is not None else None,
     )
 
 
 def _print_verification(v, lang: str) -> None:  # noqa: ANN001
     ar = lang == "ar"
-    labels = {"problem_confirmed": ("REAL PROBLEM", "يوجد عطل حقيقي"), "likely_resolved": ("LIKELY RESOLVED", "غالبا انتهى"),
-              "verifying": ("STILL VERIFYING", "التحقق مستمر"), "nothing_cleared": ("NOTHING TO VERIFY", "لا يوجد ما يُتحقق منه")}
+    labels = {
+        "problem_confirmed": ("REAL PROBLEM", "يوجد عطل حقيقي"),
+        "likely_resolved": ("LIKELY RESOLVED", "غالبا انتهى"),
+        "verifying": ("STILL VERIFYING", "التحقق مستمر"),
+        "nothing_cleared": ("NOTHING TO VERIFY", "لا يوجد ما يُتحقق منه"),
+    }
     label = labels[v.overall][1 if ar else 0]
-    print(f"\n== {'نتيجة التحقق بعد المسح' if ar else 'Clear verification'}: {label} "
-          f"({v.checks_after_clear} {'فحص' if ar else 'check(s)'}) ==")
+    print(
+        f"\n== {'نتيجة التحقق بعد المسح' if ar else 'Clear verification'}: {label} "
+        f"({v.checks_after_clear} {'فحص' if ar else 'check(s)'}) =="
+    )
     print(v.summary_ar if ar else v.summary_en)
     for cv in v.codes:
         flag = {True: "!!", False: "OK", None: ".."}[cv.is_real_problem]
@@ -309,14 +378,29 @@ async def cmd_clear(a: argparse.Namespace) -> None:
         first = await _snapshot(c)  # same key cycle: catches faults that are present right now
     finally:
         await c.close()
-    out = {"format": CLEAR_FORMAT, "record": record.model_dump(mode="json"), "freeze_frame": ff,
-           "checks": [first.model_dump(mode="json")]}
+    out = {
+        "format": CLEAR_FORMAT,
+        "record": record.model_dump(mode="json"),
+        "freeze_frame": ff,
+        "checks": [first.model_dump(mode="json")],
+    }
     Path(a.out).write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     audit = Path.home() / ".automind" / "audit.log"
     audit.parent.mkdir(exist_ok=True)
     with audit.open("a", encoding="utf-8") as fh:
-        fh.write(json.dumps({"at": cleared_at.isoformat(), "action": "clear_dtcs", "operation_id": auth.operation_id,
-                             "data_mode": mode, "codes": codes, "adapter": c.transport.description}) + "\n")
+        fh.write(
+            json.dumps(
+                {
+                    "at": cleared_at.isoformat(),
+                    "action": "clear_dtcs",
+                    "operation_id": auth.operation_id,
+                    "data_mode": mode,
+                    "codes": codes,
+                    "adapter": c.transport.description,
+                }
+            )
+            + "\n"
+        )
     print(f"Clear record saved: {a.out}  (local audit: {audit})")
     _print_verification(assess_after_clear(record, [first]), a.lang)
     print("\nNext: drive normally, then run  automind verify " + a.out)
@@ -372,26 +456,44 @@ async def cmd_create_admin(a: argparse.Namespace, settings=None) -> None:  # noq
     engine = create_async_engine(settings.database_url)
     try:
         async with engine.begin() as conn:
-            row = (await conn.execute(
-                select(t.users.c.id).where(func.lower(t.users.c.email) == email.lower(), t.users.c.deleted_at.is_(None))
-            )).first()
+            row = (
+                await conn.execute(
+                    select(t.users.c.id).where(func.lower(t.users.c.email) == email.lower(), t.users.c.deleted_at.is_(None))
+                )
+            ).first()
             if row is None:
                 pw = await asyncio.to_thread(getpass.getpass, f"No account for {email}. New password (min 10 chars): ")
                 check_password_policy(pw, email)
                 user_id = uuid.uuid4()
-                await conn.execute(insert(t.users).values(
-                    id=user_id, email=email, password_hash=await Passwords(settings).hash(pw), full_name=a.name,
-                    locale="ar", email_verified_at=func.now()))
+                await conn.execute(
+                    insert(t.users).values(
+                        id=user_id,
+                        email=email,
+                        password_hash=await Passwords(settings).hash(pw),
+                        full_name=a.name,
+                        locale="ar",
+                        email_verified_at=func.now(),
+                    )
+                )
                 print(f"Created account {email}")
             else:
                 user_id = row.id
             secret = new_totp_secret()
-            await conn.execute(update(t.users).where(t.users.c.id == user_id).values(
-                platform_role=a.role, status="active", mfa_enabled=True,
-                mfa_secret_ciphertext=encrypt_mfa_secret(Cipher(settings.data_key_bytes), user_id, secret)))
-            await conn.execute(insert(t.audit_logs).values(
-                action="admin.bootstrap", entity_type="user", entity_id=str(user_id),
-                metadata={"role": a.role, "via": "cli"}))
+            await conn.execute(
+                update(t.users)
+                .where(t.users.c.id == user_id)
+                .values(
+                    platform_role=a.role,
+                    status="active",
+                    mfa_enabled=True,
+                    mfa_secret_ciphertext=encrypt_mfa_secret(Cipher(settings.data_key_bytes), user_id, secret),
+                )
+            )
+            await conn.execute(
+                insert(t.audit_logs).values(
+                    action="admin.bootstrap", entity_type="user", entity_id=str(user_id), metadata={"role": a.role, "via": "cli"}
+                )
+            )
     finally:
         await engine.dispose()
     print(f"\n{email} is now '{a.role}' with two-factor sign-in enabled.")
@@ -421,10 +523,17 @@ def _write_reports(result, rec, a: argparse.Namespace, mode: str | None = None) 
     from automind.reports import ReportMeta, render_report_html, render_report_json
 
     meta = ReportMeta(
-        data_mode=mode or rec.data_mode, protocol_name=rec.source.protocol_name, adapter_firmware=rec.source.adapter_firmware,
-        demo_scenario=rec.source.demo_scenario, source_recording_id=rec.recording_id if mode == "replay" else None,
-        vehicle={"make": rec.vehicle.make, "model": rec.vehicle.model, "model_year": rec.vehicle.model_year,
-                 "vin_masked": (rec.vehicle.vin[:6] + "*" * 7 + rec.vehicle.vin[-4:]) if rec.vehicle.vin else None},
+        data_mode=mode or rec.data_mode,
+        protocol_name=rec.source.protocol_name,
+        adapter_firmware=rec.source.adapter_firmware,
+        demo_scenario=rec.source.demo_scenario,
+        source_recording_id=rec.recording_id if mode == "replay" else None,
+        vehicle={
+            "make": rec.vehicle.make,
+            "model": rec.vehicle.model,
+            "model_year": rec.vehicle.model_year,
+            "vin_masked": (rec.vehicle.vin[:6] + "*" * 7 + rec.vehicle.vin[-4:]) if rec.vehicle.vin else None,
+        },
     )
     if getattr(a, "report", None):
         Path(a.report).write_text(render_report_html(result, meta, a.lang), encoding="utf-8")
@@ -475,8 +584,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--engine-off", action="store_true", help="ignition on, engine off")
     p.add_argument("--drop-after", type=int, default=None, help="close the connection after N commands")
     p.add_argument("--latency-ms", type=int, default=0)
-    p.add_argument("--start-engine-after-clear", type=float, default=None, metavar="S",
-                   help="with --engine-off: the simulated driver starts the engine S seconds after a clear")
+    p.add_argument(
+        "--start-engine-after-clear",
+        type=float,
+        default=None,
+        metavar="S",
+        help="with --engine-off: the simulated driver starts the engine S seconds after a clear",
+    )
     p.set_defaults(fn=cmd_simulate)
 
     p = sub.add_parser("demo", help="simulate a scenario end-to-end and diagnose it")
@@ -519,6 +633,15 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--name", default=None)
     p.add_argument("--role", choices=["admin", "super_admin", "support"], default="super_admin")
     p.set_defaults(fn=cmd_create_admin)
+
+    p = sub.add_parser("uds-read", help="read a non-powertrain module's codes over UDS (read-only; for SRS/ABS/BCM)")
+    _add_link_args(p)
+    p.add_argument("--module", default="module", help="label, e.g. srs, abs, bcm")
+    p.add_argument("--request-id", required=True, help="module request CAN id in hex, e.g. 7E0 or a maker SRS id")
+    p.add_argument("--response-id", help="module response CAN id in hex (default: request-id + 8)")
+    p.add_argument("--id-bits", type=int, default=11, choices=(11, 29), help="CAN id length")
+    p.add_argument("--category", default="other", choices=("airbag", "abs", "other"))
+    p.set_defaults(fn=cmd_uds_read)
 
     p = sub.add_parser("ble-scan", help="list nearby BLE OBD adapters")
     p.add_argument("--timeout", type=float, default=6.0)
