@@ -49,7 +49,7 @@ function deviceSummary() {
 const dateTime = (ts) => (ts ? new Date(ts).toLocaleString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'غير معروف');
 
 /* ---------------- avatar cropper ---------------- */
-function createCropper(canvas, zoomInput) {
+export function createCropper(canvas, zoomInput) {
   const S = canvas.width; // internal square size
   const ctx = canvas.getContext('2d');
   let img = null, w = 0, h = 0, base = 1, z = 1, ox = 0, oy = 0;
@@ -108,7 +108,7 @@ function createCropper(canvas, zoomInput) {
     },
   };
 }
-function loadImage(file) {
+export function loadImage(file) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const im = new Image();

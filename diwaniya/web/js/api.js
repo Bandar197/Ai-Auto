@@ -131,7 +131,7 @@ export async function game(action, body = {}) {
 }
 
 /* ---------- realtime ---------- */
-export function channel(name) { return sb.channel(name); }
+export function channel(name, opts) { return opts ? sb.channel(name, opts) : sb.channel(name); }
 export function removeChannel(ch) { try { sb.removeChannel(ch); } catch { /* already removed */ } }
 
 /* ---------- storage ---------- */
