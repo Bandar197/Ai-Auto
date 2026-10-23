@@ -147,6 +147,75 @@ async def cmd_uds_read(a: argparse.Namespace) -> None:
         await c.close()
 
 
+# Candidate module addresses to probe for discovery. These are UNVERIFIED starting points
+# (meanings differ per model year); `uds-scan` reads from each and reports which answer, so the
+# real addresses can be confirmed on the car. 2018+ FCA vehicles have a Security Gateway (SGW)
+# that may block some modules over OBD until it is authenticated — a refusal still means "present".
+# target byte -> (label, category) for 29-bit FCA physical addressing (18DA<target>F1 / 18DAF1<target>).
+_FCA_29BIT_TARGETS = {
+    0x10: ("pcm_engine", "other"),
+    0x18: ("tcm_transmission", "other"),
+    0x28: ("abs_esp", "abs"),
+    0x40: ("bcm_body", "other"),
+    0x58: ("orc_airbag", "airbag"),
+    0x60: ("ipc_cluster", "other"),
+}
+
+_UDS_PROFILES: dict[str, list[tuple[str, int, int, int, str]]] = {
+    # key -> list of (label, request_id, response_id, id_bits, category)
+    "obd11": [(f"ecu_7E{i}", 0x7E0 + i, 0x7E8 + i, 11, "other") for i in range(8)],
+    "fca": [(f"ecu_7E{i}", 0x7E0 + i, 0x7E8 + i, 11, "other") for i in range(8)]
+    + [(label, 0x18DA0000 | (t << 8) | 0xF1, 0x18DAF100 | t, 29, cat) for t, (label, cat) in _FCA_29BIT_TARGETS.items()],
+}
+
+
+async def cmd_uds_scan(a: argparse.Namespace) -> None:
+    """Probe a list of candidate module addresses (read-only) and report which answer.
+
+    Sends only the UDS read-DTC request (0x19). A module that answers — even by refusing —
+    is present; no answer means the address is wrong or the module is unreachable. Use the
+    responders to fill the vehicle's real SRS/ABS/BCM addresses.
+    """
+    from automind.obd.uds import UdsClient, UdsError, UdsModule, _hex_to_bytes
+
+    candidates = _UDS_PROFILES.get(a.profile)
+    if candidates is None:
+        print(f"unknown profile {a.profile!r}; choices: {', '.join(_UDS_PROFILES)}")
+        return
+    c = await _connect(a)
+    try:
+        uds = UdsClient(c.elm)
+        print(f"Probing {len(candidates)} candidate addresses (profile '{a.profile}', read-only)…\n")
+        present = []
+        for label, req, resp, bits, cat in candidates:
+            tag = f"{label:<18} req {req:#x} resp {resp:#x} [{bits}-bit, {cat}]"
+            module = UdsModule(
+                key=label, name_en=label, name_ar=label, request_id=req, response_id=resp, id_bits=bits, safety_category=cat
+            )
+            try:
+                res = await uds.read_module_dtcs(module)
+            except UdsError as e:
+                print(f"  PRESENT (refused) {tag}  → {e.code}")
+                present.append((label, req, resp, bits, cat))
+                continue
+            data = _hex_to_bytes(res.response_raw)
+            if data[:1] == b"\x59":
+                print(f"  PRESENT          {tag}  → {len(res.dtcs)} code(s): {', '.join(d.display for d in res.dtcs) or '-'}")
+                present.append((label, req, resp, bits, cat))
+            else:
+                print(f"  no answer        {tag}")
+        print(f"\nResponders: {len(present)}")
+        if present:
+            print("Fill these into the vehicle's module map; for a full read use:")
+            for label, req, resp, bits, cat in present:
+                print(
+                    f"  automind uds-read --module {label} --request-id {req:X} "
+                    f"--response-id {resp:X} --id-bits {bits} --category {cat}"
+                )
+    finally:
+        await c.close()
+
+
 async def cmd_scan(a: argparse.Namespace) -> None:
     from automind.diagnosis.engine import diagnose_async
     from automind.diagnosis.input_builder import from_recording
@@ -642,6 +711,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--id-bits", type=int, default=11, choices=(11, 29), help="CAN id length")
     p.add_argument("--category", default="other", choices=("airbag", "abs", "other"))
     p.set_defaults(fn=cmd_uds_read)
+
+    p = sub.add_parser("uds-scan", help="probe candidate module addresses (read-only) to discover SRS/ABS/BCM")
+    _add_link_args(p)
+    p.add_argument("--profile", default="fca", help="candidate set: fca (Chrysler/Dodge/Jeep), obd11 (standard 11-bit ECUs)")
+    p.set_defaults(fn=cmd_uds_scan)
 
     p = sub.add_parser("ble-scan", help="list nearby BLE OBD adapters")
     p.add_argument("--timeout", type=float, default=6.0)
