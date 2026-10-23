@@ -747,6 +747,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get clearDtcsConfirm => 'أفهم ذلك — امسح الأكواد';
 
   @override
+  String clearCodesCount(int count) {
+    return 'امسح $count كود';
+  }
+
+  @override
+  String get clearWillReturnNote =>
+      'المسح يطفئ اللمبة لكنه لا يصلح العطل — تعود الأكواد إذا كان العطل حقيقياً.';
+
+  @override
   String get clearRequiresServer =>
       'مسح الأكواد يحتاج موافقة الخادم. اتصل بالإنترنت وسجّل الدخول.';
 

@@ -71,6 +71,30 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                   onPressed: () => context.push('/verify/${scan.verificationId}'),
                 ),
               ),
+            // When codes are found, offer to clear them right here. The clear screen
+            // carries the full warning (codes return if the fault is real) and the
+            // engine-off / stopped safety checks.
+            if (!scan.running &&
+                scan.reportId != null &&
+                scan.dtcCount > 0 &&
+                conn.client != null &&
+                conn.mode?.apiValue != 'replay')
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
+                    icon: const Icon(Icons.delete_sweep_outlined),
+                    label: Text(l.clearCodesCount(scan.dtcCount)),
+                    onPressed: () => context.push('/clear-dtcs?report=${scan.reportId}'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(l.clearWillReturnNote,
+                        style: Theme.of(context).textTheme.bodySmall, textAlign: TextAlign.center),
+                  ),
+                ]),
+              ),
           ]),
         ),
         Padding(

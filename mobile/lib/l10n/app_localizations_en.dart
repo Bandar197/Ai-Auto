@@ -741,6 +741,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clearDtcsConfirm => 'I understand — clear codes';
 
   @override
+  String clearCodesCount(int count) {
+    return 'Clear $count code(s)';
+  }
+
+  @override
+  String get clearWillReturnNote =>
+      'Clearing turns the light off but does not fix the fault — codes return if the problem is real.';
+
+  @override
   String get clearRequiresServer =>
       'Clearing codes needs server approval. Connect to the internet and log in.';
 

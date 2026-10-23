@@ -295,6 +295,11 @@
   "clearDtcsWarning": "Clearing codes turns off the check-engine light but does NOT fix the fault. All readiness monitors reset, so the car may fail an inspection until it completes a full drive cycle, and freeze-frame data is erased. Codes will return if the fault is still present.",
   "clearDtcsChecklist": "Engine OFF, ignition ON, vehicle stopped.",
   "clearDtcsConfirm": "I understand — clear codes",
+  "clearCodesCount": "Clear {count} code(s)",
+  "@clearCodesCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "clearWillReturnNote": "Clearing turns the light off but does not fix the fault — codes return if the problem is real.",
   "clearRequiresServer": "Clearing codes needs server approval. Connect to the internet and log in.",
   "clearConditionsFailed": "Refused: {reason}",
   "@clearConditionsFailed": {

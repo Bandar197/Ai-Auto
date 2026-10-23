@@ -30,6 +30,7 @@ class ScanState {
     this.captureLeft = 0,
     this.queued = false,
     this.verificationId,
+    this.dtcCount = 0,
   });
 
   final Map<ScanStep, StepState> steps;
@@ -38,6 +39,9 @@ class ScanState {
   final String? error;
   final int captureLeft;
   final bool queued;
+
+  /// Number of distinct trouble codes this scan read (drives the "clear codes" action).
+  final int dtcCount;
 
   /// Set when this scan was added as a check to an open clear-and-verify.
   final String? verificationId;
@@ -52,6 +56,7 @@ class ScanState {
     int? captureLeft,
     bool? queued,
     String? verificationId,
+    int? dtcCount,
   }) =>
       ScanState(
         steps: steps ?? this.steps,
@@ -61,6 +66,7 @@ class ScanState {
         captureLeft: captureLeft ?? this.captureLeft,
         queued: queued ?? this.queued,
         verificationId: verificationId ?? this.verificationId,
+        dtcCount: dtcCount ?? this.dtcCount,
       );
 }
 
@@ -175,6 +181,7 @@ class ScanController extends Notifier<ScanState> {
         if (r.error != null) errs.add('${s.service}: ${r.error}');
       }
       rec.dtcs = dtcs;
+      state = state.copyWith(dtcCount: dtcs.map((d) => d.code).toSet().length);
       _set(ScanStep.dtcs, StepStatus.done, [dtcs.map((d) => d.code).toSet().join(', '), ...errs].where((x) => x.isNotEmpty).join(' · '));
       if (_cancel) return _cancelled();
 

@@ -1448,6 +1448,18 @@ abstract class AppLocalizations {
   /// **'I understand — clear codes'**
   String get clearDtcsConfirm;
 
+  /// No description provided for @clearCodesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear {count} code(s)'**
+  String clearCodesCount(int count);
+
+  /// No description provided for @clearWillReturnNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Clearing turns the light off but does not fix the fault — codes return if the problem is real.'**
+  String get clearWillReturnNote;
+
   /// No description provided for @clearRequiresServer.
   ///
   /// In en, this message translates to:
