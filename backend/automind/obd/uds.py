@@ -196,10 +196,13 @@ class UdsClient:
         # Point the adapter at one module: send to request_id, accept only response_id.
         await self.elm.at(f"ATSH{module.request_id:03X}" if module.id_bits == 11 else f"ATSH{module.request_id:08X}")
         await self.elm.at(f"ATCRA{module.response_id:03X}" if module.id_bits == 11 else f"ATCRA{module.response_id:08X}")
+        # Headers off so the adapter returns only the ISO-TP-reassembled payload (clean "59 02 ...").
+        await self.elm.at("ATH0", tolerate_unknown=True)
 
     async def _restore(self) -> None:
-        # Back to normal OBD broadcast addressing and no receive filter (best-effort).
+        # Back to normal OBD broadcast addressing, headers on, no receive filter (best-effort).
         with contextlib.suppress(Exception):
+            await self.elm.at("ATH1", tolerate_unknown=True)
             await self.elm.at("ATCRA", tolerate_unknown=True)  # clear receive filter
             await self.elm.at("ATSH7DF" if self.elm.id_bits == 11 else "ATSH18DB33F1", tolerate_unknown=True)
 

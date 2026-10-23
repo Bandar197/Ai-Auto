@@ -756,6 +756,39 @@ class AppLocalizationsAr extends AppLocalizations {
       'المسح يطفئ اللمبة لكنه لا يصلح العطل — تعود الأكواد إذا كان العطل حقيقياً.';
 
   @override
+  String get extendedModulesTitle => 'وحدات الإيرباق / ABS';
+
+  @override
+  String get extendedModulesIntro =>
+      'يقرأ أعطال وحدات لا يصلها الفحص العادي — الوسائد الهوائية (SRS) وABS ووحدة الهيكل — عبر تشخيص الشركة المصنعة. قراءة فقط.';
+
+  @override
+  String get extendedScanCta => 'ابحث عن وحدات الإيرباق / ABS';
+
+  @override
+  String get extendedNeedsLive =>
+      'متاح في الوضع المباشر فقط (يحتاج سيارة حقيقية).';
+
+  @override
+  String get extendedNoModules =>
+      'لم ترد أي وحدة. قد تحتاج العناوين ضبطاً لهذه السيارة، أو أن بوابة أمنية تمنع الوصول.';
+
+  @override
+  String get extendedRefused =>
+      'موجودة، لكنها رفضت الطلب (قد تكون محمية ببوابة أمنية).';
+
+  @override
+  String get extendedNoFaults => 'لا توجد أعطال';
+
+  @override
+  String get extendedDisclaimer =>
+      'عناوين الوحدات نقطة انطلاق للاكتشاف وتُثبّت لكل سيارة. الأكواد هنا عبر تشخيص الشركة ويُفضّل التحقق منها على السيارة.';
+
+  @override
+  String get extendedAirbagClearNote =>
+      'مسح أكواد الإيرباق إجراء منفصل ومقيّد: يُرفض أثناء وجود عطل نشط، ولا يتم إلا بعد تأكيد الإصلاح.';
+
+  @override
   String get clearRequiresServer =>
       'مسح الأكواد يحتاج موافقة الخادم. اتصل بالإنترنت وسجّل الدخول.';
 

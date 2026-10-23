@@ -4,6 +4,7 @@ library;
 export 'client/obd_client.dart';
 export 'decode/dtc.dart';
 export 'decode/pid_table.dart';
+export 'decode/uds.dart';
 export 'decode/readiness.dart';
 export 'elm327/elm327.dart';
 export 'emulator/elm327_emulator.dart';

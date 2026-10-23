@@ -750,6 +750,39 @@ class AppLocalizationsEn extends AppLocalizations {
       'Clearing turns the light off but does not fix the fault — codes return if the problem is real.';
 
   @override
+  String get extendedModulesTitle => 'Airbag / ABS modules';
+
+  @override
+  String get extendedModulesIntro =>
+      'Reads fault codes from modules a normal scan does not reach — airbag (SRS), ABS and body control — over manufacturer diagnostics. Read-only.';
+
+  @override
+  String get extendedScanCta => 'Scan airbag / ABS modules';
+
+  @override
+  String get extendedNeedsLive =>
+      'Available in live mode only (needs a real car).';
+
+  @override
+  String get extendedNoModules =>
+      'No module answered. The addresses may need tuning for this car, or a security gateway is blocking access.';
+
+  @override
+  String get extendedRefused =>
+      'Present, but it refused the request (may be gateway-protected).';
+
+  @override
+  String get extendedNoFaults => 'No faults';
+
+  @override
+  String get extendedDisclaimer =>
+      'Module addresses are discovery starting points, confirmed per vehicle. Codes read here are over manufacturer diagnostics and should be verified on the car.';
+
+  @override
+  String get extendedAirbagClearNote =>
+      'Clearing airbag codes is a separate, gated step: it is refused while a fault is active, and only after the repair is confirmed.';
+
+  @override
   String get clearRequiresServer =>
       'Clearing codes needs server approval. Connect to the internet and log in.';
 

@@ -87,6 +87,24 @@ class Elm327 {
   /// Service 04. Call only from the approval-gated client path.
   Future<ElmResponse> sendClearDtcs() => _enqueue('04', const Duration(seconds: 5));
 
+  /// UDS extended read (service 0x19) for non-powertrain modules (SRS/ABS/BCM). Read-only.
+  Future<ElmResponse> sendExtendedRead(String command, {Duration? timeout}) {
+    final c = normalize(command);
+    if (!c.startsWith('19')) {
+      throw PolicyViolationException('sendExtendedRead only allows UDS service 0x19 (read DTC)');
+    }
+    return _enqueue(c, timeout ?? defaultTimeout);
+  }
+
+  /// UDS clear (service 0x14) for one module. Call only from the approval-gated client path.
+  Future<ElmResponse> sendUdsClear(String command) {
+    final c = normalize(command);
+    if (!c.startsWith('14')) {
+      throw PolicyViolationException('sendUdsClear only allows UDS service 0x14 (clear DTC)');
+    }
+    return _enqueue(c, const Duration(seconds: 5));
+  }
+
   Future<ElmResponse> _enqueue(String command, Duration timeout) {
     final result = Completer<ElmResponse>();
     _tail = _tail.then((_) async {

@@ -163,6 +163,14 @@ class HomeScreen extends ConsumerWidget {
             ]),
           ),
           Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: OutlinedButton.icon(
+              icon: const Icon(Icons.radar),
+              label: Text(l.extendedModulesTitle),
+              onPressed: () => context.push(conn.ecuReady ? '/extended-modules' : '/connect?next=extended-modules'),
+            ),
+          ),
+          Padding(
             padding: const EdgeInsets.all(12),
             child: Row(children: [
               Expanded(

@@ -1460,6 +1460,60 @@ abstract class AppLocalizations {
   /// **'Clearing turns the light off but does not fix the fault — codes return if the problem is real.'**
   String get clearWillReturnNote;
 
+  /// No description provided for @extendedModulesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Airbag / ABS modules'**
+  String get extendedModulesTitle;
+
+  /// No description provided for @extendedModulesIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Reads fault codes from modules a normal scan does not reach — airbag (SRS), ABS and body control — over manufacturer diagnostics. Read-only.'**
+  String get extendedModulesIntro;
+
+  /// No description provided for @extendedScanCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan airbag / ABS modules'**
+  String get extendedScanCta;
+
+  /// No description provided for @extendedNeedsLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Available in live mode only (needs a real car).'**
+  String get extendedNeedsLive;
+
+  /// No description provided for @extendedNoModules.
+  ///
+  /// In en, this message translates to:
+  /// **'No module answered. The addresses may need tuning for this car, or a security gateway is blocking access.'**
+  String get extendedNoModules;
+
+  /// No description provided for @extendedRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'Present, but it refused the request (may be gateway-protected).'**
+  String get extendedRefused;
+
+  /// No description provided for @extendedNoFaults.
+  ///
+  /// In en, this message translates to:
+  /// **'No faults'**
+  String get extendedNoFaults;
+
+  /// No description provided for @extendedDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Module addresses are discovery starting points, confirmed per vehicle. Codes read here are over manufacturer diagnostics and should be verified on the car.'**
+  String get extendedDisclaimer;
+
+  /// No description provided for @extendedAirbagClearNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Clearing airbag codes is a separate, gated step: it is refused while a fault is active, and only after the repair is confirmed.'**
+  String get extendedAirbagClearNote;
+
   /// No description provided for @clearRequiresServer.
   ///
   /// In en, this message translates to:

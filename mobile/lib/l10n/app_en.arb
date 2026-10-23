@@ -300,6 +300,15 @@
     "placeholders": { "count": { "type": "int" } }
   },
   "clearWillReturnNote": "Clearing turns the light off but does not fix the fault — codes return if the problem is real.",
+  "extendedModulesTitle": "Airbag / ABS modules",
+  "extendedModulesIntro": "Reads fault codes from modules a normal scan does not reach — airbag (SRS), ABS and body control — over manufacturer diagnostics. Read-only.",
+  "extendedScanCta": "Scan airbag / ABS modules",
+  "extendedNeedsLive": "Available in live mode only (needs a real car).",
+  "extendedNoModules": "No module answered. The addresses may need tuning for this car, or a security gateway is blocking access.",
+  "extendedRefused": "Present, but it refused the request (may be gateway-protected).",
+  "extendedNoFaults": "No faults",
+  "extendedDisclaimer": "Module addresses are discovery starting points, confirmed per vehicle. Codes read here are over manufacturer diagnostics and should be verified on the car.",
+  "extendedAirbagClearNote": "Clearing airbag codes is a separate, gated step: it is refused while a fault is active, and only after the repair is confirmed.",
   "clearRequiresServer": "Clearing codes needs server approval. Connect to the internet and log in.",
   "clearConditionsFailed": "Refused: {reason}",
   "@clearConditionsFailed": {
