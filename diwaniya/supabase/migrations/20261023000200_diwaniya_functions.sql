@@ -222,30 +222,8 @@ begin
   if not found then raise exception 'not_found'; end if;
 end $$;
 
-create or replace function public.friend_remove(p_target uuid) returns void
-language plpgsql security definer set search_path = '' as $$
-declare uid uuid := public.require_uid();
-begin
-  delete from public.friendships where a = least(uid, p_target) and b = greatest(uid, p_target);
-end $$;
 
-create or replace function public.block_user(p_target uuid) returns void
-language plpgsql security definer set search_path = '' as $$
-declare uid uuid := public.require_uid();
-begin
-  if p_target = uid then raise exception 'self'; end if;
-  insert into public.blocks (blocker, blocked) values (uid, p_target) on conflict do nothing;
-  delete from public.friendships where a = least(uid, p_target) and b = greatest(uid, p_target);
-  update public.friend_requests set status = 'cancelled', responded_at = now()
-    where status = 'pending' and ((from_id = uid and to_id = p_target) or (from_id = p_target and to_id = uid));
-end $$;
 
-create or replace function public.unblock_user(p_target uuid) returns void
-language plpgsql security definer set search_path = '' as $$
-declare uid uuid := public.require_uid();
-begin
-  delete from public.blocks where blocker = uid and blocked = p_target;
-end $$;
 
 create or replace function public.list_friends() returns jsonb
 language plpgsql stable security definer set search_path = '' as $$
@@ -544,22 +522,6 @@ begin
   return true;
 end $$;
 
-/** Atomically takes 4 compatible players out of the queue. The window widens the longer the oldest player waits. */
-create or replace function public.queue_try_match(p_mode text) returns uuid[]
-language plpgsql security definer set search_path = '' as $$
-declare first public.queue; win int; picked uuid[];
-begin
-  select * into first from public.queue where mode = p_mode order by created_at limit 1 for update skip locked;
-  if not found then return null; end if;
-  win := case when p_mode = 'friendly' then 100000 else 150 + (extract(epoch from now() - first.created_at)::int / 15) * 50 end;
-  select array_agg(user_id) into picked from (
-    select user_id from public.queue where mode = p_mode and user_id <> first.user_id and abs(rating - first.rating) <= win
-    order by created_at limit 3 for update skip locked) t;
-  if picked is null or array_length(picked, 1) < 3 then return null; end if;
-  picked := array_prepend(first.user_id, picked);
-  delete from public.queue where user_id = any(picked);
-  return picked;
-end $$;
 
 ------------------------------------------------------------------------------------------------
 -- administration (role checked in every function, every action audited)
@@ -607,20 +569,6 @@ begin
     order by p.created_at desc limit 100) t), '[]'::jsonb);
 end $$;
 
-create or replace function public.admin_ban(p_user uuid, p_hours int, p_reason text) returns void
-language plpgsql security definer set search_path = '' as $$
-declare v uuid := public.require_staff();
-begin
-  if char_length(btrim(coalesce(p_reason, ''))) < 3 then raise exception 'reason_required'; end if;
-  if public.is_staff(p_user) and not public.is_staff(v, 'owner') then raise exception 'forbidden'; end if;
-  if p_hours is null and not public.is_staff(v, 'admin') then raise exception 'forbidden'; end if;
-  if p_hours is not null and p_hours > 72 and not public.is_staff(v, 'admin') then raise exception 'forbidden'; end if;
-  insert into public.account_private (user_id) values (p_user) on conflict do nothing;
-  update public.account_private set ban_permanent = p_hours is null, ban_until = case when p_hours is null then null else now() + make_interval(hours => p_hours) end,
-    ban_reason = p_reason where user_id = p_user;
-  delete from public.queue where user_id = p_user;
-  perform public.audit('ban', p_user::text, jsonb_build_object('hours', p_hours, 'reason', p_reason));
-end $$;
 
 create or replace function public.admin_unban(p_user uuid) returns void
 language plpgsql security definer set search_path = '' as $$
@@ -690,16 +638,6 @@ begin
   perform public.audit('challenge_toggle', p_id::text, jsonb_build_object('active', p_active));
 end $$;
 
-create or replace function public.admin_set_role(p_user uuid, p_role text) returns void
-language plpgsql security definer set search_path = '' as $$
-begin
-  perform public.require_staff('owner');
-  if p_role is null then delete from public.admin_roles where user_id = p_user and role <> 'owner';
-  elsif p_role in ('admin', 'moderator') then
-    insert into public.admin_roles (user_id, role, granted_by) values (p_user, p_role, auth.uid()) on conflict (user_id) do update set role = excluded.role where public.admin_roles.role <> 'owner';
-  else raise exception 'bad_role'; end if;
-  perform public.audit('set_role', p_user::text, jsonb_build_object('role', p_role));
-end $$;
 
 create or replace function public.admin_logs() returns jsonb
 language plpgsql stable security definer set search_path = '' as $$
@@ -719,7 +657,6 @@ end $$;
 ------------------------------------------------------------------------------------------------
 revoke execute on function public.save_room(uuid, int, jsonb, jsonb, jsonb, jsonb, uuid, jsonb) from public, anon, authenticated;
 revoke execute on function public.finalize_match(uuid, jsonb) from public, anon, authenticated;
-revoke execute on function public.queue_try_match(text) from public, anon, authenticated;
 revoke execute on function public.notify_user(uuid, text, jsonb) from public, anon, authenticated;
 revoke execute on function public.unlock_achievement(uuid, text) from public, anon, authenticated;
 revoke execute on function public.bump_challenges(uuid, jsonb) from public, anon, authenticated;
