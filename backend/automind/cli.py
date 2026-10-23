@@ -161,11 +161,25 @@ _FCA_29BIT_TARGETS = {
     0x60: ("ipc_cluster", "other"),
 }
 
+# Broad 11-bit discovery band: most makers put diagnostic modules at request IDs 0x700-0x7EF with
+# the response at request+8 (the common ISO 15765-4 convention). Sweeping the band finds a car's
+# modules regardless of brand — more reliable than guessing per-make addresses — so Hyundai, Toyota,
+# Honda, Ford, GM and others are discovered this way; the responders are then confirmed on the car.
+_SWEEP_11BIT = [(f"req_{r:03X}", r, r + 8, 11, "other") for r in range(0x700, 0x7F0)]
+
 _UDS_PROFILES: dict[str, list[tuple[str, int, int, int, str]]] = {
     # key -> list of (label, request_id, response_id, id_bits, category)
     "obd11": [(f"ecu_7E{i}", 0x7E0 + i, 0x7E8 + i, 11, "other") for i in range(8)],
     "fca": [(f"ecu_7E{i}", 0x7E0 + i, 0x7E8 + i, 11, "other") for i in range(8)]
     + [(label, 0x18DA0000 | (t << 8) | 0xF1, 0x18DAF100 | t, 29, cat) for t, (label, cat) in _FCA_29BIT_TARGETS.items()],
+    # Universal discovery for Hyundai/Kia, Toyota/Lexus, Honda, Ford, GM, etc.
+    "sweep11": _SWEEP_11BIT,
+    "hyundai": _SWEEP_11BIT,
+    "kia": _SWEEP_11BIT,
+    "toyota": _SWEEP_11BIT,
+    "honda": _SWEEP_11BIT,
+    "ford": _SWEEP_11BIT,
+    "gm": _SWEEP_11BIT,
 }
 
 
@@ -185,6 +199,8 @@ async def cmd_uds_scan(a: argparse.Namespace) -> None:
     c = await _connect(a)
     try:
         uds = UdsClient(c.elm)
+        # A broad sweep has many addresses that will not answer; use a short per-address timeout.
+        probe_timeout = 0.6 if len(candidates) > 24 else 3.0
         print(f"Probing {len(candidates)} candidate addresses (profile '{a.profile}', read-only)…\n")
         present = []
         for label, req, resp, bits, cat in candidates:
@@ -193,7 +209,7 @@ async def cmd_uds_scan(a: argparse.Namespace) -> None:
                 key=label, name_en=label, name_ar=label, request_id=req, response_id=resp, id_bits=bits, safety_category=cat
             )
             try:
-                res = await uds.read_module_dtcs(module)
+                res = await uds.read_module_dtcs(module, timeout=probe_timeout)
             except UdsError as e:
                 print(f"  PRESENT (refused) {tag}  → {e.code}")
                 present.append((label, req, resp, bits, cat))
@@ -714,7 +730,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("uds-scan", help="probe candidate module addresses (read-only) to discover SRS/ABS/BCM")
     _add_link_args(p)
-    p.add_argument("--profile", default="fca", help="candidate set: fca (Chrysler/Dodge/Jeep), obd11 (standard 11-bit ECUs)")
+    p.add_argument(
+        "--profile",
+        default="fca",
+        help="candidate set: fca; sweep11/hyundai/kia/toyota/honda/ford/gm (broad 11-bit discovery); obd11",
+    )
     p.set_defaults(fn=cmd_uds_scan)
 
     p = sub.add_parser("ble-scan", help="list nearby BLE OBD adapters")

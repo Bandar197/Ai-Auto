@@ -203,12 +203,15 @@ class UdsClient:
             await self.elm.at("ATCRA", tolerate_unknown=True)  # clear receive filter
             await self.elm.at("ATSH7DF" if self.elm.id_bits == 11 else "ATSH18DB33F1", tolerate_unknown=True)
 
-    async def read_module_dtcs(self, module: UdsModule, status_mask: int = 0xFF) -> UdsResult:
-        """Read a module's fault codes (service 0x19 0x02). Read-only, always safe."""
+    async def read_module_dtcs(self, module: UdsModule, status_mask: int = 0xFF, timeout: float = 3.0) -> UdsResult:
+        """Read a module's fault codes (service 0x19 0x02). Read-only, always safe.
+
+        ``timeout`` can be lowered for discovery sweeps where most addresses will not answer.
+        """
         req = build_read_dtc_request(status_mask)
         try:
             await self._select(module)
-            resp = await self.elm.send(req, timeout=3.0)
+            resp = await self.elm.send(req, timeout=timeout)
             data = _hex_to_bytes(resp)
             dtcs = parse_read_dtc_response(data) if data else []
             return UdsResult(module=module.key, request=req, response_raw=resp, dtcs=dtcs)
