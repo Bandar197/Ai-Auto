@@ -813,6 +813,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get linkOpenFailed => 'تعذّر فتح الرابط.';
 
   @override
+  String get otherOption => 'أخرى…';
+
+  @override
   String get fullScanTitle => 'فحص شامل بالتصنيفات';
 
   @override

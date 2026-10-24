@@ -317,6 +317,7 @@
   "whatToCheck": "What to check first",
   "explainVideos": "Videos",
   "linkOpenFailed": "Could not open the link.",
+  "otherOption": "Other…",
   "fullScanTitle": "Full scan by system",
   "fullScanCta": "Start full scan",
   "fullScanChecking": "Scanning…",

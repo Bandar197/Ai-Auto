@@ -1562,6 +1562,12 @@ abstract class AppLocalizations {
   /// **'Could not open the link.'**
   String get linkOpenFailed;
 
+  /// No description provided for @otherOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Other…'**
+  String get otherOption;
+
   /// No description provided for @fullScanTitle.
   ///
   /// In en, this message translates to:

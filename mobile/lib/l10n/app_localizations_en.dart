@@ -808,6 +808,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get linkOpenFailed => 'Could not open the link.';
 
   @override
+  String get otherOption => 'Other…';
+
+  @override
   String get fullScanTitle => 'Full scan by system';
 
   @override
