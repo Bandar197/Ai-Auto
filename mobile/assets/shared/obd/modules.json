@@ -1,0 +1,62 @@
+{
+  "$comment": "AutoMind AI module-address registry: which CAN addresses the non-powertrain modules (airbag/SRS, ABS, body) answer on, per manufacturer. Used by the extended/full scan to read codes a generic ELM327 does not reach in OBD mode. Addresses are per make/model/year and must be captured and VERIFIED on a real car with `automind uds-scan` / `automind uds-read` before trusting them: entries with \"verified\": false are discovery starting points only. A profile matches by make (case-insensitive) or an alias; the \"generic\" profile is tried for every vehicle. Fields per module: key, name_en, name_ar, request (hex CAN id), response (hex CAN id), id_bits (11|29), category (airbag|abs|other), verified (bool), optional protocol (ELM ATSP code, e.g. \"6\" for 11-bit, \"7\" for 29-bit), optional note.",
+  "version": "2026.10",
+  "profiles": [
+    {
+      "make": "generic",
+      "note": "Common 11-bit diagnostic addresses seen across many makes (response = request + 8). Unverified.",
+      "modules": [
+        {"key": "srs", "name_en": "Airbag (SRS)", "name_ar": "الوسائد الهوائية (SRS)", "request": "7D0", "response": "7D8", "id_bits": 11, "category": "airbag", "verified": false},
+        {"key": "abs", "name_en": "ABS / Stability", "name_ar": "نظام ABS / الثبات", "request": "7B0", "response": "7B8", "id_bits": 11, "category": "abs", "verified": false},
+        {"key": "bcm", "name_en": "Body Control (BCM)", "name_ar": "وحدة الهيكل (BCM)", "request": "7A0", "response": "7A8", "id_bits": 11, "category": "other", "verified": false}
+      ]
+    },
+    {
+      "make": "chrysler",
+      "aliases": ["dodge", "jeep", "ram", "fca", "stellantis"],
+      "note": "FCA 29-bit physical addressing (18DA<target>F1 / 18DAF1<target>), protocol 7. 2018+ models have a Security Gateway (SGW) that can block access over OBD. Unverified — confirm on the car (e.g. Challenger 2019).",
+      "protocol": "7",
+      "modules": [
+        {"key": "srs", "name_en": "Airbag (ORC)", "name_ar": "الوسائد الهوائية (ORC)", "request": "18DA58F1", "response": "18DAF158", "id_bits": 29, "category": "airbag", "verified": false},
+        {"key": "abs", "name_en": "ABS", "name_ar": "نظام ABS", "request": "18DA28F1", "response": "18DAF128", "id_bits": 29, "category": "abs", "verified": false},
+        {"key": "bcm", "name_en": "Body Control (BCM)", "name_ar": "وحدة الهيكل (BCM)", "request": "18DA40F1", "response": "18DAF140", "id_bits": 29, "category": "other", "verified": false}
+      ]
+    },
+    {
+      "make": "toyota",
+      "aliases": ["lexus", "scion", "daihatsu"],
+      "note": "Toyota/Lexus 11-bit (ISO 15765-4). Unverified placeholders — confirm per model.",
+      "modules": [
+        {"key": "srs", "name_en": "Airbag (SRS)", "name_ar": "الوسائد الهوائية (SRS)", "request": "7D0", "response": "7D8", "id_bits": 11, "category": "airbag", "verified": false},
+        {"key": "abs", "name_en": "ABS / VSC", "name_ar": "نظام ABS / VSC", "request": "7B0", "response": "7B8", "id_bits": 11, "category": "abs", "verified": false}
+      ]
+    },
+    {
+      "make": "hyundai",
+      "aliases": ["kia", "genesis"],
+      "note": "Hyundai/Kia 11-bit. Unverified placeholders — confirm per model.",
+      "modules": [
+        {"key": "srs", "name_en": "Airbag (SRS)", "name_ar": "الوسائد الهوائية (SRS)", "request": "7D4", "response": "7DC", "id_bits": 11, "category": "airbag", "verified": false},
+        {"key": "abs", "name_en": "ABS / ESC", "name_ar": "نظام ABS / ESC", "request": "7D1", "response": "7D9", "id_bits": 11, "category": "abs", "verified": false}
+      ]
+    },
+    {
+      "make": "ford",
+      "aliases": ["lincoln", "mercury"],
+      "note": "Ford 11-bit. Unverified placeholders — confirm per model.",
+      "modules": [
+        {"key": "srs", "name_en": "Airbag (RCM)", "name_ar": "الوسائد الهوائية (RCM)", "request": "727", "response": "72F", "id_bits": 11, "category": "airbag", "verified": false},
+        {"key": "abs", "name_en": "ABS", "name_ar": "نظام ABS", "request": "760", "response": "768", "id_bits": 11, "category": "abs", "verified": false}
+      ]
+    },
+    {
+      "make": "chevrolet",
+      "aliases": ["gm", "gmc", "cadillac", "buick", "opel"],
+      "note": "GM 11-bit. Unverified placeholders — confirm per model.",
+      "modules": [
+        {"key": "srs", "name_en": "Airbag (SDM)", "name_ar": "الوسائد الهوائية (SDM)", "request": "7E4", "response": "7EC", "id_bits": 11, "category": "airbag", "verified": false},
+        {"key": "abs", "name_en": "ABS / EBCM", "name_ar": "نظام ABS / EBCM", "request": "7E5", "response": "7ED", "id_bits": 11, "category": "abs", "verified": false}
+      ]
+    }
+  ]
+}

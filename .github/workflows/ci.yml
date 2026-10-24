@@ -20,6 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - run: python3 tools/validate_kb.py shared/kb/dtc_definitions.json shared/obd/pids.json
+      - run: python3 tools/validate_modules.py shared/obd/modules.json
 
   backend:
     name: Backend (lint + tests)

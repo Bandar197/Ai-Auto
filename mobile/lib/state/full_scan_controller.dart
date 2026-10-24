@@ -106,7 +106,13 @@ class FullScanController extends Notifier<FullScanState> {
     if (conn.mode != DataMode.replay) {
       state = state.copy(stage: 'modules');
       try {
-        final found = await scanModules(client.elm);
+        final make = ref.read(selectedVehicleProvider)?['make']?.toString();
+        final registry = ref.read(appAssetsProvider).modules;
+        final candidates = registry.candidatesFor(make);
+        final found = await scanModules(
+          client.elm,
+          candidates: candidates.isNotEmpty ? candidates : kDiscoveryCandidates,
+        );
         for (final m in found) {
           final sysId = systemIdForModuleCategory(m.module.category);
           final g = groups[sysId] ?? SystemGroup(system: systemById(sysId));
