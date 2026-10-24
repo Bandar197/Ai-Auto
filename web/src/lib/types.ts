@@ -154,3 +154,51 @@ export interface AuditLog {
 }
 
 export type ExportDataset = "users" | "sessions" | "connections" | "top-dtcs";
+
+/** Trust tiers for an ECU access profile (mirrors the DB check constraint). */
+export type DiagProfileStatus =
+  | "unverified"
+  | "verified_vehicle_trace"
+  | "licensed_oem"
+  | "standard_specification"
+  | "demo_only"
+  | "rejected";
+
+/** A verification decision carries a status other than `unverified`. */
+export type DiagDecisionStatus = Exclude<DiagProfileStatus, "unverified">;
+
+/** Mirrors `automind.diag_ecu_profiles` (docs/API.md, diag section). */
+export interface DiagEcuProfile {
+  id: string;
+  make: string;
+  model: string | null;
+  market: string | null;
+  variant: string | null;
+  year_from: number | null;
+  year_to: number | null;
+  controller_id: string | null;
+  protocol: string | null;
+  tx_header: string | null;
+  rx_header: string | null;
+  read_request: string | null;
+  id_bits: 11 | 29 | null;
+  category: string | null;
+  verification_status: DiagProfileStatus;
+  source_type: string | null;
+  source_reference: string | null;
+  model_year_range: string | null;
+  notes: string | null;
+  submitted_by: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  version: number;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Decision recorded when approving or rejecting a profile (always with evidence). */
+export interface DiagProfileReview {
+  verification_status: DiagDecisionStatus;
+  source_type: string;
+  source_reference: string;
+}

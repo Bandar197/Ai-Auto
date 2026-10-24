@@ -10,6 +10,8 @@ import type {
   AdminUser,
   AdminUserPatch,
   AuditLog,
+  DiagEcuProfile,
+  DiagProfileReview,
   ExportDataset,
   OverviewStats,
   Page,
@@ -207,6 +209,13 @@ export function adminApi(client: ApiClient) {
         body: patch,
       }),
     exportCsv: (dataset: ExportDataset) => client.download(`/admin/export/${dataset}.csv`),
+    ecuPendingProfiles: (signal?: AbortSignal) =>
+      client.request<DiagEcuProfile[]>("/diag/admin/profiles/pending-review", { signal }),
+    ecuReviewProfile: (id: string, body: DiagProfileReview) =>
+      client.request<DiagEcuProfile>(`/diag/admin/profiles/${encodeURIComponent(id)}/approve`, {
+        method: "POST",
+        body,
+      }),
   };
 }
 

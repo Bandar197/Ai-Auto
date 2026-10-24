@@ -33,6 +33,12 @@ compatibility within Phase 1 (no breaking API/schema renames).
   fault is real" warning; clear-and-verify distinguishes real vs old (e.g. after a part
   change) using readiness monitors / ignition cycles.
 
+### Admin console
+- **ECU access-profile review** page: platform admins review unverified candidate
+  profiles and record a verification decision (approved tier or rejected) with
+  evidence. Separation of duties is enforced server-side (a profile can't be
+  approved by its submitter); non-admin staff see an "admins only" notice.
+
 ### App & platforms
 - Precise make/model/year pickers (Saudi-market catalogue) + fuel/transmission enums.
 - Windows / Android release builds hardened (signing, obfuscation, no cloud backup);
