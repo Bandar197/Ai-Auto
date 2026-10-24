@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'features/auth_screens.dart';
 import 'features/clear_dtcs_screen.dart';
+import 'features/explain_screen.dart';
 import 'features/extended_modules_screen.dart';
 import 'features/connect_screen.dart';
 import 'features/history_screen.dart';
@@ -48,6 +49,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/maintenance/:vehicleId', builder: (_, s) => MaintenanceScreen(vehicleId: s.pathParameters['vehicleId']!)),
       GoRoute(path: '/clear-dtcs', builder: (_, s) => ClearDtcsScreen(reportId: s.uri.queryParameters['report'])),
       GoRoute(path: '/extended-modules', builder: (_, _) => const ExtendedModulesScreen()),
+      GoRoute(
+        path: '/explain/:code',
+        builder: (_, s) => ExplainScreen(
+          code: s.pathParameters['code']!,
+          make: s.uri.queryParameters['make'],
+          model: s.uri.queryParameters['model'],
+          year: int.tryParse(s.uri.queryParameters['year'] ?? ''),
+        ),
+      ),
       GoRoute(path: '/verify', builder: (_, _) => const VerifyScreen()),
       GoRoute(path: '/verify/:id', builder: (_, s) => VerifyScreen(entryId: s.pathParameters['id'])),
     ],

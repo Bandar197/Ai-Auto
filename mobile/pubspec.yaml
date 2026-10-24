@@ -53,6 +53,7 @@ dependencies:
   # Vendored without its Android part (upstream Android build uses jcenter); see the folder's AUTOMIND_PATCH.md
   flutter_libserialport:
     path: third_party/flutter_libserialport
+  url_launcher: ^6.3.3
 
 dev_dependencies:
   flutter_test:

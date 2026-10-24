@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../core/kb/local_kb.dart';
 import '../obd/obd.dart';
@@ -108,6 +109,12 @@ class _ExtendedModulesScreenState extends ConsumerState<ExtendedModulesScreen> {
             const _Tag('active', Colors.red)
           else if (d.confirmed)
             const _Tag('stored', Colors.orange),
+          const Spacer(),
+          TextButton.icon(
+            icon: const Icon(Icons.help_outline, size: 18),
+            label: Text(context.l10n.explainCta),
+            onPressed: () => context.push('/explain/${d.code}'),
+          ),
         ]),
         if (desc.isNotEmpty) Text(desc, style: Theme.of(context).textTheme.bodySmall),
       ]),

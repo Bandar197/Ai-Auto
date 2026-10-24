@@ -783,6 +783,31 @@ class AppLocalizationsEn extends AppLocalizations {
       'Clearing airbag codes is a separate, gated step: it is refused while a fault is active, and only after the repair is confirmed.';
 
   @override
+  String get explainTitle => 'Explain code';
+
+  @override
+  String get explainCta => 'Explain this code';
+
+  @override
+  String get explainByAi => 'AI explanation, grounded in the knowledge base.';
+
+  @override
+  String get explainFromKb => 'From the knowledge base.';
+
+  @override
+  String get explainOffline =>
+      'Offline: shown from the built-in knowledge base.';
+
+  @override
+  String get whatToCheck => 'What to check first';
+
+  @override
+  String get explainVideos => 'Videos';
+
+  @override
+  String get linkOpenFailed => 'Could not open the link.';
+
+  @override
   String get clearRequiresServer =>
       'Clearing codes needs server approval. Connect to the internet and log in.';
 

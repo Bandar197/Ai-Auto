@@ -1514,6 +1514,54 @@ abstract class AppLocalizations {
   /// **'Clearing airbag codes is a separate, gated step: it is refused while a fault is active, and only after the repair is confirmed.'**
   String get extendedAirbagClearNote;
 
+  /// No description provided for @explainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain code'**
+  String get explainTitle;
+
+  /// No description provided for @explainCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain this code'**
+  String get explainCta;
+
+  /// No description provided for @explainByAi.
+  ///
+  /// In en, this message translates to:
+  /// **'AI explanation, grounded in the knowledge base.'**
+  String get explainByAi;
+
+  /// No description provided for @explainFromKb.
+  ///
+  /// In en, this message translates to:
+  /// **'From the knowledge base.'**
+  String get explainFromKb;
+
+  /// No description provided for @explainOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline: shown from the built-in knowledge base.'**
+  String get explainOffline;
+
+  /// No description provided for @whatToCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'What to check first'**
+  String get whatToCheck;
+
+  /// No description provided for @explainVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get explainVideos;
+
+  /// No description provided for @linkOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the link.'**
+  String get linkOpenFailed;
+
   /// No description provided for @clearRequiresServer.
   ///
   /// In en, this message translates to:

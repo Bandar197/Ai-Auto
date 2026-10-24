@@ -789,6 +789,30 @@ class AppLocalizationsAr extends AppLocalizations {
       'مسح أكواد الإيرباق إجراء منفصل ومقيّد: يُرفض أثناء وجود عطل نشط، ولا يتم إلا بعد تأكيد الإصلاح.';
 
   @override
+  String get explainTitle => 'شرح الكود';
+
+  @override
+  String get explainCta => 'اشرح هذا الكود';
+
+  @override
+  String get explainByAi => 'شرح بالذكاء الاصطناعي، مبني على قاعدة المعرفة.';
+
+  @override
+  String get explainFromKb => 'من قاعدة المعرفة.';
+
+  @override
+  String get explainOffline => 'دون اتصال: معروض من قاعدة المعرفة المدمجة.';
+
+  @override
+  String get whatToCheck => 'ما الذي تفحصه أولاً';
+
+  @override
+  String get explainVideos => 'فيديوهات';
+
+  @override
+  String get linkOpenFailed => 'تعذّر فتح الرابط.';
+
+  @override
   String get clearRequiresServer =>
       'مسح الأكواد يحتاج موافقة الخادم. اتصل بالإنترنت وسجّل الدخول.';
 

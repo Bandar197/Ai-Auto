@@ -2,16 +2,29 @@ import 'dart:convert';
 
 /// One DTC definition from the bundled knowledge base.
 class KbEntry {
-  KbEntry({required this.code, this.descriptionEn, this.descriptionAr, this.severity, this.system, this.causesEn = const [], this.causesAr = const []});
+  KbEntry({
+    required this.code,
+    this.descriptionEn,
+    this.descriptionAr,
+    this.severity,
+    this.system,
+    this.subsystem,
+    this.drivable,
+    this.causesEn = const [],
+    this.causesAr = const [],
+  });
   final String code;
   final String? descriptionEn;
   final String? descriptionAr;
   final String? severity;
   final String? system;
+  final String? subsystem;
+  final bool? drivable;
   final List<String> causesEn;
   final List<String> causesAr;
 
   String? description(String lang) => lang == 'ar' ? (descriptionAr ?? descriptionEn) : (descriptionEn ?? descriptionAr);
+  List<String> causes(String lang) => lang == 'ar' && causesAr.isNotEmpty ? causesAr : causesEn;
 }
 
 /// Offline DTC lookup from `assets/shared/kb/dtc_definitions.json`. The file
@@ -43,6 +56,8 @@ class LocalKb {
         descriptionAr: (m['description_ar'] ?? m['ar'])?.toString(),
         severity: m['severity']?.toString(),
         system: m['system']?.toString(),
+        subsystem: m['subsystem']?.toString(),
+        drivable: m['drivable'] is bool ? m['drivable'] as bool : null,
         causesEn: list(m['common_causes'] ?? m['causes_en']),
         causesAr: listAr(m['common_causes_ar'] ?? m['common_causes'] ?? m['causes_ar']),
       );

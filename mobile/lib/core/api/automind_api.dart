@@ -132,6 +132,22 @@ class AutomindApi {
   Future<List<dynamic>> demoScenarios() => _call(() => dio.get('/demo/scenarios'));
   Future<Map<String, dynamic>> kbDtc(String code) => _call(() => dio.get('/kb/dtc/$code'));
 
+  /// AI explanation of a fault code (with Google/YouTube links and videos).
+  Future<Map<String, dynamic>> explainDtc(
+    String code, {
+    String? make,
+    String? model,
+    int? year,
+    String lang = 'ar',
+  }) =>
+      _call(() => dio.post('/kb/explain', data: {
+            'code': code,
+            if (make != null && make.isNotEmpty) 'make': make,
+            if (model != null && model.isNotEmpty) 'model': model,
+            'year': ?year,
+            'lang': lang,
+          }));
+
   // ------------------------------------------------------- clear & verify
   /// Server verdict for the vehicle's latest clear (404 when none).
   Future<Map<String, dynamic>> vehicleClearVerification(String vehicleId) =>
