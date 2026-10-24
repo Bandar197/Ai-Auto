@@ -172,6 +172,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         commerce,
         control,
         devices,
+        diag,
         health,
         kb,
         me,
@@ -193,6 +194,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         control,
         clear_verify,
         commerce,
+        diag,
         admin,
     ):
         app.include_router(module.router, prefix=prefix)

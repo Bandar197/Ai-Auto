@@ -173,6 +173,37 @@ Response 200:
   `AUTOMIND_YOUTUBE_API_KEY` is set (YouTube Data API v3, `safeSearch=strict`), otherwise / on error `[]`.
 * Errors: 401 without a token; 422 `validation_error` for an invalid code, year, lang or over-long make/model.
 
+## Diagnostic catalogue (controllers & ECU profiles)
+
+Two layers of trust. `diag_controller_catalog` holds **unverified static identifiers** —
+module-group names per manufacturer (459 rows, seeded from
+`shared/diag/controller_identifiers.json` via `tools/gen_diag_seed.py`). They are **not CAN
+addresses** and **not** proof that an ECU is readable; every row is `verification_status:
+"unverified"`. `diag_ecu_profiles` holds **candidate access profiles** (protocol + CAN
+headers) that a platform admin curates. A profile is `unverified` until **a different admin**
+approves it with evidence (separation of duties); only approved profiles are visible to
+users. DTC explanations are not duplicated here — use `/kb/dtc/{code}` and `/kb/explain`.
+Scans/recordings are not duplicated either — they live in the existing session/recording
+tables.
+
+| Method | Path | Notes |
+|---|---|---|
+| GET | `/diag/catalog/manufacturers` | auth → `[{make, count}]` (sorted by make) |
+| GET | `/diag/catalog/controllers` | auth → `?make=&q=&limit=&offset=` → page of `{id, make, category, label, verification_status:"unverified", source_type, source_reference, created_at}` |
+| GET | `/diag/catalog/profiles` | auth → `?make=&model=&year=` → `[profile]`, **approved only** (RLS-filtered) |
+| GET | `/diag/admin/profiles/pending-review` | admin → `[profile]` with `verification_status:"unverified"` |
+| POST | `/diag/admin/profiles` | admin → submit; `verification_status` forced to `unverified`, `submitted_by` = caller → 201 `profile` |
+| POST | `/diag/admin/profiles/{id}/approve` | admin → `{verification_status, source_type, source_reference}`; sets `reviewed_by`/`reviewed_at`, bumps `version`; **403 if reviewer == submitter** (separation of duties); writes `audit_logs` |
+
+`profile = {id, make, model, market, variant, year_from, year_to, controller_id, protocol,
+tx_header, rx_header, read_request, id_bits, category, verification_status, source_type,
+source_reference, model_year_range, notes, submitted_by, reviewed_by, reviewed_at, version,
+created_at, updated_at}`.
+
+* `verification_status ∈ unverified | verified_vehicle_trace | licensed_oem | standard_specification | demo_only | rejected`; the approved set (user-visible) is the three middle values.
+* Submit validation (422 `validation_error` otherwise): `make` 1–40 chars, `model` ≤ 60; `protocol` must be a known name from `shared/obd/protocols.json`; `id_bits ∈ {11, 29}` and must match the protocol's CAN width; `tx_header`/`rx_header`/`read_request` must be hex (optional `0x`), and a header must be 3 hex digits for 11-bit or 8 for 29-bit; `year_from ≤ year_to`, both 1980–2100.
+* Authz: submit/approve/pending-review are admin-only (403 for users and support staff). Idempotency-Key header on submit is not implemented (profiles are deduplicated by admin review, not by key).
+
 ## Clear and verify
 
 Owners clear a warning light and watch whether it comes back. The platform makes that a verdict:

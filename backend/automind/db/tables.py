@@ -390,6 +390,49 @@ diagnosis_evidence = Table(
     Column("created_at", TS),
 )
 
+diag_controller_catalog = Table(
+    "diag_controller_catalog",
+    metadata,
+    Column("id", Text, primary_key=True),
+    Column("make", Text),
+    Column("category", Text),
+    Column("label", Text),
+    Column("verification_status", Text),
+    Column("source_type", Text),
+    Column("source_reference", Text),
+    Column("created_at", TS),
+)
+
+diag_ecu_profiles = Table(
+    "diag_ecu_profiles",
+    metadata,
+    _id(),
+    Column("make", Text),
+    Column("model", Text),
+    Column("market", Text),
+    Column("variant", Text),
+    Column("year_from", SmallInteger),
+    Column("year_to", SmallInteger),
+    Column("controller_id", Text),
+    Column("protocol", Text),
+    Column("tx_header", Text),
+    Column("rx_header", Text),
+    Column("read_request", Text),
+    Column("id_bits", SmallInteger),
+    Column("category", Text),
+    Column("verification_status", Text),
+    Column("source_type", Text),
+    Column("source_reference", Text),
+    Column("model_year_range", Text),
+    Column("notes", Text),
+    _uuid("submitted_by"),
+    _uuid("reviewed_by"),
+    Column("reviewed_at", TS),
+    Column("version", Integer),
+    Column("created_at", TS),
+    Column("updated_at", TS),
+)
+
 service_procedures = Table(
     "service_procedures",
     metadata,

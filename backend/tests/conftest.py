@@ -190,7 +190,7 @@ TRUNCATE_SQL = """
 truncate automind.users, automind.organizations, automind.audit_logs, automind.system_errors,
          automind.procedure_allowlist, automind.payments, automind.telemetry_recordings,
          automind.parts, automind.subscription_plans, automind.service_procedures,
-         automind.manufacturer_packs restart identity cascade
+         automind.diag_ecu_profiles, automind.manufacturer_packs restart identity cascade
 """
 
 
