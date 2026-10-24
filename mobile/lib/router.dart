@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'features/auth_screens.dart';
 import 'features/clear_dtcs_screen.dart';
 import 'features/explain_screen.dart';
+import 'features/controllers_catalog_screen.dart';
 import 'features/extended_modules_screen.dart';
 import 'features/full_scan_screen.dart';
 import 'features/connect_screen.dart';
@@ -51,6 +52,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/clear-dtcs', builder: (_, s) => ClearDtcsScreen(reportId: s.uri.queryParameters['report'])),
       GoRoute(path: '/extended-modules', builder: (_, _) => const ExtendedModulesScreen()),
       GoRoute(path: '/full-scan', builder: (_, _) => const FullScanScreen()),
+      GoRoute(path: '/controllers', builder: (_, _) => const ControllersCatalogScreen()),
       GoRoute(
         path: '/explain/:code',
         builder: (_, s) => ExplainScreen(

@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// Fails when mobile/assets/shared drifts from ../shared. Fix with
 /// `tools/sync_shared.sh` from the repository root.
 void main() {
-  const dirs = ['obd', 'scenarios', 'kb', 'schemas'];
+  const dirs = ['obd', 'scenarios', 'kb', 'schemas', 'diag'];
   final shared = Directory('../shared');
 
   test('shared contracts are present', () {

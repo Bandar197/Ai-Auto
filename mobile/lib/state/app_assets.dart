@@ -2,19 +2,27 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
+import '../core/controller_catalog.dart';
 import '../core/kb/local_kb.dart';
 import '../core/module_registry.dart';
 import '../obd/obd.dart';
 
 /// Bundled shared contracts (copied by tools/sync_shared.sh).
 class AppAssets {
-  AppAssets({required this.table, required this.scenarios, required this.kb, ModuleRegistry? modules})
-      : modules = modules ?? ModuleRegistry.empty();
+  AppAssets({
+    required this.table,
+    required this.scenarios,
+    required this.kb,
+    ModuleRegistry? modules,
+    ControllerCatalog? controllers,
+  })  : modules = modules ?? ModuleRegistry.empty(),
+        controllers = controllers ?? ControllerCatalog.empty();
 
   final PidTable table;
   final List<Scenario> scenarios;
   final LocalKb kb;
   final ModuleRegistry modules;
+  final ControllerCatalog controllers;
 
   Scenario? scenario(String key) {
     for (final s in scenarios) {
@@ -44,6 +52,12 @@ class AppAssets {
     } on Object catch (_) {
       modules = ModuleRegistry.empty();
     }
-    return AppAssets(table: table, scenarios: scenarios, kb: kb, modules: modules);
+    ControllerCatalog controllers;
+    try {
+      controllers = ControllerCatalog.fromJsonString(await bundle.loadString('assets/shared/diag/controller_identifiers.json'));
+    } on Object catch (_) {
+      controllers = ControllerCatalog.empty();
+    }
+    return AppAssets(table: table, scenarios: scenarios, kb: kb, modules: modules, controllers: controllers);
   }
 }

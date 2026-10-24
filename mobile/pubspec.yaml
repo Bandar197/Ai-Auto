@@ -87,6 +87,7 @@ flutter:
     - assets/shared/scenarios/
     - assets/shared/kb/
     - assets/shared/schemas/
+    - assets/shared/diag/
 
   fonts:
     - family: IBMPlexSansArabic

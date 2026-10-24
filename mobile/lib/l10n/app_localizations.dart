@@ -1568,6 +1568,36 @@ abstract class AppLocalizations {
   /// **'Other…'**
   String get otherOption;
 
+  /// No description provided for @controllersCatalogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Controller catalogue'**
+  String get controllersCatalogTitle;
+
+  /// No description provided for @controllersCatalogNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference list of control-module names per manufacturer. These are UNVERIFIED catalogue entries — not CAN addresses and not proof a module is readable on your car. Readable modules come from an actual scan.'**
+  String get controllersCatalogNote;
+
+  /// No description provided for @unverifiedCatalogEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Unverified catalog entry'**
+  String get unverifiedCatalogEntry;
+
+  /// No description provided for @allMakes.
+  ///
+  /// In en, this message translates to:
+  /// **'All makes'**
+  String get allMakes;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
   /// No description provided for @deepScanCta.
   ///
   /// In en, this message translates to:

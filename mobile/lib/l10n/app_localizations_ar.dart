@@ -816,6 +816,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get otherOption => 'أخرى…';
 
   @override
+  String get controllersCatalogTitle => 'كتالوج الوحدات';
+
+  @override
+  String get controllersCatalogNote =>
+      'قائمة مرجعية بأسماء وحدات التحكم لكل شركة. هذه مدخلات كتالوج غير مؤكدة — ليست عناوين CAN ولا دليلاً على إمكانية قراءة الوحدة في سيارتك. الوحدات القابلة للقراءة تأتي من فحص فعلي.';
+
+  @override
+  String get unverifiedCatalogEntry => 'مدخل كتالوج غير مؤكد';
+
+  @override
+  String get allMakes => 'كل الشركات';
+
+  @override
+  String get search => 'بحث';
+
+  @override
   String get deepScanCta => 'اكتشاف متقدم للوحدات';
 
   @override

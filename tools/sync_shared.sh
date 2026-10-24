@@ -8,7 +8,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SRC="$ROOT/shared"
 DST="$ROOT/mobile/assets/shared"
 
-for sub in obd scenarios kb schemas; do
+for sub in obd scenarios kb schemas diag; do
   mkdir -p "$DST/$sub"
   # Remove stale JSON copies first so deleted shared files disappear too.
   find "$DST/$sub" -maxdepth 1 -type f -name '*.json' -delete

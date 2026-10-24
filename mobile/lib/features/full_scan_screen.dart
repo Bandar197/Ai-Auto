@@ -79,6 +79,14 @@ class FullScanScreen extends ConsumerWidget {
             ),
           ),
         Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: TextButton.icon(
+            icon: const Icon(Icons.menu_book_outlined),
+            label: Text(l.controllersCatalogTitle),
+            onPressed: () => context.push('/controllers'),
+          ),
+        ),
+        Padding(
           padding: const EdgeInsets.all(16),
           child: FilledButton.icon(
             icon: const Icon(Icons.radar),

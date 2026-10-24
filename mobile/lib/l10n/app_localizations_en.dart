@@ -811,6 +811,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get otherOption => 'Other…';
 
   @override
+  String get controllersCatalogTitle => 'Controller catalogue';
+
+  @override
+  String get controllersCatalogNote =>
+      'Reference list of control-module names per manufacturer. These are UNVERIFIED catalogue entries — not CAN addresses and not proof a module is readable on your car. Readable modules come from an actual scan.';
+
+  @override
+  String get unverifiedCatalogEntry => 'Unverified catalog entry';
+
+  @override
+  String get allMakes => 'All makes';
+
+  @override
+  String get search => 'Search';
+
+  @override
   String get deepScanCta => 'Deep module discovery';
 
   @override
