@@ -41,12 +41,12 @@ class _ExtendedModulesScreenState extends ConsumerState<ExtendedModulesScreen> {
           child: Text(l.extendedModulesIntro),
         ),
         if (scan.running)
-          const Padding(
-            padding: EdgeInsets.all(24),
+          Padding(
+            padding: const EdgeInsets.all(24),
             child: Row(children: [
-              SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2)),
-              SizedBox(width: 12),
-              Expanded(child: Text('…')),
+              const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2)),
+              const SizedBox(width: 12),
+              Expanded(child: Text(scan.deep && scan.total > 0 ? '${l.extendedScanCta}  ${scan.progress}/${scan.total}' : '…')),
             ]),
           ),
         if (scan.error == 'replay') Padding(padding: const EdgeInsets.all(16), child: Text(l.extendedNeedsLive)),
@@ -62,12 +62,26 @@ class _ExtendedModulesScreenState extends ConsumerState<ExtendedModulesScreen> {
             child: Text(l.extendedDisclaimer, style: Theme.of(context).textTheme.bodySmall),
           ),
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: FilledButton.icon(
             icon: const Icon(Icons.radar),
-            label: Text(scan.done ? l.retry : l.extendedScanCta),
+            label: Text(scan.done && !scan.deep ? l.retry : l.extendedScanCta),
             onPressed: canRun ? () => ref.read(extendedScanProvider.notifier).run() : null,
           ),
+        ),
+        // Deep discovery: finds modules (e.g. a Hyundai airbag unit) whose exact address
+        // is not yet known, by probing every common address. Slower but thorough.
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: OutlinedButton.icon(
+            icon: const Icon(Icons.travel_explore),
+            label: Text(l.deepScanCta),
+            onPressed: canRun ? () => ref.read(extendedScanProvider.notifier).run(deep: true) : null,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
+          child: Text(l.deepScanNote, style: Theme.of(context).textTheme.bodySmall),
         ),
       ]),
     );
@@ -75,10 +89,13 @@ class _ExtendedModulesScreenState extends ConsumerState<ExtendedModulesScreen> {
 
   Widget _moduleCard(BuildContext context, String lang, LocalKb kb, ModuleScan m) {
     final l = context.l10n;
-    final airbag = m.module.category == ModuleCategory.airbag;
-    final icon = airbag ? Icons.airline_seat_legroom_extra : (m.module.category == ModuleCategory.abs ? Icons.disc_full : Icons.memory);
+    final cat = m.inferredCategory;
+    final airbag = cat == ModuleCategory.airbag;
+    final icon = airbag ? Icons.airline_seat_legroom_extra : (cat == ModuleCategory.abs ? Icons.disc_full : Icons.memory);
+    // Show the CAN address so the user can report a newly-found module to lock it in.
+    final addr = m.module.requestId.toRadixString(16).toUpperCase();
     return SectionCard(
-      title: m.module.name(lang),
+      title: '${m.module.name(lang)}  ·  $addr',
       icon: icon,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         if (m.refused)

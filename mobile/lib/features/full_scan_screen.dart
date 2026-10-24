@@ -69,6 +69,15 @@ class FullScanScreen extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
             child: Text(l.fullScanCoverageNote, style: Theme.of(context).textTheme.bodySmall),
           ),
+        if (scan.done)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: OutlinedButton.icon(
+              icon: const Icon(Icons.travel_explore),
+              label: Text(l.fullScanFindMore),
+              onPressed: () => context.push('/extended-modules'),
+            ),
+          ),
         Padding(
           padding: const EdgeInsets.all(16),
           child: FilledButton.icon(

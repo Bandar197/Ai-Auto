@@ -811,6 +811,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get otherOption => 'Other…';
 
   @override
+  String get deepScanCta => 'Deep module discovery';
+
+  @override
+  String get deepScanNote =>
+      'Probes every common address to find modules not yet mapped for your car (e.g. the airbag unit). Slower but thorough. If a module with a fault shows up, send us its address so we can lock it in.';
+
+  @override
+  String get fullScanFindMore =>
+      'Expected a fault (e.g. airbag) that didn\'t show? Try deep discovery.';
+
+  @override
   String get fullScanTitle => 'Full scan by system';
 
   @override

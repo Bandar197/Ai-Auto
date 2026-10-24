@@ -1568,6 +1568,24 @@ abstract class AppLocalizations {
   /// **'Other…'**
   String get otherOption;
 
+  /// No description provided for @deepScanCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep module discovery'**
+  String get deepScanCta;
+
+  /// No description provided for @deepScanNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Probes every common address to find modules not yet mapped for your car (e.g. the airbag unit). Slower but thorough. If a module with a fault shows up, send us its address so we can lock it in.'**
+  String get deepScanNote;
+
+  /// No description provided for @fullScanFindMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected a fault (e.g. airbag) that didn\'t show? Try deep discovery.'**
+  String get fullScanFindMore;
+
   /// No description provided for @fullScanTitle.
   ///
   /// In en, this message translates to:

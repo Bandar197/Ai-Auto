@@ -816,6 +816,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get otherOption => 'أخرى…';
 
   @override
+  String get deepScanCta => 'اكتشاف متقدم للوحدات';
+
+  @override
+  String get deepScanNote =>
+      'يجرّب كل العناوين الشائعة ليجد وحدات لم تُثبّت لسيارتك بعد (مثل وحدة الإيرباق). أبطأ لكنه شامل. إذا ظهرت وحدة فيها عطل، أرسل لنا عنوانها لنثبّته.';
+
+  @override
+  String get fullScanFindMore =>
+      'توقعت ظهور عطل (مثل الإيرباق) ولم يظهر؟ جرّب الاكتشاف المتقدم.';
+
+  @override
   String get fullScanTitle => 'فحص شامل بالتصنيفات';
 
   @override

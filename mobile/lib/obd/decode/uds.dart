@@ -190,6 +190,22 @@ const List<UdsModule> kDiscoveryCandidates = [
       requestId: 0x18DA40F1, responseId: 0x18DAF140, idBits: 29),
 ];
 
+/// Broad 11-bit discovery sweep: every request id 0x700–0x7EF, response = request+8
+/// (the common ISO 15765-4 convention). Finds modules on any make when the exact
+/// address is unknown — e.g. a Hyundai airbag module whose address is not yet verified.
+/// The category is unknown from the address alone; it is inferred from the codes read.
+List<UdsModule> deepSweep11() => [
+      for (var r = 0x700; r <= 0x7EF; r++)
+        UdsModule(
+          key: 'req_${r.toRadixString(16).toUpperCase()}',
+          nameEn: 'Module ${r.toRadixString(16).toUpperCase()}',
+          nameAr: 'وحدة ${r.toRadixString(16).toUpperCase()}',
+          requestId: r,
+          responseId: r + 8,
+          category: ModuleCategory.other,
+        ),
+    ];
+
 /// One module's result from a scan, carrying its definition for display.
 class ModuleScan {
   const ModuleScan({required this.module, this.dtcs = const [], this.refused = false});
@@ -198,16 +214,30 @@ class ModuleScan {
 
   /// Present but it refused the request (e.g. a security gateway); codes unknown.
   final bool refused;
+
+  /// Category inferred from the codes read (B→airbag/body, C→abs/chassis) when the
+  /// module was discovered by a blind sweep; falls back to the module's declared category.
+  ModuleCategory get inferredCategory {
+    for (final d in dtcs) {
+      final c = d.code.isNotEmpty ? d.code[0].toUpperCase() : '';
+      if (c == 'B') return ModuleCategory.airbag; // SRS/body — most relevant to the airbag light
+      if (c == 'C') return ModuleCategory.abs;
+    }
+    return module.category;
+  }
 }
 
 /// Probes [candidates] (read-only) and returns the modules that answered, each with its DTCs.
 /// A module that refuses (negative response) still counts as present, with an empty DTC list.
+/// [onProgress] (done, total) is called as the sweep advances, for a progress bar.
 Future<List<ModuleScan>> scanModules(
   Elm327 elm, {
   List<UdsModule> candidates = kDiscoveryCandidates,
   Duration perModuleTimeout = const Duration(milliseconds: 700),
+  void Function(int done, int total)? onProgress,
 }) async {
   final present = <ModuleScan>[];
+  var done = 0;
   for (final m in candidates) {
     try {
       final res = await readModuleDtcs(elm, m, timeout: perModuleTimeout);
@@ -220,6 +250,7 @@ Future<List<ModuleScan>> scanModules(
     } catch (_) {
       // No answer / link error → treat as absent.
     }
+    onProgress?.call(++done, candidates.length);
   }
   return present;
 }
