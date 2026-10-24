@@ -398,22 +398,27 @@ async function tryMatch(mode: string) {
 }
 
 /* ---------------- social and admin actions that remove rows ---------------- */
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function targetOf(b: any) { const t = String(b.target || ''); if (!UUID_RE.test(t)) throw new Fail('bad_target'); return t.toLowerCase(); }
 async function friendRemove(me: Me, b: any) {
-  const [a, c] = [me.id, String(b.target)].sort();
-  await db.from('friendships').delete().eq('a', a).eq('b', c);
+  const [a, c] = [me.id, targetOf(b)].sort();
+  const { error } = await db.from('friendships').delete().eq('a', a).eq('b', c);
+  if (error) throw error;
   return { ok: true };
 }
 async function block(me: Me, b: any) {
-  const t = String(b.target); if (t === me.id) throw new Fail('self');
+  const t = targetOf(b); if (t === me.id) throw new Fail('self');
   const [a, c] = [me.id, t].sort();
-  await db.from('blocks').upsert({ blocker: me.id, blocked: t });
+  const { error } = await db.from('blocks').upsert({ blocker: me.id, blocked: t });
+  if (error) throw new Fail('not_found', 404);
   await db.from('friendships').delete().eq('a', a).eq('b', c);
   await db.from('friend_requests').update({ status: 'cancelled', responded_at: new Date().toISOString() })
     .eq('status', 'pending').or(`and(from_id.eq.${me.id},to_id.eq.${t}),and(from_id.eq.${t},to_id.eq.${me.id})`);
   return { ok: true };
 }
 async function unblock(me: Me, b: any) {
-  await db.from('blocks').delete().eq('blocker', me.id).eq('blocked', String(b.target));
+  const { error } = await db.from('blocks').delete().eq('blocker', me.id).eq('blocked', targetOf(b));
+  if (error) throw error;
   return { ok: true };
 }
 async function audit(actor: string, action: string, target: string, details: Record<string, unknown>) {

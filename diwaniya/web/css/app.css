@@ -51,6 +51,7 @@ a { color: var(--gold); }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; border-radius: 6px; }
+#main:focus, #main:focus-visible { outline: none; }
 img { max-width: 100%; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 h1, h2, h3 { font-family: var(--f-display); font-weight: 700; line-height: 1.25; margin: 0; text-wrap: balance; }
