@@ -116,6 +116,62 @@ looks like `2C3CDZ*******1234`. `GET /vehicles/{id}?reveal_vin=true` returns
 | GET | `/kb/dtc/{code}` | → `{code, system, description_en, description_ar, severity, is_generic, common_causes?: [...], source}` ; 404 when unknown (never invented) |
 | GET | `/kb/dtc` | `?q=` search |
 | GET | `/kb/pids` | the shared PID table |
+| POST | `/kb/explain` | plain-language explanation of one code (below) |
+
+### POST /kb/explain
+
+Explains a DTC for the owner/mechanic in Arabic or English. The KB entry is the source of truth
+(titles, severity, `drivable`, common causes); when an LLM is configured server-side
+(`AUTOMIND_LLM_PROVIDER` = `anthropic` | `ollama`) it only rewords those facts. Without an LLM, or when
+the provider fails or times out, the answer is built from the KB alone (`source: "kb"`). Codes that are
+not in the KB still get a response, clearly marked as a general explanation (`drivable: null`, no
+invented causes). Responses are cached per `(code, make, model, year, lang)`
+(`AUTOMIND_EXPLAIN_CACHE_TTL_S`, default 7 days).
+
+Request (auth required):
+
+```json
+{"code": "P0301", "make": "Toyota", "model": "Camry", "year": 2018, "lang": "ar"}
+```
+
+* `code` — required, case-insensitive, must match `^[PCBU][0-9A-F]{4}$` after upper-casing, else 422 `validation_error`.
+* `make`, `model` — optional, max 40 chars; only letters (Arabic included), digits, space, `-` and `.` are kept
+  (other characters are dropped; a value that ends up empty is treated as absent).
+* `year` — optional, 1980–2100. `lang` — `"ar"` (default) or `"en"`.
+
+Response 200:
+
+```json
+{
+  "code": "P0301",
+  "vehicle": {"make": "Toyota", "model": "Camry", "year": 2018},
+  "title_ar": "اكتشاف تفويت إشعال (مس فاير) في الأسطوانة (السلندر) 1",
+  "title_en": "Cylinder 1 Misfire Detected",
+  "explanation": "…in the requested language…",
+  "causes": ["بوجي الأسطوانة 1 متآكل أو متسخ", "…"],
+  "checks": ["…"],
+  "safety": "…",
+  "drivable": true,
+  "source": "llm",
+  "model": "claude-opus-5-5",
+  "search": {
+    "google": "https://www.google.com/search?q=P0301+Toyota+Camry+2018+Cylinder+1+Misfire+Detected",
+    "youtube": "https://www.youtube.com/results?search_query=P0301+Toyota+Camry+2018+%D8%B4%D8%B1%D8%AD+%D8%A5%D8%B5%D9%84%D8%A7%D8%AD"
+  },
+  "videos": [
+    {"id": "dQw4w9WgXcQ", "title": "…", "channel": "…", "thumbnail": "https://i.ytimg.com/vi/…/hqdefault.jpg",
+     "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}
+  ]
+}
+```
+
+* `vehicle` is `null` when no make/model/year was given. `causes`/`checks`/`explanation`/`safety` are in `lang`;
+  `causes` is most likely first. `safety` is `null` or text (always present for critical / not-drivable codes).
+* `drivable` comes from the KB only: `true` | `false` | `null` (unknown code).
+* `source`: `"llm"` or `"kb"`; `model` is the model that wrote the text (`null` for `"kb"`).
+* `search` links are always present (YouTube query leans Arabic for `lang: "ar"`); `videos` is filled only when
+  `AUTOMIND_YOUTUBE_API_KEY` is set (YouTube Data API v3, `safeSearch=strict`), otherwise / on error `[]`.
+* Errors: 401 without a token; 422 `validation_error` for an invalid code, year, lang or over-long make/model.
 
 ## Clear and verify
 

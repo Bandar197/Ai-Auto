@@ -101,6 +101,15 @@ class Settings(BaseSettings):
     # LLM (optional) ----------------------------------------------------------------
     anthropic_api_key: SecretStr | None = None
     llm_model: str = "claude-opus-5-5"
+    # Provider for POST /kb/explain: anthropic | ollama | none. Unset = anthropic when a key is set, else none.
+    llm_provider: Literal["anthropic", "ollama", "none"] | None = None
+    ollama_url: str = "http://localhost:11434"  # server config only; never taken from a request
+    ollama_model: str = Field("llama3.1", min_length=1, max_length=200)
+    explain_timeout_s: float = Field(20.0, gt=0, le=120)  # per provider call (LLM, YouTube)
+    explain_cache_ttl_s: int = Field(7 * 86400, ge=60, le=90 * 86400)
+
+    # YouTube Data API v3 (optional: video suggestions in /kb/explain) -----------------
+    youtube_api_key: SecretStr | None = None
 
     # Logging -----------------------------------------------------------------------
     log_level: str = "INFO"
@@ -111,6 +120,19 @@ class Settings(BaseSettings):
     def _role_name(cls, v: str) -> str:
         if not _ROLE_RE.match(v):
             raise ValueError("db_app_role must be a plain lower-case identifier")
+        return v
+
+    @field_validator("llm_provider", mode="before")
+    @classmethod
+    def _blank_provider(cls, v):
+        return None if isinstance(v, str) and not v.strip() else v
+
+    @field_validator("ollama_url")
+    @classmethod
+    def _ollama_url(cls, v: str) -> str:
+        v = v.strip().rstrip("/")
+        if not re.match(r"^https?://[^\s/?#@]+(:\d+)?(/[^\s?#]*)?$", v):
+            raise ValueError("ollama_url must be an http(s) base URL such as http://localhost:11434")
         return v
 
     @field_validator("data_encryption_key", "blind_index_key")
@@ -149,6 +171,13 @@ class Settings(BaseSettings):
     @property
     def data_key_bytes(self) -> bytes:
         return _decode_key(self.data_encryption_key.get_secret_value(), "data_encryption_key")
+
+    @property
+    def effective_llm_provider(self) -> str:
+        """The provider /kb/explain actually uses ("none" when anthropic is chosen without a key)."""
+        has_key = bool(self.anthropic_api_key and self.anthropic_api_key.get_secret_value())
+        provider = self.llm_provider or ("anthropic" if has_key else "none")
+        return "none" if provider == "anthropic" and not has_key else provider
 
     @property
     def blind_key_bytes(self) -> bytes:

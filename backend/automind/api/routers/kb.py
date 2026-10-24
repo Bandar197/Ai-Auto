@@ -1,14 +1,15 @@
-"""DTC knowledge base and the shared PID table. Unknown codes → 404 (never invented)."""
+"""DTC knowledge base, code explanations and the shared PID table. Unknown codes → 404 (never invented)."""
 
 from __future__ import annotations
 
 import re
 from typing import Any
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Request
 
-from automind.api.deps import CurrentUser, Page, page
+from automind.api.deps import CurrentUser, Page, SvcDep, page
 from automind.core.errors import not_found, validation
+from automind.diagnosis.explain import ExplainIn, explain_code, normalize_code
 
 router = APIRouter(prefix="/kb", tags=["kb"])
 
@@ -54,6 +55,15 @@ async def dtc_search(user: CurrentUser, p: Page, q: str = Query("", max_length=1
     hits = kb.search(q, limit=p.offset + p.limit + 1000) if q.strip() else []
     items = [_kb_entry(kb, d) for d in hits[p.offset : p.offset + p.limit]]
     return page(items, len(hits), p)
+
+
+@router.post("/explain")
+async def explain(body: ExplainIn, request: Request, user: CurrentUser, svc: SvcDep) -> dict:
+    """Plain-language explanation of one DTC, grounded in the KB (LLM-worded when configured)."""
+    code = normalize_code(body.code)
+    if code is None:
+        raise validation("invalid DTC code format", {"field": "code"})
+    return await explain_code(body, code, svc.settings, request.app.state.explain_cache)
 
 
 @router.get("/pids")

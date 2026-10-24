@@ -14,6 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import Response
 
 from automind.api.deps import Services, client_ip
+from automind.core.cache import build_cache
 from automind.core.config import Settings, get_settings
 from automind.core.crypto import Cipher
 from automind.core.errors import error_response, install_error_handlers, unexpected_error_response
@@ -64,6 +65,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 log.exception("could not ensure telemetry partitions")
         yield
         await app.state.rate_limiter.close()
+        await app.state.explain_cache.close()
         await services.db.dispose()
 
     docs = settings.environment != "prod"
@@ -78,6 +80,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.services = services
     app.state.db = services.db
     app.state.rate_limiter = build_rate_limiter(settings.redis_url)
+    app.state.explain_cache = build_cache(settings.redis_url, prefix="automind:explain:")
 
     install_error_handlers(app)
 
