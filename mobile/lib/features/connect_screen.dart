@@ -60,6 +60,8 @@ class _ConnectScreenState extends ConsumerState<ConnectScreen> {
         context.pushReplacement('/scan');
       } else if (widget.next == 'extended-modules') {
         context.pushReplacement('/extended-modules');
+      } else if (widget.next == 'full-scan') {
+        context.pushReplacement('/full-scan');
       } else {
         context.pop();
       }

@@ -808,6 +808,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get linkOpenFailed => 'Could not open the link.';
 
   @override
+  String get fullScanTitle => 'Full scan by system';
+
+  @override
+  String get fullScanCta => 'Start full scan';
+
+  @override
+  String get fullScanChecking => 'Scanning…';
+
+  @override
+  String get fullScanAllClear => 'No fault codes found in the systems scanned.';
+
+  @override
+  String fullScanSummary(int count) {
+    return '$count fault code(s) found';
+  }
+
+  @override
+  String get fullScanCoverageNote =>
+      'Engine, emissions, transmission, electrical and network come from the standard scan. Airbag, ABS and body are read per module and depend on your car\'s addresses being supported; a security gateway can block some modules.';
+
+  @override
   String get clearRequiresServer =>
       'Clearing codes needs server approval. Connect to the internet and log in.';
 

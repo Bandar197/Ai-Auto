@@ -1562,6 +1562,42 @@ abstract class AppLocalizations {
   /// **'Could not open the link.'**
   String get linkOpenFailed;
 
+  /// No description provided for @fullScanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Full scan by system'**
+  String get fullScanTitle;
+
+  /// No description provided for @fullScanCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Start full scan'**
+  String get fullScanCta;
+
+  /// No description provided for @fullScanChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning…'**
+  String get fullScanChecking;
+
+  /// No description provided for @fullScanAllClear.
+  ///
+  /// In en, this message translates to:
+  /// **'No fault codes found in the systems scanned.'**
+  String get fullScanAllClear;
+
+  /// No description provided for @fullScanSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} fault code(s) found'**
+  String fullScanSummary(int count);
+
+  /// No description provided for @fullScanCoverageNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine, emissions, transmission, electrical and network come from the standard scan. Airbag, ABS and body are read per module and depend on your car\'s addresses being supported; a security gateway can block some modules.'**
+  String get fullScanCoverageNote;
+
   /// No description provided for @clearRequiresServer.
   ///
   /// In en, this message translates to:

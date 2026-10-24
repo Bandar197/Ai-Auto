@@ -317,6 +317,13 @@
   "whatToCheck": "What to check first",
   "explainVideos": "Videos",
   "linkOpenFailed": "Could not open the link.",
+  "fullScanTitle": "Full scan by system",
+  "fullScanCta": "Start full scan",
+  "fullScanChecking": "Scanning…",
+  "fullScanAllClear": "No fault codes found in the systems scanned.",
+  "fullScanSummary": "{count} fault code(s) found",
+  "@fullScanSummary": { "placeholders": { "count": { "type": "int" } } },
+  "fullScanCoverageNote": "Engine, emissions, transmission, electrical and network come from the standard scan. Airbag, ABS and body are read per module and depend on your car's addresses being supported; a security gateway can block some modules.",
   "clearRequiresServer": "Clearing codes needs server approval. Connect to the internet and log in.",
   "clearConditionsFailed": "Refused: {reason}",
   "@clearConditionsFailed": {

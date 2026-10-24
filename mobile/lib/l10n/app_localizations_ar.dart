@@ -813,6 +813,27 @@ class AppLocalizationsAr extends AppLocalizations {
   String get linkOpenFailed => 'تعذّر فتح الرابط.';
 
   @override
+  String get fullScanTitle => 'فحص شامل بالتصنيفات';
+
+  @override
+  String get fullScanCta => 'ابدأ الفحص الشامل';
+
+  @override
+  String get fullScanChecking => 'جارٍ الفحص…';
+
+  @override
+  String get fullScanAllClear => 'لا توجد أعطال في الأنظمة التي تم فحصها.';
+
+  @override
+  String fullScanSummary(int count) {
+    return 'عدد الأعطال: $count';
+  }
+
+  @override
+  String get fullScanCoverageNote =>
+      'المحرك والانبعاثات وناقل الحركة والكهرباء والشبكة تأتي من الفحص القياسي. الإيرباق وABS والهيكل تُقرأ لكل وحدة وتعتمد على دعم عناوين سيارتك؛ وقد تمنع بوابة أمنية بعض الوحدات.';
+
+  @override
   String get clearRequiresServer =>
       'مسح الأكواد يحتاج موافقة الخادم. اتصل بالإنترنت وسجّل الدخول.';
 
