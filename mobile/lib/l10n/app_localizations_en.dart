@@ -838,6 +838,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Expected a fault (e.g. airbag) that didn\'t show? Try deep discovery.';
 
   @override
+  String get systemUnverified =>
+      'Couldn\'t verify this system — its module did not respond. Not read as healthy.';
+
+  @override
+  String get airbagUnverified =>
+      'Couldn\'t verify the airbag (SRS) system — specialist diagnosis needed. If the airbag light is on, it may be a real fault.';
+
+  @override
   String get fullScanTitle => 'Full scan by system';
 
   @override

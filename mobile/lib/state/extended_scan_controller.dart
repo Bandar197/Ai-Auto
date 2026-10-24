@@ -49,6 +49,9 @@ class ExtendedScanController extends Notifier<ExtendedScanState> {
         client.elm,
         candidates: candidates,
         perModuleTimeout: Duration(milliseconds: deep ? 450 : 700),
+        // Quick scan: show expected modules that didn't answer (honest, not "healthy").
+        // Deep sweep: only list responders, otherwise 240 "no answer" rows.
+        includeNoResponse: !deep,
         onProgress: (d, t) {
           if (state.running) state = ExtendedScanState(running: true, deep: deep, progress: d, total: t, results: state.results);
         },

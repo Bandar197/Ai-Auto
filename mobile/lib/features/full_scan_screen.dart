@@ -100,16 +100,22 @@ class FullScanScreen extends ConsumerWidget {
 
   Widget _systemCard(BuildContext context, String lang, SystemGroup g) {
     final l = context.l10n;
+    final airbag = g.system.id == 'airbag';
     return SectionCard(
       title: '${g.system.name(lang)}  (${g.codes.length})',
       icon: g.system.icon,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        if (g.codes.isEmpty && g.refused)
-          Text(l.extendedRefused, style: const TextStyle(fontWeight: FontWeight.w600))
-        else if (g.codes.isEmpty)
+        if (g.codes.isNotEmpty)
+          for (final c in g.codes) _codeRow(context, c)
+        // "No faults" is shown ONLY when a real, interpretable read succeeded.
+        else if (g.readOk)
           Text(l.extendedNoFaults, style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w600))
+        // Attempted but not readable (refused / no answer): never shown as healthy.
         else
-          for (final c in g.codes) _codeRow(context, c),
+          Text(
+            airbag ? l.airbagUnverified : (g.refused ? l.extendedRefused : l.systemUnverified),
+            style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.w700),
+          ),
       ]),
     );
   }

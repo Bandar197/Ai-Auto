@@ -326,6 +326,8 @@
   "deepScanCta": "Deep module discovery",
   "deepScanNote": "Probes every common address to find modules not yet mapped for your car (e.g. the airbag unit). Slower but thorough. If a module with a fault shows up, send us its address so we can lock it in.",
   "fullScanFindMore": "Expected a fault (e.g. airbag) that didn't show? Try deep discovery.",
+  "systemUnverified": "Couldn't verify this system — its module did not respond. Not read as healthy.",
+  "airbagUnverified": "Couldn't verify the airbag (SRS) system — specialist diagnosis needed. If the airbag light is on, it may be a real fault.",
   "fullScanTitle": "Full scan by system",
   "fullScanCta": "Start full scan",
   "fullScanChecking": "Scanning…",

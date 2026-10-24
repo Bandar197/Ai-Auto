@@ -1616,6 +1616,18 @@ abstract class AppLocalizations {
   /// **'Expected a fault (e.g. airbag) that didn\'t show? Try deep discovery.'**
   String get fullScanFindMore;
 
+  /// No description provided for @systemUnverified.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t verify this system — its module did not respond. Not read as healthy.'**
+  String get systemUnverified;
+
+  /// No description provided for @airbagUnverified.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t verify the airbag (SRS) system — specialist diagnosis needed. If the airbag light is on, it may be a real fault.'**
+  String get airbagUnverified;
+
   /// No description provided for @fullScanTitle.
   ///
   /// In en, this message translates to:

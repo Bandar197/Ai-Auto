@@ -15,16 +15,28 @@ class ScanCode {
   final String? ecu;
 }
 
-/// Codes grouped under one vehicle system, with whether that system was actually checked.
+/// Codes grouped under one vehicle system, with how the read actually went.
 class SystemGroup {
-  const SystemGroup({required this.system, this.codes = const [], this.checked = false, this.refused = false});
+  const SystemGroup({
+    required this.system,
+    this.codes = const [],
+    this.checked = false,
+    this.refused = false,
+    this.readOk = false,
+  });
   final VehicleSystem system;
   final List<ScanCode> codes;
-  final bool checked; // a read for this system completed
+  final bool checked; // a read for this system was attempted
   final bool refused; // a module answered but refused (e.g. security gateway)
+  final bool readOk; // a genuine, interpretable read happened (the only case "no faults" is honest)
 
-  SystemGroup copy({List<ScanCode>? codes, bool? checked, bool? refused}) =>
-      SystemGroup(system: system, codes: codes ?? this.codes, checked: checked ?? this.checked, refused: refused ?? this.refused);
+  SystemGroup copy({List<ScanCode>? codes, bool? checked, bool? refused, bool? readOk}) => SystemGroup(
+        system: system,
+        codes: codes ?? this.codes,
+        checked: checked ?? this.checked,
+        refused: refused ?? this.refused,
+        readOk: readOk ?? this.readOk,
+      );
 }
 
 class FullScanState {
@@ -81,8 +93,10 @@ class FullScanController extends Notifier<FullScanState> {
 
     // --- Stage 1: standard OBD codes (engine / emissions / transmission / electrical / network) ---
     try {
+      var anyReadOk = false;
       for (final status in DtcStatus.values) {
         final res = await client.readDtcs(status);
+        if (res.error == null) anyReadOk = true; // a successful, interpretable read happened
         for (final d in res.dtcs) {
           final entry = kb.lookup(d.code);
           final sysId = systemIdForDtc(d.code, subsystem: entry?.subsystem);
@@ -94,8 +108,9 @@ class FullScanController extends Notifier<FullScanState> {
           ));
         }
       }
+      // Mark OBD systems checked; "no faults" is only honest where a read actually succeeded.
       for (final s in kVehicleSystems) {
-        if (s.source == ScanSource.obd) groups[s.id] = groups[s.id]!.copy(checked: true);
+        if (s.source == ScanSource.obd) groups[s.id] = groups[s.id]!.copy(checked: true, readOk: anyReadOk);
       }
       state = state.copy(groups: {...groups});
     } on Object catch (e) {
@@ -112,11 +127,12 @@ class FullScanController extends Notifier<FullScanState> {
         final found = await scanModules(
           client.elm,
           candidates: candidates.isNotEmpty ? candidates : kDiscoveryCandidates,
+          includeNoResponse: true, // so a module that didn't answer is shown honestly, not as "no faults"
         );
         for (final m in found) {
           final sysId = systemIdForModuleCategory(m.module.category);
           final g = groups[sysId] ?? SystemGroup(system: systemById(sysId));
-          groups[sysId] = g.copy(checked: true, refused: g.refused || m.refused);
+          groups[sysId] = g.copy(checked: true, refused: g.refused || m.refused, readOk: g.readOk || m.readOk);
           for (final d in m.dtcs) {
             final entry = kb.lookup(d.code);
             _addCode(groups, sysId, ScanCode(

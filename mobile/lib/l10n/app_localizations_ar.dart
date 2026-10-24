@@ -843,6 +843,14 @@ class AppLocalizationsAr extends AppLocalizations {
       'توقعت ظهور عطل (مثل الإيرباق) ولم يظهر؟ جرّب الاكتشاف المتقدم.';
 
   @override
+  String get systemUnverified =>
+      'تعذّر التحقق من هذا النظام — وحدته لم تستجب. لا يُعرض على أنه سليم.';
+
+  @override
+  String get airbagUnverified =>
+      'تعذّر التحقق من نظام الإيرباق (SRS) — يلزم فحص متخصص. إذا كانت لمبة الإيرباق مضيئة فقد يكون العطل حقيقياً.';
+
+  @override
   String get fullScanTitle => 'فحص شامل بالتصنيفات';
 
   @override

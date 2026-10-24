@@ -98,12 +98,15 @@ class _ExtendedModulesScreenState extends ConsumerState<ExtendedModulesScreen> {
       title: '${m.module.name(lang)}  ·  $addr',
       icon: icon,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        if (m.refused)
-          Text(l.extendedRefused, style: const TextStyle(fontWeight: FontWeight.w600))
-        else if (m.dtcs.isEmpty)
+        if (m.dtcs.isNotEmpty)
+          for (final d in m.dtcs) _dtcRow(context, lang, kb, d)
+        else if (m.readOk)
           Text(l.extendedNoFaults, style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w600))
         else
-          for (final d in m.dtcs) _dtcRow(context, lang, kb, d),
+          Text(
+            airbag ? l.airbagUnverified : (m.refused ? l.extendedRefused : l.systemUnverified),
+            style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.w700),
+          ),
         if (airbag && m.dtcs.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 8),

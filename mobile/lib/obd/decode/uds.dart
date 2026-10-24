@@ -206,14 +206,29 @@ List<UdsModule> deepSweep11() => [
         ),
     ];
 
-/// One module's result from a scan, carrying its definition for display.
+/// Honest per-module read outcome (never collapse no-answer into "no faults").
+enum ModuleOutcome {
+  readSuccessCodes, // positive 0x59 response WITH codes
+  readSuccessNoCodes, // positive 0x59 response, zero codes — the only "no faults"
+  refused, // negative response (e.g. security gateway) — present but not readable
+  noResponse, // no answer / timeout / link error — NOT "healthy"
+}
+
+/// One module's result from a scan, carrying its definition and read outcome.
 class ModuleScan {
-  const ModuleScan({required this.module, this.dtcs = const [], this.refused = false});
+  const ModuleScan({required this.module, this.dtcs = const [], this.outcome = ModuleOutcome.noResponse});
   final UdsModule module;
   final List<UdsDtc> dtcs;
+  final ModuleOutcome outcome;
 
-  /// Present but it refused the request (e.g. a security gateway); codes unknown.
-  final bool refused;
+  /// A genuine, interpretable read happened (the only case a "no faults" may be shown).
+  bool get readOk => outcome == ModuleOutcome.readSuccessCodes || outcome == ModuleOutcome.readSuccessNoCodes;
+
+  /// The module answered in some form (read or refusal) — it is present on the bus.
+  bool get present => outcome != ModuleOutcome.noResponse;
+
+  /// Present but refused the request (e.g. a security gateway); codes unknown.
+  bool get refused => outcome == ModuleOutcome.refused;
 
   /// Category inferred from the codes read (B→airbag/body, C→abs/chassis) when the
   /// module was discovered by a blind sweep; falls back to the module's declared category.
@@ -227,32 +242,42 @@ class ModuleScan {
   }
 }
 
-/// Probes [candidates] (read-only) and returns the modules that answered, each with its DTCs.
-/// A module that refuses (negative response) still counts as present, with an empty DTC list.
+/// Probes [candidates] (read-only) and returns a result per module, classified by outcome.
+/// Modules that did not answer are included only when [includeNoResponse] is true (useful to
+/// show "couldn't read the airbag"); a discovery sweep leaves it false to list only responders.
 /// [onProgress] (done, total) is called as the sweep advances, for a progress bar.
 Future<List<ModuleScan>> scanModules(
   Elm327 elm, {
   List<UdsModule> candidates = kDiscoveryCandidates,
   Duration perModuleTimeout = const Duration(milliseconds: 700),
   void Function(int done, int total)? onProgress,
+  bool includeNoResponse = false,
 }) async {
-  final present = <ModuleScan>[];
+  final out = <ModuleScan>[];
   var done = 0;
   for (final m in candidates) {
+    ModuleOutcome outcome;
+    var dtcs = const <UdsDtc>[];
     try {
       final res = await readModuleDtcs(elm, m, timeout: perModuleTimeout);
       final data = udsHexToBytes(res.responseRaw);
       if (data.isNotEmpty && data[0] == kUdsReadDtc + kPositiveOffset) {
-        present.add(ModuleScan(module: m, dtcs: res.dtcs));
+        dtcs = res.dtcs;
+        outcome = res.dtcs.isEmpty ? ModuleOutcome.readSuccessNoCodes : ModuleOutcome.readSuccessCodes;
+      } else {
+        outcome = ModuleOutcome.noResponse; // NO DATA / unparseable — not a successful read
       }
     } on UdsException {
-      present.add(ModuleScan(module: m, refused: true)); // present but refused (e.g. gateway)
+      outcome = ModuleOutcome.refused; // present but refused (e.g. gateway)
     } catch (_) {
-      // No answer / link error → treat as absent.
+      outcome = ModuleOutcome.noResponse; // timeout / link error
+    }
+    if (outcome != ModuleOutcome.noResponse || includeNoResponse) {
+      out.add(ModuleScan(module: m, dtcs: dtcs, outcome: outcome));
     }
     onProgress?.call(++done, candidates.length);
   }
-  return present;
+  return out;
 }
 
 String _atHeader(String at, int id, int bits) => bits == 11
