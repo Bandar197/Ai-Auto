@@ -64,6 +64,7 @@ class UdsModule {
     this.idBits = 11,
     this.category = ModuleCategory.other,
     this.verified = false,
+    this.clearService,
   });
 
   final String key;
@@ -77,6 +78,10 @@ class UdsModule {
   /// The address was confirmed on a real car (registry `verified: true`). Unverified
   /// addresses are only read, never trusted for a clear.
   final bool verified;
+
+  /// 'uds14' when ClearDiagnosticInformation is documented for this module (registry
+  /// `clear`). null = no documented clear → the app never offers one.
+  final String? clearService;
 
   String name(String lang) => lang == 'ar' ? nameAr : nameEn;
 }
@@ -286,6 +291,68 @@ Future<UdsResult> readModuleDtcs(Elm327 elm, UdsModule module, {int statusMask =
     return UdsResult(module: module.key, request: req, responseRaw: resp.raw, dtcs: dtcs);
   } finally {
     // Best-effort restore to normal OBD broadcast addressing.
+    try {
+      await elm.send('ATH1');
+      await elm.send('ATCRA');
+      await elm.send(module.idBits == 11 ? 'ATSH7DF' : 'ATSH18DB33F1');
+    } catch (_) {}
+  }
+}
+
+/// What a module answered to ClearDiagnosticInformation (0x14). A positive 0x54 only
+/// means the module accepted the request — the codes must be re-read to prove it.
+class UdsClearResponse {
+  const UdsClearResponse({required this.request, required this.responseRaw, required this.positive, this.nrc, this.noAnswer = false});
+  final String request;
+  final String responseRaw;
+
+  /// 0x54 received.
+  final bool positive;
+
+  /// Negative response code (7F 14 xx), e.g. 0x22 conditions not correct, 0x33 security.
+  final int? nrc;
+
+  /// Timeout / NO DATA / link error — nothing usable came back.
+  final bool noAnswer;
+
+  String? get nrcName => nrc == null ? null : (kNrc[nrc!] ?? 'negative_response');
+}
+
+/// Pure: classify a raw 0x14 reply. "7F 14 78" (response pending) is skipped in
+/// favour of the final answer on a later line.
+UdsClearResponse parseClearReply(String request, String raw) {
+  int? nrc;
+  var positive = false;
+  for (final line in raw.split(RegExp(r'[\r\n]+'))) {
+    final b = udsHexToBytes(line);
+    if (b.isEmpty) continue;
+    if (b[0] == kUdsClearDtc + kPositiveOffset) positive = true;
+    if (b.length >= 3 && b[0] == kNegativeResponse && b[1] == kUdsClearDtc && b[2] != 0x78) nrc = b[2];
+  }
+  return UdsClearResponse(
+    request: request,
+    responseRaw: raw,
+    positive: positive && nrc == null,
+    nrc: nrc,
+    noAnswer: !positive && nrc == null,
+  );
+}
+
+/// Sends ClearDiagnosticInformation (all groups) to ONE module. Only reachable through
+/// [ObdClient.clearModuleDtcs], which enforces approval, a verified address and a
+/// documented clear. Restores OBD addressing afterwards.
+Future<UdsClearResponse> sendModuleClear(Elm327 elm, UdsModule module) async {
+  final req = buildClearRequest();
+  try {
+    await elm.send(_atHeader('ATSH', module.requestId, module.idBits));
+    await elm.send(_atHeader('ATCRA', module.responseId, module.idBits));
+    await elm.send('ATH0');
+    final resp = await elm.sendUdsClear(req);
+    if (!resp.ok) {
+      return UdsClearResponse(request: req, responseRaw: resp.raw.isNotEmpty ? resp.raw : (resp.error?.code ?? ''), positive: false, noAnswer: true);
+    }
+    return parseClearReply(req, resp.raw);
+  } finally {
     try {
       await elm.send('ATH1');
       await elm.send('ATCRA');

@@ -1098,7 +1098,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get srsNote =>
-      'لا يقوم التطبيق أبدًا بمسح أكواد الوسائد الهوائية (SRS).';
+      'لا تُمسح أكواد الوسائد الهوائية (SRS) إلا على وحدة مثبتة العنوان ولها وظيفة مسح موثقة وبموافقة الخادم لهذه السيارة — وغير ذلك أبداً. بيانات الاصطدام لا تُمسح مطلقاً.';
 
   @override
   String get autoStartAfterClear => 'تجريبي: تشغيل المحرك تلقائيًا بعد المسح';
@@ -1311,4 +1311,146 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get exportFolderReset => 'استخدم الافتراضي';
+
+  @override
+  String get clearCanTitle => 'يمكن مسحها';
+
+  @override
+  String get clearCannotTitle => 'لا يمكن مسحها هنا';
+
+  @override
+  String get clearNoneClearable => 'لا يوجد في هذا الفحص ما يمكن مسحه الآن.';
+
+  @override
+  String clearPermanentNote(String codes) {
+    return 'الأكواد الدائمة ($codes) لا تُمسح بالمسح — تختفي وحدها بعد نجاح الاختبار الذاتي المرتبط بها.';
+  }
+
+  @override
+  String clearSelectedCta(int count) {
+    return 'امسح المحدد ($count)';
+  }
+
+  @override
+  String get clearConsentTargets => 'ستقوم بمسح:';
+
+  @override
+  String clearBatteryAdvice(String volts) {
+    return 'البطارية: $volts فولت — حافظ على 12 فولت أو أكثر أثناء المسح (صِل شاحناً إن كانت أقل).';
+  }
+
+  @override
+  String get clearIgnitionOn => 'السويتش مفتوح (السيارة تستجيب)';
+
+  @override
+  String get clearOfflineNote =>
+      'بدون اتصال: يُسجَّل مسح المحرك في سجل التدقيق على هذا الجهاز. مسح الوحدات الأخرى يحتاج موافقة الخادم.';
+
+  @override
+  String get clearResultsTitle => 'النتيجة بعد إعادة القراءة';
+
+  @override
+  String get clearCodeVsLamp =>
+      '«تم مسح الكود» يعني أن الوحدة لم تعد تُبلغ عنه، ولا يثبت أن لمبة التحذير انطفأت.';
+
+  @override
+  String get clearLampByCar => 'السيارة تُبلغ أن لمبة المحرك (MIL) مطفأة.';
+
+  @override
+  String get clearLampConfirmCta => 'أرى أن اللمبة انطفأت';
+
+  @override
+  String get clearLampConfirmed => 'أكّدتَ أن اللمبة انطفأت.';
+
+  @override
+  String get clearLampUnknown => 'حالة اللمبة لم تُؤكَّد بعد.';
+
+  @override
+  String get clearOpenVerification => 'المتابعة (التحقق)';
+
+  @override
+  String get clearSnapshotKept =>
+      'حُفظت نسخة دائمة من كل شيء قبل المسح على هذا الجهاز.';
+
+  @override
+  String get ctx_allowed => 'مسموح';
+
+  @override
+  String get ctx_unsupported_by_hardware => 'غير مدعوم بهذا الجهاز';
+
+  @override
+  String get ctx_unsupported_by_vehicle => 'غير مدعوم لهذه السيارة';
+
+  @override
+  String get ctx_requires_oem_authorization => 'يتطلب تصريح الشركة / الخادم';
+
+  @override
+  String get ctx_active_fault_not_clearable => 'عطل نشط لا يقبل المسح';
+
+  @override
+  String get ctx_crash_data_specialist => 'بيانات اصطدام — تتطلب خدمة متخصصة';
+
+  @override
+  String get ctx_comm_failed => 'فشل الاتصال';
+
+  @override
+  String get ctx_cleared_and_verified => 'تم المسح والتحقق';
+
+  @override
+  String get reason_not_connected => 'اتصل بالسيارة أولاً.';
+
+  @override
+  String get reason_replay => 'الإعادة ليست سيارة — لا يمكن مسح شيء.';
+
+  @override
+  String get reason_module_not_read => 'الوحدة لم تستجب، فأكوادها غير معروفة.';
+
+  @override
+  String get reason_module_refused =>
+      'الوحدة رفضت الوصول (مثل البوابة الأمنية).';
+
+  @override
+  String get reason_address_unverified =>
+      'عنوانها لم يُثبت على سيارة حقيقية بعد.';
+
+  @override
+  String get reason_clear_not_documented =>
+      'لا توجد وظيفة مسح موثقة لهذه الوحدة.';
+
+  @override
+  String get reason_adapter_no_headers =>
+      'هذا الجهاز فشل في اختبار الترويسات اللازم لمخاطبة الوحدة.';
+
+  @override
+  String get reason_active_fault =>
+      'العطل نشط الآن — المسح لن يفيد وقد يخفيه. أصلح أولاً.';
+
+  @override
+  String get reason_crash_data =>
+      'بيانات الاصطدام/الانتفاخ لا تُمسح هنا أبداً — راجع مختص الوسائد الهوائية.';
+
+  @override
+  String get reason_safety_policy =>
+      'نظام أمان: يجب السماح بالمسح لهذه السيارة على الخادم أولاً.';
+
+  @override
+  String get res_cleared => 'تم المسح';
+
+  @override
+  String get res_still_active => 'ما زال موجوداً';
+
+  @override
+  String get res_read_failed => 'فشلت إعادة القراءة';
+
+  @override
+  String get res_verification_pending => 'التحقق معلّق';
+
+  @override
+  String get res_refused => 'رفضته الوحدة';
+
+  @override
+  String get res_comm_failed => 'لا استجابة';
+
+  @override
+  String get res_blocked => 'لم يُرسل';
 }

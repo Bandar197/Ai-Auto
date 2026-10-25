@@ -287,7 +287,10 @@
       "description": "Service 01 PID 01 decoded at scan time: mil_on, dtc_count, ignition, monitors {name: {available, complete}}. Used to verify whether a cleared code was re-tested."
     },
     "adapter_capabilities": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "description": "Optional: what the adapter PROVED it supports during capture (see recording.v2 adapter_capabilities). Absent when no probe ran."
     },
     "tx_rx_frames": {
@@ -295,11 +298,25 @@
       "description": "Optional raw adapter traffic (see recording.v2 tx_rx_frames). Kept on the device; stripped from uploads because replies can contain the VIN.",
       "items": {
         "type": "object",
-        "required": ["t_ms", "dir", "data"],
+        "required": [
+          "t_ms",
+          "dir",
+          "data"
+        ],
         "properties": {
-          "t_ms": { "type": "integer", "minimum": 0 },
-          "dir": { "enum": ["tx", "rx"] },
-          "data": { "type": "string" }
+          "t_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "dir": {
+            "enum": [
+              "tx",
+              "rx"
+            ]
+          },
+          "data": {
+            "type": "string"
+          }
         }
       }
     },
@@ -368,6 +385,13 @@
                   ]
                 }
               }
+            }
+          },
+          "active_codes": {
+            "type": "array",
+            "description": "Codes reported as failing now (UDS testFailed bit); a clear is not offered for them.",
+            "items": {
+              "type": "string"
             }
           }
         }

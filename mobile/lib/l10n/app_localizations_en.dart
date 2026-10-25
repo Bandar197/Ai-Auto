@@ -1092,7 +1092,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get procedureUnavailable => 'Unavailable';
 
   @override
-  String get srsNote => 'Airbag (SRS) codes are never cleared by this app.';
+  String get srsNote =>
+      'Airbag (SRS) codes are cleared only on a verified module with a documented clear function and server approval for this car — never otherwise. Crash data is never cleared.';
 
   @override
   String get autoStartAfterClear =>
@@ -1306,4 +1307,151 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exportFolderReset => 'Use default';
+
+  @override
+  String get clearCanTitle => 'Can be cleared';
+
+  @override
+  String get clearCannotTitle => 'Cannot be cleared here';
+
+  @override
+  String get clearNoneClearable =>
+      'Nothing on this scan can be cleared right now.';
+
+  @override
+  String clearPermanentNote(String codes) {
+    return 'Permanent codes ($codes) are not erased by clearing — they go by themselves once the related self-test passes.';
+  }
+
+  @override
+  String clearSelectedCta(int count) {
+    return 'Clear selected ($count)';
+  }
+
+  @override
+  String get clearConsentTargets => 'You are about to clear:';
+
+  @override
+  String clearBatteryAdvice(String volts) {
+    return 'Battery: $volts V — keep ≥ 12 V during clearing (connect a charger if lower).';
+  }
+
+  @override
+  String get clearIgnitionOn => 'Ignition ON (car answering)';
+
+  @override
+  String get clearOfflineNote =>
+      'Offline: the engine clear is recorded in this device\'s audit log. Clearing other modules needs a server approval.';
+
+  @override
+  String get clearResultsTitle => 'Result after re-reading';
+
+  @override
+  String get clearCodeVsLamp =>
+      '\"Code cleared\" means the module no longer reports it. It does not prove the warning lamp is off.';
+
+  @override
+  String get clearLampByCar => 'The car reports the engine lamp (MIL) is OFF.';
+
+  @override
+  String get clearLampConfirmCta => 'I can see the lamp is off';
+
+  @override
+  String get clearLampConfirmed => 'You confirmed the lamp is off.';
+
+  @override
+  String get clearLampUnknown => 'Lamp state not confirmed yet.';
+
+  @override
+  String get clearOpenVerification => 'Follow up (verification)';
+
+  @override
+  String get clearSnapshotKept =>
+      'A permanent copy of everything before the clear was saved on this device.';
+
+  @override
+  String get ctx_allowed => 'Allowed';
+
+  @override
+  String get ctx_unsupported_by_hardware => 'Not supported by this adapter';
+
+  @override
+  String get ctx_unsupported_by_vehicle => 'Not supported for this car';
+
+  @override
+  String get ctx_requires_oem_authorization =>
+      'Needs manufacturer / server authorization';
+
+  @override
+  String get ctx_active_fault_not_clearable =>
+      'Active fault — cannot be cleared';
+
+  @override
+  String get ctx_crash_data_specialist =>
+      'Crash data — specialist service required';
+
+  @override
+  String get ctx_comm_failed => 'Communication failed';
+
+  @override
+  String get ctx_cleared_and_verified => 'Cleared and verified';
+
+  @override
+  String get reason_not_connected => 'Connect to the car first.';
+
+  @override
+  String get reason_replay => 'A replay is not a car — nothing can be cleared.';
+
+  @override
+  String get reason_module_not_read =>
+      'The module did not answer, so its codes are unknown.';
+
+  @override
+  String get reason_module_refused =>
+      'The module refused access (e.g. security gateway).';
+
+  @override
+  String get reason_address_unverified =>
+      'Its address has not been verified on a real car yet.';
+
+  @override
+  String get reason_clear_not_documented =>
+      'No documented clear function for this module.';
+
+  @override
+  String get reason_adapter_no_headers =>
+      'This adapter failed the header test needed to address the module.';
+
+  @override
+  String get reason_active_fault =>
+      'The fault is active now — clearing would not help and could hide it. Repair first.';
+
+  @override
+  String get reason_crash_data =>
+      'Crash/deployment data is never cleared here — see an airbag specialist.';
+
+  @override
+  String get reason_safety_policy =>
+      'Safety system: clearing must be allowed for this car on the server first.';
+
+  @override
+  String get res_cleared => 'Cleared';
+
+  @override
+  String get res_still_active => 'Still present';
+
+  @override
+  String get res_read_failed => 'Re-read failed';
+
+  @override
+  String get res_verification_pending => 'Verification pending';
+
+  @override
+  String get res_refused => 'Refused by the module';
+
+  @override
+  String get res_comm_failed => 'No answer';
+
+  @override
+  String get res_blocked => 'Not sent';
 }

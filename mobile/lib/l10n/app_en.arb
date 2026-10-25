@@ -458,7 +458,7 @@
   },
   "otherProcedures": "Other procedures",
   "procedureUnavailable": "Unavailable",
-  "srsNote": "Airbag (SRS) codes are never cleared by this app.",
+  "srsNote": "Airbag (SRS) codes are cleared only on a verified module with a documented clear function and server approval for this car — never otherwise. Crash data is never cleared.",
   "autoStartAfterClear": "Demo: start the engine automatically after clearing",
   "monitorComplete": "complete",
   "monitorIncomplete": "not complete",
@@ -545,6 +545,69 @@
   "@importTampered": {
     "placeholders": {
       "files": {
+        "type": "String"
+      }
+    }
+  },
+  "clearCanTitle": "Can be cleared",
+  "clearCannotTitle": "Cannot be cleared here",
+  "clearNoneClearable": "Nothing on this scan can be cleared right now.",
+  "clearPermanentNote": "Permanent codes ({codes}) are not erased by clearing — they go by themselves once the related self-test passes.",
+  "clearSelectedCta": "Clear selected ({count})",
+  "clearConsentTargets": "You are about to clear:",
+  "clearBatteryAdvice": "Battery: {volts} V — keep ≥ 12 V during clearing (connect a charger if lower).",
+  "clearIgnitionOn": "Ignition ON (car answering)",
+  "clearOfflineNote": "Offline: the engine clear is recorded in this device's audit log. Clearing other modules needs a server approval.",
+  "clearResultsTitle": "Result after re-reading",
+  "clearCodeVsLamp": "\"Code cleared\" means the module no longer reports it. It does not prove the warning lamp is off.",
+  "clearLampByCar": "The car reports the engine lamp (MIL) is OFF.",
+  "clearLampConfirmCta": "I can see the lamp is off",
+  "clearLampConfirmed": "You confirmed the lamp is off.",
+  "clearLampUnknown": "Lamp state not confirmed yet.",
+  "clearOpenVerification": "Follow up (verification)",
+  "clearSnapshotKept": "A permanent copy of everything before the clear was saved on this device.",
+  "ctx_allowed": "Allowed",
+  "ctx_unsupported_by_hardware": "Not supported by this adapter",
+  "ctx_unsupported_by_vehicle": "Not supported for this car",
+  "ctx_requires_oem_authorization": "Needs manufacturer / server authorization",
+  "ctx_active_fault_not_clearable": "Active fault — cannot be cleared",
+  "ctx_crash_data_specialist": "Crash data — specialist service required",
+  "ctx_comm_failed": "Communication failed",
+  "ctx_cleared_and_verified": "Cleared and verified",
+  "reason_not_connected": "Connect to the car first.",
+  "reason_replay": "A replay is not a car — nothing can be cleared.",
+  "reason_module_not_read": "The module did not answer, so its codes are unknown.",
+  "reason_module_refused": "The module refused access (e.g. security gateway).",
+  "reason_address_unverified": "Its address has not been verified on a real car yet.",
+  "reason_clear_not_documented": "No documented clear function for this module.",
+  "reason_adapter_no_headers": "This adapter failed the header test needed to address the module.",
+  "reason_active_fault": "The fault is active now — clearing would not help and could hide it. Repair first.",
+  "reason_crash_data": "Crash/deployment data is never cleared here — see an airbag specialist.",
+  "reason_safety_policy": "Safety system: clearing must be allowed for this car on the server first.",
+  "res_cleared": "Cleared",
+  "res_still_active": "Still present",
+  "res_read_failed": "Re-read failed",
+  "res_verification_pending": "Verification pending",
+  "res_refused": "Refused by the module",
+  "res_comm_failed": "No answer",
+  "res_blocked": "Not sent",
+  "@clearPermanentNote": {
+    "placeholders": {
+      "codes": {
+        "type": "String"
+      }
+    }
+  },
+  "@clearSelectedCta": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@clearBatteryAdvice": {
+    "placeholders": {
+      "volts": {
         "type": "String"
       }
     }

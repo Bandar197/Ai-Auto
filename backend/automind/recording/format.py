@@ -75,6 +75,7 @@ class RecModuleScan(BaseModel):
     address: str | None = None
     outcome: Literal["read_codes", "read_no_codes", "refused", "no_response"]
     codes: list[RecDTC] = Field(default_factory=list)
+    active_codes: list[str] = Field(default_factory=list)  # UDS testFailed — failing now
 
 
 class Recording(BaseModel):

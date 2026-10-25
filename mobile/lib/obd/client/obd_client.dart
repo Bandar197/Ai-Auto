@@ -3,6 +3,7 @@ import 'dart:async';
 import '../decode/dtc.dart';
 import '../decode/pid_table.dart';
 import '../decode/readiness.dart';
+import '../decode/uds.dart';
 import '../hex.dart';
 import '../verify/recurrence.dart';
 import '../elm327/elm327.dart';
@@ -69,6 +70,23 @@ class ClearDtcApproval {
   final List<String> commands;
 
   bool get approvesClear => status == 'approved' && commands.contains('04');
+}
+
+/// Server approval for a module clear: the operation must list `14:<module key>`.
+class ModuleClearApproval {
+  const ModuleClearApproval({required this.operationId, required this.status, required this.commands});
+  final String operationId;
+  final String status;
+  final List<String> commands;
+  bool approves(String moduleKey) => status == 'approved' && commands.contains('14:$moduleKey');
+}
+
+class ModuleClearOutcome {
+  const ModuleClearOutcome({required this.reply, this.after});
+  final UdsClearResponse reply;
+
+  /// Re-read right after a positive reply (null = not attempted / failed).
+  final UdsResult? after;
 }
 
 class ClearDtcOutcome {
@@ -386,8 +404,11 @@ class ObdClient {
   Future<ScanSnapshot> snapshot({DateTime? at}) async {
     if (supported == null) await readSupportedPids();
     final dtcs = <SnapshotDtc>[];
+    bool? readOk;
     for (final st in DtcStatus.values) {
-      for (final d in (await readDtcs(st)).dtcs) {
+      final r = await readDtcs(st);
+      if (st == DtcStatus.stored) readOk = r.error == null;
+      for (final d in r.dtcs) {
         dtcs.add(SnapshotDtc(d.code, status: st.apiValue, ecu: d.ecu));
       }
     }
@@ -400,6 +421,7 @@ class ObdClient {
       warmupsSinceClear: await value(0x30, 'warmups_since_clear'),
       distanceSinceClearKm: await value(0x31, 'distance_since_clear'),
       engineRunning: rpm == null ? null : rpm > 300,
+      readOk: readOk,
     );
   }
 
@@ -419,6 +441,33 @@ class ObdClient {
     final r = await elm.sendClearDtcs();
     final ok = r.ok && r.lines.any((l) => l.replaceAll(' ', '').toUpperCase().contains('44'));
     return ClearDtcOutcome(success: ok, requestFrames: const ['04'], responseFrames: r.ok ? r.lines : [r.errorLine ?? r.error?.code ?? 'error'], error: r.error?.code);
+  }
+
+  /// UDS ClearDiagnosticInformation on one module, then an immediate re-read.
+  /// Refuses (PolicyViolationException) unless the server approved exactly this
+  /// module, the address is verified, a 0x14 clear is documented for it, and live
+  /// data shows engine off + vehicle stopped. Never retried automatically.
+  Future<ModuleClearOutcome> clearModuleDtcs(UdsModule module, ModuleClearApproval approval) async {
+    if (!approval.approves(module.key)) throw PolicyViolationException('server did not approve clearing module ${module.key}');
+    if (!module.verified) throw PolicyViolationException('module address ${module.key} is not verified');
+    if (module.clearService != 'uds14') throw PolicyViolationException('no documented 0x14 clear for ${module.key}');
+    final rpm = await _readFirst(0x0C, 'engine_rpm');
+    final speed = await _readFirst(0x0D, 'vehicle_speed');
+    if (rpm == null || speed == null) {
+      throw PolicyViolationException('cannot verify engine off / vehicle stopped (rpm=$rpm, speed=$speed)');
+    }
+    if (rpm > 0) throw PolicyViolationException('engine is running ($rpm rpm)');
+    if (speed > 0) throw PolicyViolationException('vehicle is moving ($speed km/h)');
+    final reply = await sendModuleClear(elm, module);
+    UdsResult? after;
+    if (reply.positive) {
+      try {
+        after = await readModuleDtcs(elm, module);
+      } on Object catch (_) {
+        after = null; // re-read failed → verification pending, never "cleared"
+      }
+    }
+    return ModuleClearOutcome(reply: reply, after: after);
   }
 
   Future<double?> _readFirst(int pid, String key) async {

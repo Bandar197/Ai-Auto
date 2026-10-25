@@ -16,7 +16,12 @@ class ClearEntry {
     this.verification,
     this.verificationSource,
     this.open = true,
-  }) : checks = checks ?? [];
+    this.snapshotId,
+    List<Map<String, dynamic>>? targetResults,
+    this.lampOffBy,
+    this.lampOffAt,
+  })  : checks = checks ?? [],
+        targetResults = targetResults ?? [];
 
   factory ClearEntry.fromJson(Map<String, dynamic> j) => ClearEntry(
         id: j['id'] as String,
@@ -31,6 +36,10 @@ class ClearEntry {
         verification: j['verification'] == null ? null : ClearVerification.fromJson(Map<String, dynamic>.from(j['verification'] as Map)),
         verificationSource: j['verification_source'] as String?,
         open: j['open'] as bool? ?? true,
+        snapshotId: j['snapshot_id'] as String?,
+        targetResults: [for (final t in (j['target_results'] as List? ?? const [])) Map<String, dynamic>.from(t as Map)],
+        lampOffBy: j['lamp_off_by'] as String?,
+        lampOffAt: j['lamp_off_at'] == null ? null : DateTime.tryParse(j['lamp_off_at'] as String),
       );
 
   final String id;
@@ -52,6 +61,21 @@ class ClearEntry {
   String? verificationSource;
   bool open;
 
+  /// Permanent pre-clear snapshot (`snapshots/<id>.json`), never deleted.
+  final String? snapshotId;
+
+  /// Per-target outcome of the clear: {key, service, result, nrc?, codes: {code: outcome}}.
+  List<Map<String, dynamic>> targetResults;
+
+  /// Id that groups this clear's events in the on-device audit log.
+  String? get auditOperationId => snapshotId?.startsWith('preclear_') == true ? snapshotId!.substring(9) : null;
+
+  /// Who confirmed the warning lamp is OFF: 'module_status' (the ECU reported MIL off —
+  /// engine lamp only) or 'user' (they looked). null = not confirmed. "Code cleared" alone never
+  /// means the lamp is off.
+  String? lampOffBy;
+  DateTime? lampOffAt;
+
   String get dataMode => record.dataMode;
   String get overall => verification?.overall ?? 'verifying';
 
@@ -68,6 +92,10 @@ class ClearEntry {
         'verification': verification?.toJson(),
         'verification_source': verificationSource,
         'open': open,
+        'snapshot_id': ?snapshotId,
+        if (targetResults.isNotEmpty) 'target_results': targetResults,
+        'lamp_off_by': ?lampOffBy,
+        if (lampOffAt != null) 'lamp_off_at': lampOffAt!.toUtc().toIso8601String(),
       };
 }
 

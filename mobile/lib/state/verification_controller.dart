@@ -64,6 +64,29 @@ class VerificationController extends AsyncNotifier<List<ClearEntry>> {
     return evaluate(id);
   }
 
+  Future<ClearEntry?> setTargetResults(String id, List<Map<String, dynamic>> results, {String? lampOffBy, DateTime? lampOffAt}) async {
+    final list = await _all();
+    final e = list.where((x) => x.id == id).firstOrNull;
+    if (e == null) return null;
+    e
+      ..targetResults = results
+      ..lampOffBy = lampOffBy ?? e.lampOffBy
+      ..lampOffAt = lampOffAt ?? e.lampOffAt;
+    await _save(list);
+    return e;
+  }
+
+  /// Record who confirmed the warning lamp is off ('module_status' or 'user').
+  Future<void> setLampOff(String id, {required String by}) async {
+    final list = await _all();
+    final e = list.where((x) => x.id == id).firstOrNull;
+    if (e == null) return;
+    e
+      ..lampOffBy = by
+      ..lampOffAt = DateTime.now().toUtc();
+    await _save(list);
+  }
+
   Future<void> close(String id) async {
     final list = await _all();
     for (final e in list) {

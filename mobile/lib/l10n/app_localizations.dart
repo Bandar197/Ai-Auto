@@ -2039,7 +2039,7 @@ abstract class AppLocalizations {
   /// No description provided for @srsNote.
   ///
   /// In en, this message translates to:
-  /// **'Airbag (SRS) codes are never cleared by this app.'**
+  /// **'Airbag (SRS) codes are cleared only on a verified module with a documented clear function and server approval for this car — never otherwise. Crash data is never cleared.'**
   String get srsNote;
 
   /// No description provided for @autoStartAfterClear.
@@ -2413,6 +2413,258 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use default'**
   String get exportFolderReset;
+
+  /// No description provided for @clearCanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Can be cleared'**
+  String get clearCanTitle;
+
+  /// No description provided for @clearCannotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot be cleared here'**
+  String get clearCannotTitle;
+
+  /// No description provided for @clearNoneClearable.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing on this scan can be cleared right now.'**
+  String get clearNoneClearable;
+
+  /// No description provided for @clearPermanentNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanent codes ({codes}) are not erased by clearing — they go by themselves once the related self-test passes.'**
+  String clearPermanentNote(String codes);
+
+  /// No description provided for @clearSelectedCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear selected ({count})'**
+  String clearSelectedCta(int count);
+
+  /// No description provided for @clearConsentTargets.
+  ///
+  /// In en, this message translates to:
+  /// **'You are about to clear:'**
+  String get clearConsentTargets;
+
+  /// No description provided for @clearBatteryAdvice.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery: {volts} V — keep ≥ 12 V during clearing (connect a charger if lower).'**
+  String clearBatteryAdvice(String volts);
+
+  /// No description provided for @clearIgnitionOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignition ON (car answering)'**
+  String get clearIgnitionOn;
+
+  /// No description provided for @clearOfflineNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline: the engine clear is recorded in this device\'s audit log. Clearing other modules needs a server approval.'**
+  String get clearOfflineNote;
+
+  /// No description provided for @clearResultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Result after re-reading'**
+  String get clearResultsTitle;
+
+  /// No description provided for @clearCodeVsLamp.
+  ///
+  /// In en, this message translates to:
+  /// **'\"Code cleared\" means the module no longer reports it. It does not prove the warning lamp is off.'**
+  String get clearCodeVsLamp;
+
+  /// No description provided for @clearLampByCar.
+  ///
+  /// In en, this message translates to:
+  /// **'The car reports the engine lamp (MIL) is OFF.'**
+  String get clearLampByCar;
+
+  /// No description provided for @clearLampConfirmCta.
+  ///
+  /// In en, this message translates to:
+  /// **'I can see the lamp is off'**
+  String get clearLampConfirmCta;
+
+  /// No description provided for @clearLampConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'You confirmed the lamp is off.'**
+  String get clearLampConfirmed;
+
+  /// No description provided for @clearLampUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Lamp state not confirmed yet.'**
+  String get clearLampUnknown;
+
+  /// No description provided for @clearOpenVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow up (verification)'**
+  String get clearOpenVerification;
+
+  /// No description provided for @clearSnapshotKept.
+  ///
+  /// In en, this message translates to:
+  /// **'A permanent copy of everything before the clear was saved on this device.'**
+  String get clearSnapshotKept;
+
+  /// No description provided for @ctx_allowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed'**
+  String get ctx_allowed;
+
+  /// No description provided for @ctx_unsupported_by_hardware.
+  ///
+  /// In en, this message translates to:
+  /// **'Not supported by this adapter'**
+  String get ctx_unsupported_by_hardware;
+
+  /// No description provided for @ctx_unsupported_by_vehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not supported for this car'**
+  String get ctx_unsupported_by_vehicle;
+
+  /// No description provided for @ctx_requires_oem_authorization.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs manufacturer / server authorization'**
+  String get ctx_requires_oem_authorization;
+
+  /// No description provided for @ctx_active_fault_not_clearable.
+  ///
+  /// In en, this message translates to:
+  /// **'Active fault — cannot be cleared'**
+  String get ctx_active_fault_not_clearable;
+
+  /// No description provided for @ctx_crash_data_specialist.
+  ///
+  /// In en, this message translates to:
+  /// **'Crash data — specialist service required'**
+  String get ctx_crash_data_specialist;
+
+  /// No description provided for @ctx_comm_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication failed'**
+  String get ctx_comm_failed;
+
+  /// No description provided for @ctx_cleared_and_verified.
+  ///
+  /// In en, this message translates to:
+  /// **'Cleared and verified'**
+  String get ctx_cleared_and_verified;
+
+  /// No description provided for @reason_not_connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect to the car first.'**
+  String get reason_not_connected;
+
+  /// No description provided for @reason_replay.
+  ///
+  /// In en, this message translates to:
+  /// **'A replay is not a car — nothing can be cleared.'**
+  String get reason_replay;
+
+  /// No description provided for @reason_module_not_read.
+  ///
+  /// In en, this message translates to:
+  /// **'The module did not answer, so its codes are unknown.'**
+  String get reason_module_not_read;
+
+  /// No description provided for @reason_module_refused.
+  ///
+  /// In en, this message translates to:
+  /// **'The module refused access (e.g. security gateway).'**
+  String get reason_module_refused;
+
+  /// No description provided for @reason_address_unverified.
+  ///
+  /// In en, this message translates to:
+  /// **'Its address has not been verified on a real car yet.'**
+  String get reason_address_unverified;
+
+  /// No description provided for @reason_clear_not_documented.
+  ///
+  /// In en, this message translates to:
+  /// **'No documented clear function for this module.'**
+  String get reason_clear_not_documented;
+
+  /// No description provided for @reason_adapter_no_headers.
+  ///
+  /// In en, this message translates to:
+  /// **'This adapter failed the header test needed to address the module.'**
+  String get reason_adapter_no_headers;
+
+  /// No description provided for @reason_active_fault.
+  ///
+  /// In en, this message translates to:
+  /// **'The fault is active now — clearing would not help and could hide it. Repair first.'**
+  String get reason_active_fault;
+
+  /// No description provided for @reason_crash_data.
+  ///
+  /// In en, this message translates to:
+  /// **'Crash/deployment data is never cleared here — see an airbag specialist.'**
+  String get reason_crash_data;
+
+  /// No description provided for @reason_safety_policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety system: clearing must be allowed for this car on the server first.'**
+  String get reason_safety_policy;
+
+  /// No description provided for @res_cleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Cleared'**
+  String get res_cleared;
+
+  /// No description provided for @res_still_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Still present'**
+  String get res_still_active;
+
+  /// No description provided for @res_read_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-read failed'**
+  String get res_read_failed;
+
+  /// No description provided for @res_verification_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification pending'**
+  String get res_verification_pending;
+
+  /// No description provided for @res_refused.
+  ///
+  /// In en, this message translates to:
+  /// **'Refused by the module'**
+  String get res_refused;
+
+  /// No description provided for @res_comm_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'No answer'**
+  String get res_comm_failed;
+
+  /// No description provided for @res_blocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sent'**
+  String get res_blocked;
 }
 
 class _AppLocalizationsDelegate

@@ -31,6 +31,7 @@ class ScanSnapshot {
     this.warmupsSinceClear,
     this.distanceSinceClearKm,
     this.engineRunning,
+    this.readOk,
   });
 
   factory ScanSnapshot.fromJson(Map<String, dynamic> j) => ScanSnapshot(
@@ -41,6 +42,7 @@ class ScanSnapshot {
         warmupsSinceClear: (j['warmups_since_clear'] as num?)?.toDouble(),
         distanceSinceClearKm: (j['distance_since_clear_km'] as num?)?.toDouble(),
         engineRunning: j['engine_running'] as bool?,
+        readOk: j['read_ok'] as bool?,
       );
 
   final DateTime takenAt;
@@ -51,6 +53,10 @@ class ScanSnapshot {
   final double? distanceSinceClearKm;
   final bool? engineRunning;
 
+  /// The stored-code read (service 03) succeeded. false = an empty code list means
+  /// "couldn't read", NOT "cleared". null = unknown (older snapshots).
+  final bool? readOk;
+
   Map<String, dynamic> toJson() => {
         'taken_at': takenAt.toUtc().toIso8601String(),
         'session_id': ?sessionId,
@@ -59,6 +65,7 @@ class ScanSnapshot {
         'warmups_since_clear': warmupsSinceClear,
         'distance_since_clear_km': distanceSinceClearKm,
         'engine_running': engineRunning,
+        'read_ok': ?readOk,
       };
 
   /// Snapshot of a recording (codes, readiness, counters, engine running).

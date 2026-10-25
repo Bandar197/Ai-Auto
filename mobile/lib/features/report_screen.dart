@@ -6,9 +6,11 @@ import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../core/api/api_client.dart';
+import '../core/clear/clear_audit.dart';
 import '../core/kb/local_kb.dart';
 import '../core/recording/export_service.dart';
 import '../core/storage/scan_report.dart';
+import '../state/clear_controller.dart';
 import '../state/connection_controller.dart';
 import '../state/providers.dart';
 import '../ui/l10n_helpers.dart';
@@ -82,12 +84,16 @@ class ReportScreen extends ConsumerWidget {
       return;
     }
     final kb = ref.read(appAssetsProvider).kb;
+    // Every clear attempt on this scan (incl. refusals) from the on-device audit log.
+    final audit = await ref.read(clearAuditProvider).read(reportId: r.id);
     final zip = ExportService.evidenceZip(
       rec,
       maskVin: !ref.read(settingsProvider).includeVin,
       describe: (code) => kb.lookup(code)?.description(lang),
       evidence: SessionEvidence(
         sessionState: r.interrupted ? 'interrupted' : 'completed',
+        auditEvents: audit,
+        clearOperations: ClearAuditLog.operations(audit),
         beforeAfter: r.diagnosis == null ? null : {'diagnosis': r.diagnosis},
       ),
     );

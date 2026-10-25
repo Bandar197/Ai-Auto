@@ -85,6 +85,7 @@ class ModuleRegistry {
             _ => ModuleCategory.other,
           },
           verified: m['verified'] == true,
+          clearService: m['clear'] == 'uds14' ? 'uds14' : null,
         ));
       }
       profiles.add(ModuleProfile(

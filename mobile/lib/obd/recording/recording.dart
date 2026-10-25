@@ -29,6 +29,7 @@ class RecordingModuleScan {
     this.category = 'other',
     this.address,
     this.codes = const [],
+    this.activeCodes = const [],
   });
 
   /// Map an in-app [ModuleScan] to the recording shape. Codes are kept only for a
@@ -45,6 +46,7 @@ class RecordingModuleScan {
       address: m.module.requestId.toRadixString(16).toUpperCase().padLeft(nibbles, '0'),
       outcome: moduleOutcomeWire(m.outcome),
       codes: m.readOk ? [for (final d in m.dtcs) d.toDtc(null)] : const [],
+      activeCodes: m.readOk ? [for (final d in m.dtcs) if (d.active) d.code] : const [],
     );
   }
 
@@ -56,6 +58,7 @@ class RecordingModuleScan {
         address: j['address'] as String?,
         outcome: j['outcome'] as String,
         codes: [for (final d in (j['codes'] as List? ?? const [])) Dtc.fromJson(d as Map<String, dynamic>)],
+        activeCodes: [for (final c in (j['active_codes'] as List? ?? const [])) '$c'],
       );
 
   final String key;
@@ -66,6 +69,9 @@ class RecordingModuleScan {
   final String outcome;
   final List<Dtc> codes;
 
+  /// Codes the module reported as failing NOW (UDS testFailed) — not clearable.
+  final List<String> activeCodes;
+
   Map<String, dynamic> toJson() => {
         'key': key,
         'name_en': nameEn,
@@ -74,6 +80,7 @@ class RecordingModuleScan {
         if (address != null) 'address': address,
         'outcome': outcome,
         'codes': [for (final d in codes) d.toJson()],
+        if (activeCodes.isNotEmpty) 'active_codes': activeCodes,
       };
 }
 

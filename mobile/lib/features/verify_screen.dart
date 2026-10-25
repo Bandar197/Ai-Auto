@@ -5,6 +5,7 @@ import 'package:intl/intl.dart' show DateFormat;
 
 import '../core/storage/clear_entry.dart';
 import '../obd/obd.dart';
+import '../state/clear_controller.dart';
 import '../state/connection_controller.dart';
 import '../state/verification_controller.dart';
 import '../ui/l10n_helpers.dart';
@@ -87,6 +88,12 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
               busy: _busy,
               onCheckNow: canCheck ? () => _checkNow(entry!) : null,
               onFullScan: entry.open && conn.ecuReady ? () => context.push('/scan') : null,
+              onConfirmLamp: entry.lampOffBy == null
+                  ? () async {
+                      await ref.read(clearProvider.notifier).confirmLampOff(entry!);
+                      ref.invalidate(verificationProvider);
+                    }
+                  : null,
               onClose: entry.open
                   ? () async {
                       await ref.read(verificationProvider.notifier).close(entry!.id);
@@ -99,12 +106,15 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
 
 /// Pure presentation of a clear-and-verify entry.
 class VerificationView extends StatelessWidget {
-  const VerificationView({super.key, required this.entry, this.onCheckNow, this.onFullScan, this.onClose, this.busy = false});
+  const VerificationView({super.key, required this.entry, this.onCheckNow, this.onFullScan, this.onClose, this.onConfirmLamp, this.busy = false});
 
   final ClearEntry entry;
   final VoidCallback? onCheckNow;
   final VoidCallback? onFullScan;
   final VoidCallback? onClose;
+
+  /// User confirms they see the warning lamp off (kept apart from "code cleared").
+  final VoidCallback? onConfirmLamp;
   final bool busy;
 
   @override
@@ -136,6 +146,21 @@ class VerificationView extends StatelessWidget {
           Text('${l.verifyClearedAt(fmt.format(entry.record.clearedAt.toLocal()))} · ${l.verifyChecks(v.checksAfterClear)}',
               style: const TextStyle(color: Colors.white70)),
         ]),
+      ),
+      Card(
+        key: const Key('verify-lamp'),
+        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        child: ListTile(
+          leading: Icon(entry.lampOffBy == null ? Icons.help_outline : Icons.lightbulb_outline,
+              color: entry.lampOffBy == null ? Colors.blueGrey : Colors.green.shade700),
+          title: Text(switch (entry.lampOffBy) {
+            'module_status' => l.clearLampByCar,
+            'user' => l.clearLampConfirmed,
+            _ => l.clearLampUnknown,
+          }),
+          subtitle: Text(l.clearCodeVsLamp),
+          trailing: onConfirmLamp == null ? null : TextButton(onPressed: onConfirmLamp, child: Text(l.clearLampConfirmCta)),
+        ),
       ),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
