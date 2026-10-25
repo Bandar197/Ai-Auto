@@ -11,12 +11,19 @@ import 'state/providers.dart';
 
 const String appFont = 'IBMPlexSansArabic';
 
-/// AutoMind brand seed (teal). The whole palette derives from it per brightness.
-const Color brandSeed = Color(0xFF00A88F);
+/// "فاحص خارق" (Super Scanner) brand colours — diagnostic blue + energetic orange on white.
+const Color brandBlue = Color(0xFF1565C0); // primary — trust / diagnostics
+const Color brandBlueDeep = Color(0xFF0B1D3F); // deep navy for the logo/splash
+const Color brandOrange = Color(0xFFFF7A00); // accent — action / "خارق" energy
 
 ThemeData buildTheme(Brightness b) {
   final dark = b == Brightness.dark;
-  final scheme = ColorScheme.fromSeed(seedColor: brandSeed, brightness: b);
+  final scheme = ColorScheme.fromSeed(seedColor: brandBlue, brightness: b).copyWith(
+    secondary: brandOrange,
+    onSecondary: Colors.white,
+    tertiary: brandOrange,
+    onTertiary: Colors.white,
+  );
   final buttonShape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(12));
   return ThemeData(
     colorScheme: scheme,

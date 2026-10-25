@@ -22,7 +22,7 @@ void main() {
     expect(Directionality.of(ctx), TextDirection.rtl);
     expect(Localizations.localeOf(ctx).languageCode, 'ar');
     expect(find.text('ابدأ الفحص'), findsOneWidget); // Start scan
-    expect(find.text('أوتومايند'), findsOneWidget); // app title
+    expect(find.text('فاحص خارق'), findsOneWidget); // app title (brand name)
     expect(find.textContaining('القارئ'), findsWidgets); // adapter status chip
     // RTL layout: the start-scan icon sits on the right side of the button.
     final button = tester.getRect(find.byKey(const Key('start-scan')));

@@ -10,7 +10,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'AutoMind AI';
+  String get appTitle => 'Super Scanner';
 
   @override
   String get ok => 'OK';

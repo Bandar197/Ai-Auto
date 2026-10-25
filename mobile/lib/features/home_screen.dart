@@ -8,6 +8,7 @@ import '../state/connection_controller.dart';
 import '../state/providers.dart';
 import '../state/verification_controller.dart';
 import 'verify_screen.dart';
+import '../ui/app_logo.dart';
 import '../ui/l10n_helpers.dart';
 import '../ui/widgets.dart';
 
@@ -39,7 +40,7 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l.appTitle),
+        title: AppLogoWordmark(size: 30, title: l.appTitle),
         actions: [
           IconButton(icon: const Icon(Icons.directions_car), tooltip: l.vehiclesTitle, onPressed: () => context.push('/vehicles')),
         ],
