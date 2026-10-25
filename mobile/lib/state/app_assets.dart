@@ -6,6 +6,7 @@ import '../core/controller_catalog.dart';
 import '../core/kb/local_kb.dart';
 import '../core/module_registry.dart';
 import '../core/vehicle_make.dart';
+import '../core/vehicle_profiles.dart';
 import '../obd/obd.dart';
 
 /// Bundled shared contracts (copied by tools/sync_shared.sh).
@@ -17,9 +18,11 @@ class AppAssets {
     ModuleRegistry? modules,
     ControllerCatalog? controllers,
     WmiTable? wmi,
+    VehicleProfiles? profiles,
   })  : modules = modules ?? ModuleRegistry.empty(),
         controllers = controllers ?? ControllerCatalog.empty(),
-        wmi = wmi ?? WmiTable.empty();
+        wmi = wmi ?? WmiTable.empty(),
+        profiles = profiles ?? VehicleProfiles.empty();
 
   final PidTable table;
   final List<Scenario> scenarios;
@@ -29,6 +32,9 @@ class AppAssets {
 
   /// VIN → brand (WMI).
   final WmiTable wmi;
+
+  /// Vehicle compatibility profiles (pending verification until read on a car).
+  final VehicleProfiles profiles;
 
   Scenario? scenario(String key) {
     for (final s in scenarios) {
@@ -61,6 +67,12 @@ class AppAssets {
     } on Object catch (_) {
       wmi = WmiTable.empty();
     }
+    VehicleProfiles profiles;
+    try {
+      profiles = VehicleProfiles.fromJsonString(await bundle.loadString('assets/shared/obd/vehicle_profiles.json'));
+    } on Object catch (_) {
+      profiles = VehicleProfiles.empty();
+    }
     ModuleRegistry modules;
     try {
       modules = ModuleRegistry.fromJsonString(await bundle.loadString('assets/shared/obd/modules.json'));
@@ -73,6 +85,6 @@ class AppAssets {
     } on Object catch (_) {
       controllers = ControllerCatalog.empty();
     }
-    return AppAssets(table: table, scenarios: scenarios, kb: kb, modules: modules, controllers: controllers, wmi: wmi);
+    return AppAssets(table: table, scenarios: scenarios, kb: kb, modules: modules, controllers: controllers, wmi: wmi, profiles: profiles);
   }
 }

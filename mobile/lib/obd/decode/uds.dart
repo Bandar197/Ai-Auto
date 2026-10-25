@@ -180,6 +180,35 @@ List<int> udsHexToBytes(String raw) {
   return parseHexBytes(even) ?? const [];
 }
 
+/// The final UDS payload for service [sid] from a raw ELM reply (headers off):
+/// * ISO-TP multi-frame ("014" length line + "0:", "1:" … frames) is reassembled and
+///   cut to the announced length;
+/// * `7F <sid> 78` (response pending) lines are skipped in favour of the final answer;
+/// * returns [] when only pending/garbage came back.
+List<int> udsPayload(String raw, int sid) {
+  final lines = [for (final l in raw.replaceAll('\n', '\r').split('\r')) l.trim()].where((l) => l.isNotEmpty).toList();
+  final framed = lines.where((l) => RegExp(r'^[0-9A-Fa-f]:').hasMatch(l)).toList();
+  if (framed.isNotEmpty) {
+    final lenLine = lines.where((l) => RegExp(r'^[0-9A-Fa-f]{3}$').hasMatch(l)).firstOrNull;
+    final bytes = <int>[for (final f in framed) ...udsHexToBytes(f.substring(2))];
+    final n = lenLine == null ? bytes.length : int.parse(lenLine, radix: 16);
+    return bytes.length >= n ? bytes.sublist(0, n) : bytes;
+  }
+  for (final l in lines) {
+    final b = udsHexToBytes(l);
+    if (b.isEmpty) continue;
+    if (b.length >= 3 && b[0] == kNegativeResponse && b[1] == sid && b[2] == 0x78) continue; // pending
+    if (b[0] == sid + kPositiveOffset || (b[0] == kNegativeResponse && b.length >= 2 && b[1] == sid)) return b;
+  }
+  return const [];
+}
+
+/// True when the reply contains a "response pending" (`7F <sid> 78`).
+bool udsPending(String raw, int sid) => raw
+    .split(RegExp(r'[\r\n]+'))
+    .map(udsHexToBytes)
+    .any((b) => b.length >= 3 && b[0] == kNegativeResponse && b[1] == sid && b[2] == 0x78);
+
 /// Curated, UNVERIFIED discovery candidates for the in-app module scan. These are
 /// starting points (addresses differ per make/model year); the scan reports which
 /// answer, and the real addresses are confirmed per vehicle. Kept short so the scan
@@ -210,10 +239,13 @@ enum ModuleOutcome {
 
 /// One module's result from a scan, carrying its definition and read outcome.
 class ModuleScan {
-  const ModuleScan({required this.module, this.dtcs = const [], this.outcome = ModuleOutcome.noResponse});
+  const ModuleScan({required this.module, this.dtcs = const [], this.outcome = ModuleOutcome.noResponse, this.nrc});
   final UdsModule module;
   final List<UdsDtc> dtcs;
   final ModuleOutcome outcome;
+
+  /// Negative response code when the module refused (e.g. 0x33 security, 0x11 unsupported).
+  final int? nrc;
 
   /// A genuine, interpretable read happened (the only case a "no faults" may be shown).
   bool get readOk => outcome == ModuleOutcome.readSuccessCodes || outcome == ModuleOutcome.readSuccessNoCodes;
@@ -252,22 +284,24 @@ Future<List<ModuleScan>> scanModules(
   for (final m in candidates) {
     ModuleOutcome outcome;
     var dtcs = const <UdsDtc>[];
+    int? nrc;
     try {
       final res = await readModuleDtcs(elm, m, timeout: perModuleTimeout);
-      final data = udsHexToBytes(res.responseRaw);
+      final data = udsPayload(res.responseRaw, kUdsReadDtc);
       if (data.isNotEmpty && data[0] == kUdsReadDtc + kPositiveOffset) {
         dtcs = res.dtcs;
         outcome = res.dtcs.isEmpty ? ModuleOutcome.readSuccessNoCodes : ModuleOutcome.readSuccessCodes;
       } else {
         outcome = ModuleOutcome.noResponse; // NO DATA / unparseable — not a successful read
       }
-    } on UdsException {
+    } on UdsException catch (e) {
       outcome = ModuleOutcome.refused; // present but refused (e.g. gateway)
+      nrc = e.nrc;
     } catch (_) {
       outcome = ModuleOutcome.noResponse; // timeout / link error
     }
     if (outcome != ModuleOutcome.noResponse || includeNoResponse) {
-      out.add(ModuleScan(module: m, dtcs: dtcs, outcome: outcome));
+      out.add(ModuleScan(module: m, dtcs: dtcs, outcome: outcome, nrc: nrc));
     }
     onProgress?.call(++done, candidates.length);
   }
@@ -285,10 +319,18 @@ Future<UdsResult> readModuleDtcs(Elm327 elm, UdsModule module, {int statusMask =
     await elm.send(_atHeader('ATSH', module.requestId, module.idBits));
     await elm.send(_atHeader('ATCRA', module.responseId, module.idBits));
     await elm.send('ATH0'); // headers off → clean ISO-TP payload
-    final resp = await elm.sendExtendedRead(req, timeout: timeout);
-    final data = udsHexToBytes(resp.raw);
+    var resp = await elm.sendExtendedRead(req, timeout: timeout);
+    var raw = resp.raw;
+    var data = udsPayload(raw, kUdsReadDtc);
+    // Response pending (7F 19 78) with no final answer yet: ask again (read-only), up to
+    // twice, with a longer wait. Never treated as "no faults".
+    for (var i = 0; i < 2 && data.isEmpty && udsPending(raw, kUdsReadDtc); i++) {
+      resp = await elm.sendExtendedRead(req, timeout: const Duration(seconds: 5));
+      raw = '$raw\r${resp.raw}';
+      data = udsPayload(resp.raw, kUdsReadDtc);
+    }
     final dtcs = data.isEmpty ? <UdsDtc>[] : parseReadDtcResponse(data);
-    return UdsResult(module: module.key, request: req, responseRaw: resp.raw, dtcs: dtcs);
+    return UdsResult(module: module.key, request: req, responseRaw: raw, dtcs: dtcs);
   } finally {
     // Best-effort restore to normal OBD broadcast addressing.
     try {

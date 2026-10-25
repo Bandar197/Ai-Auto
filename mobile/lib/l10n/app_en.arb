@@ -666,5 +666,73 @@
   "indDetail_coolant_ok": "Coolant temperature normal.",
   "indDetail_no_data": "No reading yet — connect and tap \"Check now\".",
   "indDetail_not_readable": "Not readable through generic OBD on this car (no verified module).",
-  "kbOemUnverifiedTag": "community data, not verified by the manufacturer"
+  "kbOemUnverifiedTag": "community data, not verified by the manufacturer",
+  "kbArAiTag": "AI translation",
+  "ecuMapTitle": "Module map",
+  "ecuMapSubtitle": "Every module tried in the last scan and how it answered",
+  "ecuMapNoScan": "Run a full scan to build the module map.",
+  "ecu_discovered": "Discovered",
+  "ecu_reachable": "Reachable",
+  "ecu_dtc_read_supported": "Code read supported",
+  "ecu_clear_supported": "Clear supported",
+  "ecu_not_supported": "Not supported",
+  "ecu_timed_out": "No answer (timed out)",
+  "ecu_gateway_blocked": "Blocked by security gateway",
+  "ecu_refused": "Refused",
+  "ecu_passed": "Read OK — no codes",
+  "ecu_faults_present": "Faults present",
+  "ecuAddrVerified": "address verified on a car",
+  "ecuAddrUnverified": "address NOT verified",
+  "ecuSource": "Source: {source}",
+  "ecuNrc": "Refused with NRC {nrc}",
+  "@ecuSource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "@ecuNrc": {
+    "placeholders": {
+      "nrc": {
+        "type": "String"
+      }
+    }
+  },
+  "monitorTestsTitle": "Self-test results (Mode 06)",
+  "monitorTestsIntro": "Results of the engine computer's own monitor tests. A test passes when its value is within the limits the computer reports. Values are raw (unit code shown) — no units are guessed.",
+  "monitorTestsRead": "Read results",
+  "monitorTestsNotCan": "Mode 06 is only decoded on CAN cars; this car's protocol uses a different format.",
+  "monitorTestsNotSupported": "The car did not report any Mode 06 tests.",
+  "monitorTestsNeedConnection": "Connect to the car to read the results.",
+  "monitorTestsSummary": "{count} tests · {failed} failed",
+  "monitorPass": "PASS",
+  "monitorFail": "FAIL",
+  "monitorValues": "value {value} · limits {min} … {max} · UASID {uasid}",
+  "@monitorTestsSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
+    }
+  },
+  "@monitorValues": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      },
+      "uasid": {
+        "type": "String"
+      }
+    }
+  }
 }

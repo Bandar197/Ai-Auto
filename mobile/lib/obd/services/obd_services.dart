@@ -1,4 +1,5 @@
 import '../decode/dtc.dart';
+import '../decode/monitor_tests.dart';
 import '../decode/pid_table.dart';
 import '../elm327/elm327.dart';
 import '../hex.dart';
@@ -63,6 +64,40 @@ class ObdServices {
       if (m.data.length >= 6) s09.addAll(decodeSupportedBitmask(0, m.data.sublist(m.data.length - 4)));
     }
     return SupportedPids(byEcu, service09: s09);
+  }
+
+  /// Service 06 (CAN only): supported MIDs via 0600/0620/…, then every test result.
+  /// Read-only; legacy-protocol 06 replies use another layout and are reported as
+  /// unsupported rather than mis-decoded.
+  Future<MonitorTestReport> readMonitorTests() async {
+    if (family != ProtocolFamily.can11 && family != ProtocolFamily.can29) {
+      return const MonitorTestReport(unsupportedReason: 'not_can');
+    }
+    final mids = <int>{};
+    var base = 0x00;
+    while (base <= 0xE0) {
+      final (_, msgs) = await request('06${hex2(base)}');
+      final pos = positive(msgs, 0x06, base);
+      if (pos.isEmpty) break;
+      var cont = false;
+      for (final m in pos) {
+        if (m.data.length < 6) continue;
+        final s = decodeSupportedBitmask(base, m.data.sublist(2, 6));
+        mids.addAll(s.where((x) => !isAvailabilityMid(x)));
+        if (s.contains(base + 0x20)) cont = true;
+      }
+      if (!cont) break;
+      base += 0x20;
+    }
+    if (mids.isEmpty) return const MonitorTestReport(unsupportedReason: 'not_supported');
+    final tests = <MonitorTest>[];
+    for (final mid in mids.toList()..sort()) {
+      final (_, msgs) = await request('06${hex2(mid)}');
+      for (final m in positive(msgs, 0x06, mid)) {
+        tests.addAll(parseMonitorResponse(m.data, ecu: m.ecu));
+      }
+    }
+    return MonitorTestReport(tests: tests, supportedMids: mids);
   }
 
   /// Reads one mode 01 PID; returns one reading per answering ECU.

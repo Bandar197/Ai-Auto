@@ -2911,6 +2911,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'community data, not verified by the manufacturer'**
   String get kbOemUnverifiedTag;
+
+  /// No description provided for @kbArAiTag.
+  ///
+  /// In en, this message translates to:
+  /// **'AI translation'**
+  String get kbArAiTag;
+
+  /// No description provided for @ecuMapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Module map'**
+  String get ecuMapTitle;
+
+  /// No description provided for @ecuMapSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Every module tried in the last scan and how it answered'**
+  String get ecuMapSubtitle;
+
+  /// No description provided for @ecuMapNoScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Run a full scan to build the module map.'**
+  String get ecuMapNoScan;
+
+  /// No description provided for @ecu_discovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Discovered'**
+  String get ecu_discovered;
+
+  /// No description provided for @ecu_reachable.
+  ///
+  /// In en, this message translates to:
+  /// **'Reachable'**
+  String get ecu_reachable;
+
+  /// No description provided for @ecu_dtc_read_supported.
+  ///
+  /// In en, this message translates to:
+  /// **'Code read supported'**
+  String get ecu_dtc_read_supported;
+
+  /// No description provided for @ecu_clear_supported.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear supported'**
+  String get ecu_clear_supported;
+
+  /// No description provided for @ecu_not_supported.
+  ///
+  /// In en, this message translates to:
+  /// **'Not supported'**
+  String get ecu_not_supported;
+
+  /// No description provided for @ecu_timed_out.
+  ///
+  /// In en, this message translates to:
+  /// **'No answer (timed out)'**
+  String get ecu_timed_out;
+
+  /// No description provided for @ecu_gateway_blocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked by security gateway'**
+  String get ecu_gateway_blocked;
+
+  /// No description provided for @ecu_refused.
+  ///
+  /// In en, this message translates to:
+  /// **'Refused'**
+  String get ecu_refused;
+
+  /// No description provided for @ecu_passed.
+  ///
+  /// In en, this message translates to:
+  /// **'Read OK — no codes'**
+  String get ecu_passed;
+
+  /// No description provided for @ecu_faults_present.
+  ///
+  /// In en, this message translates to:
+  /// **'Faults present'**
+  String get ecu_faults_present;
+
+  /// No description provided for @ecuAddrVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'address verified on a car'**
+  String get ecuAddrVerified;
+
+  /// No description provided for @ecuAddrUnverified.
+  ///
+  /// In en, this message translates to:
+  /// **'address NOT verified'**
+  String get ecuAddrUnverified;
+
+  /// No description provided for @ecuSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source: {source}'**
+  String ecuSource(String source);
+
+  /// No description provided for @ecuNrc.
+  ///
+  /// In en, this message translates to:
+  /// **'Refused with NRC {nrc}'**
+  String ecuNrc(String nrc);
+
+  /// No description provided for @monitorTestsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-test results (Mode 06)'**
+  String get monitorTestsTitle;
+
+  /// No description provided for @monitorTestsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Results of the engine computer\'s own monitor tests. A test passes when its value is within the limits the computer reports. Values are raw (unit code shown) — no units are guessed.'**
+  String get monitorTestsIntro;
+
+  /// No description provided for @monitorTestsRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read results'**
+  String get monitorTestsRead;
+
+  /// No description provided for @monitorTestsNotCan.
+  ///
+  /// In en, this message translates to:
+  /// **'Mode 06 is only decoded on CAN cars; this car\'s protocol uses a different format.'**
+  String get monitorTestsNotCan;
+
+  /// No description provided for @monitorTestsNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'The car did not report any Mode 06 tests.'**
+  String get monitorTestsNotSupported;
+
+  /// No description provided for @monitorTestsNeedConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect to the car to read the results.'**
+  String get monitorTestsNeedConnection;
+
+  /// No description provided for @monitorTestsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} tests · {failed} failed'**
+  String monitorTestsSummary(int count, int failed);
+
+  /// No description provided for @monitorPass.
+  ///
+  /// In en, this message translates to:
+  /// **'PASS'**
+  String get monitorPass;
+
+  /// No description provided for @monitorFail.
+  ///
+  /// In en, this message translates to:
+  /// **'FAIL'**
+  String get monitorFail;
+
+  /// No description provided for @monitorValues.
+  ///
+  /// In en, this message translates to:
+  /// **'value {value} · limits {min} … {max} · UASID {uasid}'**
+  String monitorValues(String value, String min, String max, String uasid);
 }
 
 class _AppLocalizationsDelegate

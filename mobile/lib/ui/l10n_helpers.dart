@@ -82,7 +82,11 @@ String describeCode(AppLocalizations l, LocalKb kb, String code, String lang, {S
   final e = kb.lookupFor(code, make: make);
   if (e != null) {
     final d = e.description(lang) ?? l.kbUnknownCode;
-    return e.oemMake != null && !e.oemVerified ? '$d · ${l.kbOemUnverifiedTag}' : d;
+    final tags = [
+      if (e.oemMake != null && !e.oemVerified) l.kbOemUnverifiedTag,
+      if (lang == 'ar' && e.arByAi && e.descriptionAr != null) l.kbArAiTag,
+    ];
+    return tags.isEmpty ? d : '$d · ${tags.join(' · ')}';
   }
   return isManufacturerSpecific(code) ? l.kbOemUnknown(make == null ? '' : ' (${make.toUpperCase()})') : l.kbUnknownCode;
 }

@@ -393,6 +393,13 @@
             "items": {
               "type": "string"
             }
+          },
+          "nrc": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "UDS negative response code when the module refused (e.g. 51 = 0x33 security access denied)."
           }
         }
       }

@@ -15,6 +15,7 @@ class KbEntry {
     this.oemMake,
     this.oemSource,
     this.oemVerified = false,
+    this.arByAi = false,
   });
   final String code;
 
@@ -24,6 +25,9 @@ class KbEntry {
 
   /// Confirmed against manufacturer service information (false = community data).
   final bool oemVerified;
+
+  /// The Arabic text is an AI translation of the English source (labelled in the app).
+  final bool arByAi;
   final String? descriptionEn;
   final String? descriptionAr;
   final String? severity;
@@ -152,6 +156,7 @@ class LocalKb {
           oemMake: make,
           oemSource: (v['source'] ?? p['source'])?.toString(),
           oemVerified: (v['verified'] ?? p['verified']) == true,
+          arByAi: v['ar_by'] == 'ai',
         );
       }
     }

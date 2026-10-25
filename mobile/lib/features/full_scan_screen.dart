@@ -100,6 +100,15 @@ class FullScanScreen extends ConsumerWidget {
                     },
                   ),
           ),
+        if (scan.reportId != null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: OutlinedButton.icon(
+              icon: const Icon(Icons.account_tree_outlined),
+              label: Text(l.ecuMapTitle),
+              onPressed: () => context.push('/ecu-map'),
+            ),
+          ),
         // Clear fault codes — only offered when codes were actually found, on a live link.
         if (scan.done && !scan.uploading && scan.totalCodes > 0 && conn.mode != null && conn.mode != DataMode.replay)
           Padding(

@@ -23,7 +23,7 @@ class Elm327 {
   final Duration defaultTimeout;
   final Duration searchTimeout;
 
-  static const Set<String> readOnlyServices = {'01', '02', '03', '07', '09', '0A'};
+  static const Set<String> readOnlyServices = {'01', '02', '03', '06', '07', '09', '0A'};
 
   final StringBuffer _buffer = StringBuffer();
   StreamSubscription<String>? _sub;

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import '../decode/dtc.dart';
 import '../decode/pid_table.dart';
+import '../decode/monitor_tests.dart';
 import '../decode/readiness.dart';
 import '../decode/uds.dart';
 import '../hex.dart';
@@ -390,6 +391,12 @@ class ObdClient {
   Future<double?> readVoltage() => services.readAdapterVoltage();
 
   /// Service 01 PID 01 → readiness monitors (null when unsupported / no answer).
+  /// Service 06 on-board monitor test results (read-only, CAN only).
+  Future<MonitorTestReport> readMonitorTests() async {
+    if (supported == null) await readSupportedPids();
+    return services.readMonitorTests();
+  }
+
   Future<Map<String, dynamic>?> readReadiness() async {
     final s = supported;
     if (s == null || !s.supports(0x01)) return null;

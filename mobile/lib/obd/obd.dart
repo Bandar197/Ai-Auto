@@ -4,6 +4,7 @@ library;
 export 'client/capability_probe.dart';
 export 'client/obd_client.dart';
 export 'decode/dtc.dart';
+export 'decode/monitor_tests.dart';
 export 'decode/pid_table.dart';
 export 'decode/uds.dart';
 export 'decode/readiness.dart';

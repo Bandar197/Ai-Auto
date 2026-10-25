@@ -1590,4 +1590,99 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get kbOemUnverifiedTag => 'بيانات مجتمعية غير موثّقة من الشركة';
+
+  @override
+  String get kbArAiTag => 'ترجمة بالذكاء الاصطناعي';
+
+  @override
+  String get ecuMapTitle => 'خريطة الوحدات';
+
+  @override
+  String get ecuMapSubtitle => 'كل وحدة جُرّبت في آخر فحص وكيف استجابت';
+
+  @override
+  String get ecuMapNoScan => 'شغّل الفحص الكامل لبناء خريطة الوحدات.';
+
+  @override
+  String get ecu_discovered => 'مكتشفة';
+
+  @override
+  String get ecu_reachable => 'تستجيب';
+
+  @override
+  String get ecu_dtc_read_supported => 'تدعم قراءة الأكواد';
+
+  @override
+  String get ecu_clear_supported => 'تدعم المسح';
+
+  @override
+  String get ecu_not_supported => 'غير مدعومة';
+
+  @override
+  String get ecu_timed_out => 'لا استجابة (انتهت المهلة)';
+
+  @override
+  String get ecu_gateway_blocked => 'محجوبة بالبوابة الأمنية';
+
+  @override
+  String get ecu_refused => 'رفضت';
+
+  @override
+  String get ecu_passed => 'قُرئت بنجاح — بلا أكواد';
+
+  @override
+  String get ecu_faults_present => 'فيها أعطال';
+
+  @override
+  String get ecuAddrVerified => 'العنوان مثبت على سيارة';
+
+  @override
+  String get ecuAddrUnverified => 'العنوان غير مثبت';
+
+  @override
+  String ecuSource(String source) {
+    return 'المصدر: $source';
+  }
+
+  @override
+  String ecuNrc(String nrc) {
+    return 'رفضت برمز NRC ‏$nrc';
+  }
+
+  @override
+  String get monitorTestsTitle => 'نتائج الاختبارات الذاتية (Mode 06)';
+
+  @override
+  String get monitorTestsIntro =>
+      'نتائج اختبارات المراقبة التي يجريها كمبيوتر المحرك بنفسه. ينجح الاختبار إذا كانت القيمة ضمن الحدود التي يُبلغ بها الكمبيوتر. القيم خام (مع رمز الوحدة) — لا نخمّن الوحدات.';
+
+  @override
+  String get monitorTestsRead => 'اقرأ النتائج';
+
+  @override
+  String get monitorTestsNotCan =>
+      'Mode 06 يُفكّ فقط في سيارات CAN؛ بروتوكول هذه السيارة يستخدم صيغة مختلفة.';
+
+  @override
+  String get monitorTestsNotSupported =>
+      'السيارة لم تُبلغ عن أي اختبارات Mode 06.';
+
+  @override
+  String get monitorTestsNeedConnection => 'اتصل بالسيارة لقراءة النتائج.';
+
+  @override
+  String monitorTestsSummary(int count, int failed) {
+    return '$count اختبار · $failed فاشل';
+  }
+
+  @override
+  String get monitorPass => 'ناجح';
+
+  @override
+  String get monitorFail => 'فاشل';
+
+  @override
+  String monitorValues(String value, String min, String max, String uasid) {
+    return 'القيمة $value · الحدود $min … $max · UASID $uasid';
+  }
 }

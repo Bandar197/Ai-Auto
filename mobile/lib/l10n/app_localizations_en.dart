@@ -1594,4 +1594,101 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get kbOemUnverifiedTag =>
       'community data, not verified by the manufacturer';
+
+  @override
+  String get kbArAiTag => 'AI translation';
+
+  @override
+  String get ecuMapTitle => 'Module map';
+
+  @override
+  String get ecuMapSubtitle =>
+      'Every module tried in the last scan and how it answered';
+
+  @override
+  String get ecuMapNoScan => 'Run a full scan to build the module map.';
+
+  @override
+  String get ecu_discovered => 'Discovered';
+
+  @override
+  String get ecu_reachable => 'Reachable';
+
+  @override
+  String get ecu_dtc_read_supported => 'Code read supported';
+
+  @override
+  String get ecu_clear_supported => 'Clear supported';
+
+  @override
+  String get ecu_not_supported => 'Not supported';
+
+  @override
+  String get ecu_timed_out => 'No answer (timed out)';
+
+  @override
+  String get ecu_gateway_blocked => 'Blocked by security gateway';
+
+  @override
+  String get ecu_refused => 'Refused';
+
+  @override
+  String get ecu_passed => 'Read OK — no codes';
+
+  @override
+  String get ecu_faults_present => 'Faults present';
+
+  @override
+  String get ecuAddrVerified => 'address verified on a car';
+
+  @override
+  String get ecuAddrUnverified => 'address NOT verified';
+
+  @override
+  String ecuSource(String source) {
+    return 'Source: $source';
+  }
+
+  @override
+  String ecuNrc(String nrc) {
+    return 'Refused with NRC $nrc';
+  }
+
+  @override
+  String get monitorTestsTitle => 'Self-test results (Mode 06)';
+
+  @override
+  String get monitorTestsIntro =>
+      'Results of the engine computer\'s own monitor tests. A test passes when its value is within the limits the computer reports. Values are raw (unit code shown) — no units are guessed.';
+
+  @override
+  String get monitorTestsRead => 'Read results';
+
+  @override
+  String get monitorTestsNotCan =>
+      'Mode 06 is only decoded on CAN cars; this car\'s protocol uses a different format.';
+
+  @override
+  String get monitorTestsNotSupported =>
+      'The car did not report any Mode 06 tests.';
+
+  @override
+  String get monitorTestsNeedConnection =>
+      'Connect to the car to read the results.';
+
+  @override
+  String monitorTestsSummary(int count, int failed) {
+    return '$count tests · $failed failed';
+  }
+
+  @override
+  String get monitorPass => 'PASS';
+
+  @override
+  String get monitorFail => 'FAIL';
+
+  @override
+  String monitorValues(String value, String min, String max, String uasid) {
+    return 'value $value · limits $min … $max · UASID $uasid';
+  }
 }

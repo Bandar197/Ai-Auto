@@ -191,6 +191,24 @@ class _IndicatorsScreenState extends ConsumerState<IndicatorsScreen> with Single
             onPressed: () => context.push(conn.ecuReady ? '/full-scan' : '/connect?next=full-scan'),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: OutlinedButton.icon(
+            key: const Key('open-ecu-map'),
+            icon: const Icon(Icons.account_tree_outlined),
+            label: Text(l.ecuMapTitle),
+            onPressed: () => context.push('/ecu-map'),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: OutlinedButton.icon(
+            key: const Key('open-monitor-tests'),
+            icon: const Icon(Icons.fact_check_outlined),
+            label: Text(l.monitorTestsTitle),
+            onPressed: () => context.push('/monitor-tests'),
+          ),
+        ),
       ]),
     );
   }

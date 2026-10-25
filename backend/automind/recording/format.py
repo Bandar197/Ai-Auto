@@ -76,6 +76,7 @@ class RecModuleScan(BaseModel):
     outcome: Literal["read_codes", "read_no_codes", "refused", "no_response"]
     codes: list[RecDTC] = Field(default_factory=list)
     active_codes: list[str] = Field(default_factory=list)  # UDS testFailed — failing now
+    nrc: int | None = None  # UDS negative response code when refused
 
 
 class Recording(BaseModel):
