@@ -9,6 +9,7 @@ from automind.diagnosis.models import (
     DiagnosticInput,
     FreezeFrame,
     InputDTC,
+    InputModuleScan,
     Sample,
     UserMeasurement,
     VehicleInfo,
@@ -43,4 +44,12 @@ def from_recording(
         measurements=ms,
         mil_on=mil,
         duration_ms=rec.duration_ms,
+        module_scans=[
+            InputModuleScan(
+                key=m.key, name_en=m.name_en, name_ar=m.name_ar, category=m.category,
+                address=m.address, outcome=m.outcome,
+                codes=[InputDTC(code=c.code, status=c.status, ecu=c.ecu) for c in m.codes],
+            )
+            for m in rec.module_scans
+        ],
     )

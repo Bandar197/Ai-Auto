@@ -1,9 +1,79 @@
 import 'dart:convert';
 
 import '../decode/dtc.dart';
+import '../decode/uds.dart';
 import '../services/obd_models.dart';
 
 const String recordingFormat = 'automind.recording.v1';
+
+/// Backend outcome string for a [ModuleOutcome] (matches the recording schema
+/// and `DiagnosisResult.module_scans[].outcome`).
+String moduleOutcomeWire(ModuleOutcome o) => switch (o) {
+      ModuleOutcome.readSuccessCodes => 'read_codes',
+      ModuleOutcome.readSuccessNoCodes => 'read_no_codes',
+      ModuleOutcome.refused => 'refused',
+      ModuleOutcome.noResponse => 'no_response',
+    };
+
+/// An honest per-module read outcome carried in the recording (SRS/ABS/body/…).
+/// A module that did not answer or refused never carries codes — mirrors the
+/// server's honesty rule.
+class RecordingModuleScan {
+  RecordingModuleScan({
+    required this.key,
+    required this.nameEn,
+    required this.nameAr,
+    required this.outcome,
+    this.category = 'other',
+    this.address,
+    this.codes = const [],
+  });
+
+  /// Map an in-app [ModuleScan] to the recording shape. Codes are kept only for a
+  /// genuine read; the CAN request id becomes the hex address (11-bit → 3 nibbles,
+  /// 29-bit → 8). Category uses the inferred one (B→airbag, C→abs) so a swept
+  /// module is labelled from its codes.
+  factory RecordingModuleScan.fromScan(ModuleScan m) {
+    final nibbles = m.module.idBits == 29 ? 8 : 3;
+    return RecordingModuleScan(
+      key: m.module.key,
+      nameEn: m.module.nameEn,
+      nameAr: m.module.nameAr,
+      category: m.inferredCategory.value,
+      address: m.module.requestId.toRadixString(16).toUpperCase().padLeft(nibbles, '0'),
+      outcome: moduleOutcomeWire(m.outcome),
+      codes: m.readOk ? [for (final d in m.dtcs) d.toDtc(null)] : const [],
+    );
+  }
+
+  factory RecordingModuleScan.fromJson(Map<String, dynamic> j) => RecordingModuleScan(
+        key: j['key'] as String,
+        nameEn: j['name_en'] as String,
+        nameAr: j['name_ar'] as String,
+        category: (j['category'] as String?) ?? 'other',
+        address: j['address'] as String?,
+        outcome: j['outcome'] as String,
+        codes: [for (final d in (j['codes'] as List? ?? const [])) Dtc.fromJson(d as Map<String, dynamic>)],
+      );
+
+  final String key;
+  final String nameEn;
+  final String nameAr;
+  final String category;
+  final String? address;
+  final String outcome;
+  final List<Dtc> codes;
+
+  Map<String, dynamic> toJson() => {
+        'key': key,
+        'name_en': nameEn,
+        'name_ar': nameAr,
+        'category': category,
+        if (address != null) 'address': address,
+        'outcome': outcome,
+        'codes': [for (final d in codes) d.toJson()],
+      };
+}
 
 class RecordingSample {
   RecordingSample({required this.tMs, required this.pid, required this.values, this.ecu, this.raw});
@@ -71,6 +141,7 @@ class Recording {
     this.freezeFrames = const [],
     this.events = const [],
     this.readiness,
+    this.moduleScans = const [],
   });
 
   factory Recording.fromJsonString(String s) => Recording.fromJson(jsonDecode(s) as Map<String, dynamic>);
@@ -102,6 +173,9 @@ class Recording {
       samples: [for (final s in j['samples'] as List) RecordingSample.fromJson(s as Map<String, dynamic>)],
       events: [for (final e in (j['events'] as List? ?? const [])) RecordingEvent.fromJson(e as Map<String, dynamic>)],
       readiness: (j['readiness'] as Map?)?.cast<String, dynamic>(),
+      moduleScans: [
+        for (final m in (j['module_scans'] as List? ?? const [])) RecordingModuleScan.fromJson(m as Map<String, dynamic>),
+      ],
     );
   }
 
@@ -122,6 +196,9 @@ class Recording {
   /// Service 01 PID 01 decoded at scan time (readiness monitors), or null.
   final Map<String, dynamic>? readiness;
 
+  /// Honest per-module reads (airbag/ABS/body/…) — see [RecordingModuleScan].
+  final List<RecordingModuleScan> moduleScans;
+
   String? get demoScenario => source['demo_scenario'] as String?;
 
   Map<String, dynamic> toJson() => {
@@ -140,6 +217,7 @@ class Recording {
         'samples': [for (final s in samples) s.toJson()],
         'events': [for (final e in events) e.toJson()],
         if (readiness != null) 'readiness': readiness,
+        if (moduleScans.isNotEmpty) 'module_scans': [for (final m in moduleScans) m.toJson()],
       };
 
   String toJsonString({bool pretty = false}) =>

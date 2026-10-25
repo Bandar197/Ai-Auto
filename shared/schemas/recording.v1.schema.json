@@ -285,6 +285,76 @@
         "null"
       ],
       "description": "Service 01 PID 01 decoded at scan time: mil_on, dtc_count, ignition, monitors {name: {available, complete}}. Used to verify whether a cleared code was re-tested."
+    },
+    "module_scans": {
+      "type": "array",
+      "description": "Non-powertrain module reads (airbag/ABS/body/… over UDS). outcome is recorded verbatim; a module that did not answer (no_response) or refused is never recorded as 'no faults', and non-read modules carry no codes.",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "name_en",
+          "name_ar",
+          "outcome"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "name_en": {
+            "type": "string"
+          },
+          "name_ar": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "address": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "outcome": {
+            "enum": [
+              "read_codes",
+              "read_no_codes",
+              "refused",
+              "no_response"
+            ]
+          },
+          "codes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "code",
+                "status"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "pattern": "^[PCBU][0-9A-F]{4}$"
+                },
+                "status": {
+                  "enum": [
+                    "stored",
+                    "pending",
+                    "permanent"
+                  ]
+                },
+                "ecu": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

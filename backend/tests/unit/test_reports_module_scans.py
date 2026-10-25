@@ -1,10 +1,15 @@
 """Honest module-scan outcomes flow into the diagnosis result and the reports,
 and PDF rendering produces a real PDF (or reports it's unavailable)."""
 
+import json
+from pathlib import Path
+
 import pytest
 
 from automind.diagnosis.engine import diagnose
+from automind.diagnosis.input_builder import from_recording
 from automind.diagnosis.models import DiagnosticInput, InputDTC, InputModuleScan
+from automind.recording.format import RecDTC, RecModuleScan, Recording, RecSource
 from automind.reports import (
     ReportMeta,
     ReportRendererUnavailable,
@@ -12,6 +17,8 @@ from automind.reports import (
     render_report_json,
     render_report_pdf,
 )
+
+SCHEMA_DIR = Path(__file__).resolve().parents[3] / "shared" / "schemas"
 
 
 def _result_with_modules():
@@ -71,6 +78,38 @@ def test_html_report_is_honest_about_modules(lang):
     else:
         assert "تعذّر التحقق" in html
         assert "متخصص" in html
+
+
+def test_recording_carries_module_scans_through_to_the_report():
+    rec = Recording(
+        data_mode="live",
+        source=RecSource(kind="elm327_wifi"),
+        module_scans=[
+            RecModuleScan(key="srs", name_en="Airbag (SRS)", name_ar="الإيرباق",
+                          category="airbag", address="7D0", outcome="no_response"),
+            RecModuleScan(key="eng2", name_en="Engine", name_ar="المحرك", category="engine",
+                          address="7E0", outcome="read_codes", codes=[RecDTC(code="P0106", status="stored")]),
+        ],
+    )
+    # Round-trips through JSON (as uploaded) and keeps the outcomes.
+    rec = Recording.from_obj(rec.to_json())
+    r = diagnose(from_recording(rec))
+    by = {m.key: m for m in r.module_scans}
+    assert by["srs"].outcome == "no_response" and by["srs"].read_ok is False
+    assert by["eng2"].outcome == "read_codes" and any(c.code == "P0106" for c in by["eng2"].codes)
+    html = render_report_html(r, ReportMeta(data_mode="live"), "ar")
+    assert "تعذّر التحقق" in html and "P0106" in html
+
+
+def test_recording_schema_accepts_module_scans():
+    jsonschema = pytest.importorskip("jsonschema")
+    schema = json.loads((SCHEMA_DIR / "recording.v1.schema.json").read_text(encoding="utf-8"))
+    rec = Recording(
+        data_mode="live", source=RecSource(kind="elm327_wifi"),
+        module_scans=[RecModuleScan(key="abs", name_en="ABS", name_ar="ABS", category="abs",
+                                    address="7D1", outcome="read_no_codes")],
+    )
+    jsonschema.validate(json.loads(rec.to_json()), schema)
 
 
 def test_pdf_report_renders_a_real_pdf_or_reports_unavailable():

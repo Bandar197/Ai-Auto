@@ -61,6 +61,22 @@ class RecEvent(BaseModel):
     detail: str | None = None
 
 
+class RecModuleScan(BaseModel):
+    """An honest per-module read outcome (SRS/ABS/body over UDS, or any ECU).
+
+    ``outcome`` is recorded verbatim; a module that did not answer (``no_response``)
+    or refused (``refused``) is never recorded as "no faults".
+    """
+
+    key: str
+    name_en: str
+    name_ar: str
+    category: str = "other"
+    address: str | None = None
+    outcome: Literal["read_codes", "read_no_codes", "refused", "no_response"]
+    codes: list[RecDTC] = Field(default_factory=list)
+
+
 class Recording(BaseModel):
     format: Literal["automind.recording.v1"] = FORMAT_ID
     recording_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -78,6 +94,8 @@ class Recording(BaseModel):
     signals: list[RecSignal] = Field(default_factory=list)
     samples: list[RecSample] = Field(default_factory=list)
     events: list[RecEvent] = Field(default_factory=list)
+    # Non-powertrain module reads (airbag/ABS/body/…) with their honest outcomes.
+    module_scans: list[RecModuleScan] = Field(default_factory=list)
 
     # ------------------------------------------------------------------ io
     def to_json(self, *, indent: int | None = None) -> str:
