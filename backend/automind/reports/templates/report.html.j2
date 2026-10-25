@@ -85,6 +85,29 @@ ol,ul{margin:.3rem 0;padding-inline-start:1.3rem}.muted{color:var(--muted)}.smal
 <h2>{{ t.systems }}</h2>
 <div class="card"><table><tbody>{% for s in r.system_status %}<tr><td class="st-{{ s.status }}"><b>{{ s.status }}</b></td><td>{{ s['note_' ~ lang] }}</td></tr>{% endfor %}</tbody></table></div>
 
+{% if r.module_scans %}
+<h2>{{ t.modules }}</h2>
+<div class="card"><table><tbody>
+{% for ms in r.module_scans %}
+<tr>
+  <td><b>{{ ms['name_' ~ lang] }}</b>{% if ms.address %}<br><small class="muted">{{ t.m_address }}: {{ ms.address }}</small>{% endif %}</td>
+  <td>
+  {% if ms.outcome == 'read_codes' %}
+    <span class="st-fault"><b>{{ t.m_read_codes }}</b></span>
+    <table><tbody>{% for c in ms.codes %}<tr><td><b>{{ c.code }}</b></td><td>{% if c.known %}{{ c['description_' ~ lang] }}{% else %}<i class="muted">{{ t.unknown_code }}</i>{% endif %}</td></tr>{% endfor %}</tbody></table>
+  {% elif ms.outcome == 'read_no_codes' %}
+    <span class="st-ok">{{ t.m_no_codes }}</span>
+  {% elif ms.outcome == 'refused' %}
+    <span class="st-warning">{{ t.m_refused }}</span>
+  {% else %}
+    <span class="st-unknown">{{ t.m_no_response }}</span>{% if ms.category == 'airbag' %}<br><small class="ab">{{ t.m_airbag_unverified }}</small>{% endif %}
+  {% endif %}
+  </td>
+</tr>
+{% endfor %}
+</tbody></table></div>
+{% endif %}
+
 <h2>{{ t.quality }}</h2>
 <div class="card grid">
   <div class="kv"><span>{{ t.samples }}</span>{{ r.data_quality.sample_count }}</div>

@@ -605,7 +605,13 @@ def _print_result(r, lang: str) -> None:  # noqa: ANN001
 
 
 def _write_reports(result, rec, a: argparse.Namespace, mode: str | None = None) -> None:  # noqa: ANN001
-    from automind.reports import ReportMeta, render_report_html, render_report_json
+    from automind.reports import (
+        ReportMeta,
+        ReportRendererUnavailable,
+        render_report_html,
+        render_report_json,
+        render_report_pdf,
+    )
 
     meta = ReportMeta(
         data_mode=mode or rec.data_mode,
@@ -626,12 +632,19 @@ def _write_reports(result, rec, a: argparse.Namespace, mode: str | None = None) 
     if getattr(a, "json", None):
         Path(a.json).write_text(json.dumps(render_report_json(result, meta), ensure_ascii=False, indent=1), encoding="utf-8")
         print(f"JSON report: {a.json}")
+    if getattr(a, "pdf", None):
+        try:
+            Path(a.pdf).write_bytes(render_report_pdf(result, meta, a.lang))
+            print(f"PDF report: {a.pdf}")
+        except ReportRendererUnavailable as exc:
+            print(f"PDF report skipped: {exc}")
 
 
 def _add_output_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("--lang", choices=["ar", "en"], default="ar")
     p.add_argument("--report", help="write an HTML report to this path")
     p.add_argument("--json", help="write a JSON report to this path")
+    p.add_argument("--pdf", help="write a PDF report to this path (needs 'automind[pdf]')")
     p.add_argument("--llm", action="store_true", help="add an AI narrative (needs ANTHROPIC_API_KEY)")
 
 

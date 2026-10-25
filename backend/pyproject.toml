@@ -29,6 +29,7 @@ dependencies = [
 ble = ["bleak>=3.0"]
 serial = ["pyserial>=3.5"]
 llm = ["anthropic>=2.0"]
+pdf = ["weasyprint>=60"]
 dev = [
   "pytest>=9.1",
   "pytest-asyncio>=1.3",

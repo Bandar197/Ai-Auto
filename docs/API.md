@@ -86,7 +86,7 @@ looks like `2C3CDZ*******1234`. `GET /vehicles/{id}?reveal_vin=true` returns
 | POST | `/sessions/{id}/diagnose` | `{language?, use_llm?}` → `diagnosis_result` (re-run, keeps history) |
 | GET | `/sessions/{id}/diagnosis` | latest `diagnosis_result` |
 | GET | `/sessions/{id}/telemetry` | `?signals=engine_rpm,map_kpa` → `{series: {signal: [{t, v}]}, units: {...}}` |
-| GET | `/sessions/{id}/report` | `?format=json|html&lang=ar|en` → report |
+| GET | `/sessions/{id}/report` | `?format=json\|html\|pdf&lang=ar\|en` → report (`pdf` needs the optional `automind[pdf]` extra; otherwise `501 pdf_unavailable` — HTML still prints to PDF) |
 | POST | `/sessions/{id}/shares` | `{organization_id, include_vin?, include_live_data?, consent_version, expires_in_days?}` → share (only owner) |
 | DELETE | `/sessions/{id}/shares/{share_id}` | revoke |
 
@@ -291,6 +291,12 @@ input). Shape (see `backend/automind/diagnosis/models.py`, source of truth):
     "missing_data": [{"signal": "baro_kpa", "description_en": "...", "description_ar": "..."}]
   }],
   "system_status": [{"system": "cooling", "status": "ok|warning|fault|unknown", "note_en": "...", "note_ar": "..."}],
+  // Honest per-module reads (SRS/ABS/body/… over UDS). outcome is never collapsed to pass/fail:
+  // read_ok is true only for read_codes/read_no_codes; refused/no_response carry no codes and are
+  // never shown as healthy (the report flags an unverified airbag for a specialist).
+  "module_scans": [{"key": "srs", "name_en": "Airbag (SRS)", "name_ar": "الإيرباق", "category": "airbag",
+                    "address": "7D0", "outcome": "read_codes|read_no_codes|refused|no_response",
+                    "read_ok": false, "codes": [{"code": "B0051", "description_en": "...", "description_ar": "...", "known": true}]}],
   "data_quality": {"signals": ["engine_rpm", "..."], "sample_count": 1200, "duration_s": 110.0, "conditions_seen": ["warm_idle", "cruise"], "warnings": []},
   "disclaimers": [{"en": "...", "ar": "..."}],
   "llm": null   // or {model, prompt_version, narrative_en, narrative_ar, input_tokens, output_tokens}

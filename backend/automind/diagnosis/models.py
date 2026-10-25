@@ -21,6 +21,9 @@ System = Literal[
     "emissions", "transmission", "ac", "electrical", "network", "other",
 ]
 Assessment = Literal["normal", "abnormal", "inconclusive", "supports", "contradicts"]
+# Honest per-module read outcome. A module that did not answer or refused is never
+# collapsed into "no faults": only read_codes / read_no_codes mean the module was read.
+ModuleOutcome = Literal["read_codes", "read_no_codes", "refused", "no_response"]
 EvidenceKind = Literal[
     "dtc", "pid_reading", "pid_statistic", "freeze_frame",
     "user_measurement", "technician_note", "kb_reference", "missing_data",
@@ -64,6 +67,24 @@ class VehicleInfo(BaseModel):
     fuel_type: str | None = None
 
 
+class InputModuleScan(BaseModel):
+    """An honest per-module read outcome (SRS/ABS/body/… over UDS, or any ECU).
+
+    ``outcome`` is carried verbatim from the scan: a module that did not answer
+    (``no_response``) or refused (``refused``, e.g. a security gateway) is reported
+    as such and never shown as "no faults". Only ``read_codes`` / ``read_no_codes``
+    mean the module was actually read.
+    """
+
+    key: str
+    name_en: str
+    name_ar: str
+    category: str = "other"  # airbag / abs / body / network / …
+    address: str | None = None  # CAN request id if known, e.g. "7D0"
+    outcome: ModuleOutcome
+    codes: list[InputDTC] = Field(default_factory=list)
+
+
 class DiagnosticInput(BaseModel):
     data_mode: DataMode
     vehicle: VehicleInfo = Field(default_factory=VehicleInfo)
@@ -76,6 +97,8 @@ class DiagnosticInput(BaseModel):
     measurements: list[UserMeasurement] = Field(default_factory=list)
     mil_on: bool | None = None
     duration_ms: int = 0
+    # Non-powertrain module reads (airbag/ABS/body/…) with their honest outcomes.
+    module_scans: list[InputModuleScan] = Field(default_factory=list)
 
 
 # --------------------------------------------------------------------------- output
@@ -176,6 +199,30 @@ class SystemStatus(BaseModel):
     note_ar: str
 
 
+class ModuleCode(BaseModel):
+    code: str
+    description_en: str | None = None
+    description_ar: str | None = None
+    known: bool = False  # False → not in the knowledge base (no description invented)
+
+
+class ModuleScanResult(BaseModel):
+    """Report view of a module read — the outcome drives how it is shown.
+
+    ``read_ok`` is True only for ``read_codes``/``read_no_codes``; a ``refused`` or
+    ``no_response`` module is never rendered as healthy.
+    """
+
+    key: str
+    name_en: str
+    name_ar: str
+    category: str = "other"
+    address: str | None = None
+    outcome: ModuleOutcome
+    read_ok: bool
+    codes: list[ModuleCode] = Field(default_factory=list)
+
+
 class DataQuality(BaseModel):
     signals: list[str] = Field(default_factory=list)
     sample_count: int = 0
@@ -206,6 +253,7 @@ class DiagnosisResult(BaseModel):
     dtcs: list[DTCResult] = Field(default_factory=list)
     findings: list[Finding] = Field(default_factory=list)
     system_status: list[SystemStatus] = Field(default_factory=list)
+    module_scans: list[ModuleScanResult] = Field(default_factory=list)
     data_quality: DataQuality = Field(default_factory=DataQuality)
     disclaimers: list[Bilingual] = Field(default_factory=list)
     llm: LLMNarrative | None = None

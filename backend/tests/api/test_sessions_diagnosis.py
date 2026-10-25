@@ -249,6 +249,13 @@ async def test_report_json_and_html(client):
     assert r.status_code == 200 and r.headers["content-type"].startswith("text/html")
     assert "P0106" in r.text
     assert VALID_VIN not in r.text
+    # PDF: a real PDF when the optional renderer is installed, else a clean 501 (never a 500).
+    r = await client.get(f"/sessions/{s['id']}/report?format=pdf&lang=ar", headers=h)
+    if r.status_code == 200:
+        assert r.headers["content-type"] == "application/pdf"
+        assert r.content[:5] == b"%PDF-"
+    else:
+        assert_envelope(r, 501, "pdf_unavailable")
 
 
 async def test_demo_scenarios_and_run(client, db):

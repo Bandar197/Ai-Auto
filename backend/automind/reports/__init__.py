@@ -14,6 +14,10 @@ from automind.diagnosis.models import DiagnosisResult
 REPORT_FORMAT = "automind.report.v1"
 
 
+class ReportRendererUnavailable(RuntimeError):
+    """Raised when a PDF renderer (WeasyPrint + its native libs) is not installed."""
+
+
 class ReportMeta(BaseModel):
     session_id: str | None = None
     data_mode: Literal["live", "demo", "replay"] = "live"
@@ -51,6 +55,25 @@ def render_report_html(result: DiagnosisResult, meta: ReportMeta, lang: Literal[
     return tpl.render(r=result, m=meta, lang=lang, t=_T[lang], generated=datetime.now(UTC))
 
 
+def render_report_pdf(result: DiagnosisResult, meta: ReportMeta, lang: Literal["ar", "en"] = "ar") -> bytes:
+    """Render the report to PDF (via the HTML view).
+
+    Uses WeasyPrint, which needs its native libraries (pango/cairo/harfbuzz). It is an
+    optional dependency (``pip install 'automind[pdf]'``); when it isn't importable this
+    raises :class:`ReportRendererUnavailable` so callers can fall back to HTML — the same
+    HTML also prints to PDF from any browser.
+    """
+    html = render_report_html(result, meta, lang)
+    try:
+        from weasyprint import HTML  # noqa: PLC0415 - optional, imported on demand
+    except Exception as exc:  # ImportError, or an OSError if native libs are missing
+        raise ReportRendererUnavailable(
+            "PDF rendering needs WeasyPrint and its native libraries; "
+            "install 'automind[pdf]' or print the HTML report to PDF from a browser."
+        ) from exc
+    return HTML(string=html).write_pdf()
+
+
 _T: dict[str, dict[str, str]] = {
     "en": {
         "title": "AutoMind AI — Vehicle diagnostic report", "dir": "ltr", "health": "Vehicle health",
@@ -59,6 +82,13 @@ _T: dict[str, dict[str, str]] = {
         "inferred": "Inference / reference", "tests": "Tests to confirm", "actions": "Recommended actions",
         "parts": "Parts that may be needed — only after confirmation", "missing": "Missing data",
         "systems": "System status", "quality": "Data quality", "disclaimers": "Important",
+        "modules": "Module scan (airbag / ABS / body)",
+        "m_address": "address", "m_read_codes": "Read — stored codes",
+        "m_no_codes": "Read — no stored codes",
+        "m_refused": "Module present but refused the read (e.g. a security gateway)",
+        "m_no_response": "No response — could not verify (the module address may be unverified or wrong)",
+        "m_airbag_unverified": "Couldn't verify the airbag (SRS). If the warning light is on it may be a real "
+        "fault — have a specialist read it with the correct module address.",
         "vehicle": "Vehicle", "session": "Session", "protocol": "Protocol", "adapter": "Adapter",
         "mode": "Data source", "generated": "Generated", "confidence": "confidence", "likelihood": "likelihood",
         "expected": "expected", "no_findings": "No issues were found in the captured data.",
@@ -76,6 +106,13 @@ _T: dict[str, dict[str, str]] = {
         "inferred": "استنتاج / مرجع", "tests": "اختبارات التأكيد", "actions": "الإجراءات المقترحة",
         "parts": "قطع قد تلزم — بعد التأكيد فقط", "missing": "بيانات ناقصة",
         "systems": "حالة الأنظمة", "quality": "جودة البيانات", "disclaimers": "تنبيه مهم",
+        "modules": "فحص الوحدات (الإيرباق / ABS / الهيكل)",
+        "m_address": "العنوان", "m_read_codes": "تمت القراءة — توجد أكواد مخزّنة",
+        "m_no_codes": "تمت القراءة — لا توجد أكواد مخزّنة",
+        "m_refused": "الوحدة موجودة لكنها رفضت القراءة (بوابة أمنية مثلاً)",
+        "m_no_response": "لا استجابة — تعذّر التحقق (قد يكون عنوان الوحدة غير مؤكد أو خاطئ)",
+        "m_airbag_unverified": "تعذّر التحقق من الإيرباق (SRS). إذا كانت لمبة التحذير مضاءة فقد يكون عطلاً "
+        "فعلياً — راجع متخصصاً لقراءته بعنوان الوحدة الصحيح.",
         "vehicle": "السيارة", "session": "الجلسة", "protocol": "البروتوكول", "adapter": "الجهاز",
         "mode": "مصدر البيانات", "generated": "تاريخ الإنشاء", "confidence": "الثقة", "likelihood": "الاحتمال",
         "expected": "المتوقع", "no_findings": "لم تُكتشف مشاكل في البيانات المسجلة.",

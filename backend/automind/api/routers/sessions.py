@@ -17,7 +17,7 @@ from automind.api.audit import audit
 from automind.api.deps import CtxDep, CurrentUser, Page, SvcDep, page
 from automind.api.serializers import decrypt_vin, recording_meta_out, session_out, share_out
 from automind.core.crypto import mask_vin
-from automind.core.errors import conflict, forbidden, not_found, validation
+from automind.core.errors import APIError, conflict, forbidden, not_found, validation
 from automind.db import tables as t
 
 router = APIRouter(prefix="/sessions", tags=["sessions"])
@@ -351,7 +351,7 @@ async def report(
     session_id: uuid.UUID,
     user: CurrentUser,
     svc: SvcDep,
-    format: Literal["json", "html"] = "json",
+    format: Literal["json", "html", "pdf"] = "json",
     lang: Lang = "ar",
 ) -> Any:  # noqa: A002
     async with svc.db.user(user.id) as conn:
@@ -394,7 +394,13 @@ async def report(
             if is_owner or (share and share["include_vin"]):
                 vehicle["vin_masked"] = mask_vin(decrypt_vin(svc.cipher, v))
     from automind.diagnosis.models import DiagnosisResult
-    from automind.reports import ReportMeta, render_report_html, render_report_json
+    from automind.reports import (
+        ReportMeta,
+        ReportRendererUnavailable,
+        render_report_html,
+        render_report_json,
+        render_report_pdf,
+    )
 
     result = DiagnosisResult.model_validate(latest)
     meta = ReportMeta(
@@ -415,6 +421,17 @@ async def report(
                 "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; img-src data:; "
                 "font-src data:; frame-ancestors 'none'"
             },
+        )
+    if format == "pdf":
+        try:
+            pdf = render_report_pdf(result, meta, lang)
+        except ReportRendererUnavailable as exc:
+            # 501: the server has no PDF renderer installed; HTML (printable) still works.
+            raise APIError(501, "pdf_unavailable", str(exc)) from exc
+        return Response(
+            pdf,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f'inline; filename="automind-report-{session_id}.pdf"'},
         )
     return {**render_report_json(result, meta), "data_mode": s["data_mode"]}
 

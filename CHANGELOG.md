@@ -28,6 +28,14 @@ compatibility within Phase 1 (no breaking API/schema renames).
   Google/YouTube search links and YouTube videos; falls back to the KB offline.
 - In-app "Explain this code" screen with search + videos.
 
+### Reports
+- Diagnostic reports (JSON / HTML / **PDF**) now carry honest **module-scan outcomes**
+  (SRS / ABS / body over UDS): `read_codes` / `read_no_codes` / `refused` / `no_response`.
+  A module that didn't answer or refused is never shown as healthy; an unverified airbag is
+  flagged for a specialist. PDF via WeasyPrint (optional `automind[pdf]` extra); the HTML
+  report also prints to PDF from any browser, and the API returns a clean `501 pdf_unavailable`
+  when the renderer isn't installed (never a 500).
+
 ### Clear & verify
 - Clear codes offered the moment they appear (scan result), with a "codes return if the
   fault is real" warning; clear-and-verify distinguishes real vs old (e.g. after a part

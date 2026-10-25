@@ -19,6 +19,8 @@ from automind.diagnosis.models import (
     DiagnosticInput,
     DTCResult,
     Finding,
+    ModuleCode,
+    ModuleScanResult,
     SystemStatus,
 )
 from automind.diagnosis.rules.powertrain import SPECIALISED_RULES, GenericDtcRule
@@ -82,6 +84,30 @@ def _dtc_results(inp: DiagnosticInput) -> list[DTCResult]:
             description_en=k["en"] if k else None, description_ar=k["ar"] if k else None,
             system=(k or {}).get("system", st["system"]),
             severity=(k or {}).get("severity", "medium"), known=bool(k),
+        ))
+    return out
+
+
+def _module_scans(inp: DiagnosticInput) -> list[ModuleScanResult]:
+    """Carry each module read's honest outcome into the result, enriching known codes
+    from the KB. Outcome is never collapsed: refused / no_response stay as-is."""
+    kb = get_kb()
+    out = []
+    for m in inp.module_scans:
+        read_ok = m.outcome in ("read_codes", "read_no_codes")
+        codes = []
+        if read_ok:
+            for d in m.codes:
+                k = kb.lookup(d.code)
+                codes.append(ModuleCode(
+                    code=d.code,
+                    description_en=k["en"] if k else None,
+                    description_ar=k["ar"] if k else None,
+                    known=bool(k),
+                ))
+        out.append(ModuleScanResult(
+            key=m.key, name_en=m.name_en, name_ar=m.name_ar, category=m.category,
+            address=m.address, outcome=m.outcome, read_ok=read_ok, codes=codes,
         ))
     return out
 
@@ -223,6 +249,7 @@ def diagnose(inp: DiagnosticInput, language: str = "ar") -> DiagnosisResult:  # 
         engine_version=ENGINE_VERSION, kb_version=get_kb().version, data_mode=inp.data_mode,
         health_score=score, health_band=band, summary=own, technician_summary=tech,  # type: ignore[arg-type]
         dtcs=dtcs, findings=findings, system_status=_system_status(findings, ctx),
+        module_scans=_module_scans(inp),
         data_quality=_data_quality(ctx, inp), disclaimers=DISCLAIMERS, input_sha256=_input_hash(inp),
     )
 
