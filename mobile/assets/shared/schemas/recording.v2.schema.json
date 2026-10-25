@@ -43,6 +43,13 @@
             "protocol_switching": { "type": ["boolean", "null"] }
           }
         },
+        "evidence": {
+          "type": "object",
+          "description": "How each capability was established: behavioral = the adapter's behaviour changed as expected; accepted_only = the command returned OK but its effect was not observable; not_tested.",
+          "additionalProperties": { "enum": ["behavioral", "accepted_only", "not_tested"] }
+        },
+        "notes": { "type": "object", "additionalProperties": { "type": "string" } },
+        "probed_at": { "type": ["string", "null"], "format": "date-time" },
         "probe": {
           "type": "array",
           "items": {

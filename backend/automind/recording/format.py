@@ -96,6 +96,8 @@ class Recording(BaseModel):
     events: list[RecEvent] = Field(default_factory=list)
     # Non-powertrain module reads (airbag/ABS/body/…) with their honest outcomes.
     module_scans: list[RecModuleScan] = Field(default_factory=list)
+    # Adapter capability probe (recording.v2 adapter_capabilities shape); None = not probed.
+    adapter_capabilities: dict | None = None
 
     # ------------------------------------------------------------------ io
     def to_json(self, *, indent: int | None = None) -> str:

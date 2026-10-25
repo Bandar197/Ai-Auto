@@ -5,6 +5,7 @@ import '../core/api/api_client.dart';
 import '../core/storage/scan_report.dart';
 import '../core/systems.dart';
 import '../obd/obd.dart';
+import 'adapter_caps_controller.dart';
 import 'connection_controller.dart';
 import 'providers.dart';
 
@@ -19,6 +20,7 @@ Recording buildFullScanRecording({
   String sourceKind = 'elm327_wifi',
   String? protocolName,
   String? scenarioKey,
+  AdapterCapabilities? adapterCapabilities,
 }) {
   final now = DateTime.now().toUtc();
   return Recording(
@@ -41,6 +43,7 @@ Recording buildFullScanRecording({
     samples: const [],
     dtcs: obdDtcs,
     moduleScans: [for (final m in moduleScans) RecordingModuleScan.fromScan(m)],
+    adapterCapabilities: adapterCapabilities,
   );
 }
 
@@ -242,6 +245,7 @@ class FullScanController extends Notifier<FullScanState> {
         vehicle: ref.read(selectedVehicleProvider),
         sourceKind: conn.sourceKind,
         scenarioKey: conn.scenarioKey,
+        adapterCapabilities: ref.read(adapterCapabilitiesProvider).value,
       );
       final store = ref.read(localStoreProvider);
       await store.saveRecording(rec);

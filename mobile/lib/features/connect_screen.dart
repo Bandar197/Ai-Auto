@@ -167,10 +167,16 @@ class _ConnectScreenState extends ConsumerState<ConnectScreen> {
                   Text(conn.status.detail, style: Theme.of(context).textTheme.bodySmall, textDirection: TextDirection.ltr),
                 if (conn.busy) const LinearProgressIndicator(),
                 if (conn.client != null && !conn.busy)
-                  Align(
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: TextButton(onPressed: () => ref.read(connectionProvider.notifier).disconnect(), child: Text(l.disconnect)),
-                  ),
+                  Wrap(alignment: WrapAlignment.end, spacing: 8, children: [
+                    if (conn.isConnected)
+                      TextButton.icon(
+                        key: const Key('open-adapter-caps'),
+                        onPressed: () => context.push('/adapter'),
+                        icon: const Icon(Icons.memory, size: 18),
+                        label: Text(l.adapterCapsTitle),
+                      ),
+                    TextButton(onPressed: () => ref.read(connectionProvider.notifier).disconnect(), child: Text(l.disconnect)),
+                  ]),
               ]),
             ),
           ),

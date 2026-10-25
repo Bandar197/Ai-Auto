@@ -1,3 +1,4 @@
+import '../client/capability_probe.dart';
 import '../client/states.dart';
 import '../decode/dtc.dart';
 import '../decode/pid_table.dart';
@@ -51,6 +52,9 @@ class Recorder {
   /// Latest service 01 PID 01 readiness (filled automatically from readings).
   Map<String, dynamic>? readiness;
 
+  /// Proven adapter capabilities for this session, when a probe ran.
+  AdapterCapabilities? adapterCapabilities;
+
   int get sampleCount => _samples.length;
   int elapsedMs([DateTime? at]) => (at ?? _now()).difference(_startedAt).inMilliseconds.clamp(0, 1 << 31);
 
@@ -100,6 +104,7 @@ class Recorder {
       samples: List.unmodifiable(_samples),
       events: List.unmodifiable(_events),
       readiness: readiness,
+      adapterCapabilities: adapterCapabilities,
     );
   }
 }

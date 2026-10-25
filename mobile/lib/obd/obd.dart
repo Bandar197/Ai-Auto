@@ -1,6 +1,7 @@
 /// AutoMind OBD-II engine — pure Dart, no Flutter imports.
 library;
 
+export 'client/capability_probe.dart';
 export 'client/obd_client.dart';
 export 'decode/dtc.dart';
 export 'decode/pid_table.dart';

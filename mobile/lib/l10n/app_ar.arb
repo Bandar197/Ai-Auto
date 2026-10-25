@@ -240,7 +240,11 @@
   "clearDtcsConfirm": "أفهم ذلك — امسح الأكواد",
   "clearCodesCount": "امسح {count} كود",
   "@clearCodesCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "clearWillReturnNote": "المسح يطفئ اللمبة لكنه لا يصلح العطل — تعود الأكواد إذا كان العطل حقيقياً.",
   "extendedModulesTitle": "وحدات الإيرباق / ABS",
@@ -276,9 +280,21 @@
   "fullScanChecking": "جارٍ الفحص…",
   "fullScanAllClear": "لا توجد أعطال في الأنظمة التي تم فحصها.",
   "fullScanSummary": "عدد الأعطال: {count}",
-  "@fullScanSummary": { "placeholders": { "count": { "type": "int" } } },
+  "@fullScanSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "fullScanUnverifiedNote": "تعذّر التحقق من {count} نظاماً — لا تُعرض كسليمة.",
-  "@fullScanUnverifiedNote": { "placeholders": { "count": { "type": "int" } } },
+  "@fullScanUnverifiedNote": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "fullScanCoverageNote": "المحرك والانبعاثات وناقل الحركة والكهرباء والشبكة تأتي من الفحص القياسي. الإيرباق وABS والهيكل تُقرأ لكل وحدة وتعتمد على دعم عناوين سيارتك؛ وقد تمنع بوابة أمنية بعض الوحدات.",
   "fullScanSaveReport": "حفظ التقرير وعرضه",
   "clearRequiresServer": "مسح الأكواد يحتاج موافقة الخادم. اتصل بالإنترنت وسجّل الدخول.",
@@ -331,5 +347,37 @@
   "srsNote": "لا يقوم التطبيق أبدًا بمسح أكواد الوسائد الهوائية (SRS).",
   "autoStartAfterClear": "تجريبي: تشغيل المحرك تلقائيًا بعد المسح",
   "monitorComplete": "مكتمل",
-  "monitorIncomplete": "غير مكتمل"
+  "monitorIncomplete": "غير مكتمل",
+  "adapterCapsTitle": "قدرات جهاز الفحص",
+  "adapterCapsIntro": "يختبر ما يدعمه هذا الجهاز فعلاً — بسلوكه لا باسمه. تُرسل أوامر الجهاز (AT) وطلبات قراءة فقط؛ لا يُكتب أي شيء في السيارة.",
+  "adapterCapsRun": "ابدأ الاختبار",
+  "adapterCapsRerun": "أعد الاختبار",
+  "adapterCapsNotRun": "لم يُختبر بعد على هذا الاتصال.",
+  "adapterCapsNeedConnection": "اتصل بجهاز الفحص أولاً.",
+  "adapterCapsReplay": "غير متاح في وضع الإعادة.",
+  "adapterCapsBusy": "انتظر حتى يكتمل الاتصال.",
+  "adapterCapsIdleNote": "أوقف البيانات الحية والفحص قبل الاختبار.",
+  "adapterCapsNoVehicle": "لم تستجب السيارة — اختبارات الترويسات والفلترة والإطارات المتعددة تحتاج تشغيل المفتاح.",
+  "adapterCapsSimulator": "محاكي: هذه النتائج تصف المحاكي وليس جهازاً حقيقياً.",
+  "adapterCapsPass": "ناجح",
+  "adapterCapsFail": "فشل",
+  "adapterCapsUntested": "لم يُختبر",
+  "adapterCapsBehavioral": "مُتحقَّق بالسلوك",
+  "adapterCapsAcceptedOnly": "قُبل الأمر فقط",
+  "adapterCapsRawLog": "سجل الاختبار (خام)",
+  "adapterCapsCopy": "نسخ JSON",
+  "adapterCapsCopied": "تم النسخ",
+  "adapterCapsName": "اسم الجهاز",
+  "adapterCapsFirmware": "البرنامج الثابت",
+  "adapterCapsVoltage": "الجهد",
+  "adapterCapsProtocol": "البروتوكول",
+  "adapterCapsConnection": "نوع الاتصال",
+  "adapterCapsError": "فشل الاختبار: {error}",
+  "capHeaders": "ترويسات CAN ‏(ATH1)",
+  "capFilters": "فلتر الاستقبال (ATCRA)",
+  "capCanFormatting": "تنسيق CAN ‏(ATCAF1)",
+  "capIsoTp": "نقل ISO-TP",
+  "capMultiFrame": "الردود متعددة الإطارات",
+  "capFlowControl": "التحكم بالتدفق (ATFCSM)",
+  "capProtocolSwitching": "تبديل البروتوكول"
 }

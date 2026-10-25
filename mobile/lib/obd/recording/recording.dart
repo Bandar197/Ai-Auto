@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../client/capability_probe.dart';
 import '../decode/dtc.dart';
 import '../decode/uds.dart';
 import '../services/obd_models.dart';
@@ -142,6 +143,7 @@ class Recording {
     this.events = const [],
     this.readiness,
     this.moduleScans = const [],
+    this.adapterCapabilities,
   });
 
   factory Recording.fromJsonString(String s) => Recording.fromJson(jsonDecode(s) as Map<String, dynamic>);
@@ -176,6 +178,9 @@ class Recording {
       moduleScans: [
         for (final m in (j['module_scans'] as List? ?? const [])) RecordingModuleScan.fromJson(m as Map<String, dynamic>),
       ],
+      adapterCapabilities: j['adapter_capabilities'] is Map
+          ? AdapterCapabilities.fromJson((j['adapter_capabilities'] as Map).cast<String, dynamic>())
+          : null,
     );
   }
 
@@ -199,6 +204,9 @@ class Recording {
   /// Honest per-module reads (airbag/ABS/body/…) — see [RecordingModuleScan].
   final List<RecordingModuleScan> moduleScans;
 
+  /// What the adapter proved it can do when this was captured (null = not probed).
+  final AdapterCapabilities? adapterCapabilities;
+
   String? get demoScenario => source['demo_scenario'] as String?;
 
   Map<String, dynamic> toJson() => {
@@ -218,6 +226,7 @@ class Recording {
         'events': [for (final e in events) e.toJson()],
         if (readiness != null) 'readiness': readiness,
         if (moduleScans.isNotEmpty) 'module_scans': [for (final m in moduleScans) m.toJson()],
+        if (adapterCapabilities != null) 'adapter_capabilities': adapterCapabilities!.toJson(),
       };
 
   String toJsonString({bool pretty = false}) =>
@@ -252,6 +261,7 @@ class Recording {
         events: events,
         readiness: readiness,
         moduleScans: moduleScans,
+        adapterCapabilities: adapterCapabilities,
       );
 
   /// Required top-level fields per the JSON schema; returns problems found.

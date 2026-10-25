@@ -286,6 +286,10 @@
       ],
       "description": "Service 01 PID 01 decoded at scan time: mil_on, dtc_count, ignition, monitors {name: {available, complete}}. Used to verify whether a cleared code was re-tested."
     },
+    "adapter_capabilities": {
+      "type": ["object", "null"],
+      "description": "Optional: what the adapter PROVED it supports during capture (see recording.v2 adapter_capabilities). Absent when no probe ran."
+    },
     "module_scans": {
       "type": "array",
       "description": "Non-powertrain module reads (airbag/ABS/body/… over UDS). outcome is recorded verbatim; a module that did not answer (no_response) or refused is never recorded as 'no faults', and non-read modules carry no codes.",

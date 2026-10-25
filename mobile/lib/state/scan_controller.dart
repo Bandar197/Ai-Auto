@@ -7,6 +7,7 @@ import '../core/api/api_client.dart';
 import '../core/storage/clear_entry.dart';
 import '../core/storage/scan_report.dart';
 import '../obd/obd.dart';
+import 'adapter_caps_controller.dart';
 import 'connection_controller.dart';
 import 'providers.dart';
 import 'verification_controller.dart';
@@ -162,7 +163,9 @@ class ScanController extends Notifier<ScanState> {
       protocolName: info.protocolName,
       demoScenario: conn.scenarioKey,
       app: 'automind-mobile/$appVersion',
-    )..setSupported(sup);
+    )
+      ..setSupported(sup)
+      ..adapterCapabilities = ref.read(adapterCapabilitiesProvider).value;
     final eventSub = client.events.listen((e) => rec.addEvent(e.type, e.detail, e.at));
 
     try {

@@ -1108,4 +1108,105 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get monitorIncomplete => 'غير مكتمل';
+
+  @override
+  String get adapterCapsTitle => 'قدرات جهاز الفحص';
+
+  @override
+  String get adapterCapsIntro =>
+      'يختبر ما يدعمه هذا الجهاز فعلاً — بسلوكه لا باسمه. تُرسل أوامر الجهاز (AT) وطلبات قراءة فقط؛ لا يُكتب أي شيء في السيارة.';
+
+  @override
+  String get adapterCapsRun => 'ابدأ الاختبار';
+
+  @override
+  String get adapterCapsRerun => 'أعد الاختبار';
+
+  @override
+  String get adapterCapsNotRun => 'لم يُختبر بعد على هذا الاتصال.';
+
+  @override
+  String get adapterCapsNeedConnection => 'اتصل بجهاز الفحص أولاً.';
+
+  @override
+  String get adapterCapsReplay => 'غير متاح في وضع الإعادة.';
+
+  @override
+  String get adapterCapsBusy => 'انتظر حتى يكتمل الاتصال.';
+
+  @override
+  String get adapterCapsIdleNote => 'أوقف البيانات الحية والفحص قبل الاختبار.';
+
+  @override
+  String get adapterCapsNoVehicle =>
+      'لم تستجب السيارة — اختبارات الترويسات والفلترة والإطارات المتعددة تحتاج تشغيل المفتاح.';
+
+  @override
+  String get adapterCapsSimulator =>
+      'محاكي: هذه النتائج تصف المحاكي وليس جهازاً حقيقياً.';
+
+  @override
+  String get adapterCapsPass => 'ناجح';
+
+  @override
+  String get adapterCapsFail => 'فشل';
+
+  @override
+  String get adapterCapsUntested => 'لم يُختبر';
+
+  @override
+  String get adapterCapsBehavioral => 'مُتحقَّق بالسلوك';
+
+  @override
+  String get adapterCapsAcceptedOnly => 'قُبل الأمر فقط';
+
+  @override
+  String get adapterCapsRawLog => 'سجل الاختبار (خام)';
+
+  @override
+  String get adapterCapsCopy => 'نسخ JSON';
+
+  @override
+  String get adapterCapsCopied => 'تم النسخ';
+
+  @override
+  String get adapterCapsName => 'اسم الجهاز';
+
+  @override
+  String get adapterCapsFirmware => 'البرنامج الثابت';
+
+  @override
+  String get adapterCapsVoltage => 'الجهد';
+
+  @override
+  String get adapterCapsProtocol => 'البروتوكول';
+
+  @override
+  String get adapterCapsConnection => 'نوع الاتصال';
+
+  @override
+  String adapterCapsError(String error) {
+    return 'فشل الاختبار: $error';
+  }
+
+  @override
+  String get capHeaders => 'ترويسات CAN ‏(ATH1)';
+
+  @override
+  String get capFilters => 'فلتر الاستقبال (ATCRA)';
+
+  @override
+  String get capCanFormatting => 'تنسيق CAN ‏(ATCAF1)';
+
+  @override
+  String get capIsoTp => 'نقل ISO-TP';
+
+  @override
+  String get capMultiFrame => 'الردود متعددة الإطارات';
+
+  @override
+  String get capFlowControl => 'التحكم بالتدفق (ATFCSM)';
+
+  @override
+  String get capProtocolSwitching => 'تبديل البروتوكول';
 }

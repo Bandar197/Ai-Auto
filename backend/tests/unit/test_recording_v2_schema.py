@@ -28,6 +28,9 @@ def test_full_v2_evidence_validates():
             "name": "LONAUTO", "connection": "ble", "firmware": "ELM327 v1.5", "voltage": 12.4,
             "protocol": "ISO 15765-4 (CAN 11/500)",
             "capabilities": {"headers": True, "iso_tp": True, "flow_control": None},
+            "evidence": {"headers": "behavioral", "iso_tp": "behavioral", "flow_control": "not_tested"},
+            "notes": {"flow_control": "needs a connected vehicle to verify"},
+            "probed_at": "2026-10-25T09:59:00Z",
             "probe": [{"cmd": "ATI", "response": "ELM327 v1.5", "ok": True}, {"cmd": "AT@1", "response": "?", "ok": False}],
         },
         "ecu_coverage": [
@@ -56,8 +59,18 @@ def test_full_v2_evidence_validates():
         {"file_hashes": {"dtcs.csv": "not-a-sha"}},
         {"clear_operations": [{"id": "c", "requested_at": "t", "service": "04", "result": "magic"}]},
         {"data_mode": "replay"},  # a recording is never relabelled
+        {"adapter_capabilities": {"connection": "ble", "evidence": {"headers": "trust_me"}}},
+        {"adapter_capabilities": {"connection": "ble", "capabilities": {"headers": "yes"}}},
     ],
 )
 def test_invalid_v2_is_rejected(patch):
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.validate(_v1() | patch, SCHEMA)
+
+
+def test_v1_recording_keeps_adapter_capabilities():
+    caps = {"connection": "ble", "capabilities": {"headers": True}, "probe": []}
+    doc = _v1() | {"adapter_capabilities": caps}
+    rec = Recording.model_validate(doc)
+    assert rec.adapter_capabilities == caps
+    jsonschema.validate(json.loads(rec.to_json()), SCHEMA)

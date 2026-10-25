@@ -108,7 +108,8 @@ class ExportService {
       if (vin != null && vin.length >= 10) v['vin'] = '${vin.substring(0, 6)}${'*' * (vin.length - 10)}${vin.substring(vin.length - 4)}';
       j['vehicle'] = v;
     }
-    j['adapter_capabilities'] = evidence.adapterCapabilities;
+    // Explicit evidence wins; otherwise the capabilities probed during capture.
+    j['adapter_capabilities'] = evidence.adapterCapabilities ?? r.adapterCapabilities?.toJson();
     j['ecu_coverage'] = evidence.ecuCoverage;
     j['tx_rx_frames'] = evidence.txRxFrames;
     j['clear_operations'] = evidence.clearOperations;

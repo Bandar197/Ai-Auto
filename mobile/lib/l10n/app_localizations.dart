@@ -2059,6 +2059,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'not complete'**
   String get monitorIncomplete;
+
+  /// No description provided for @adapterCapsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Adapter capabilities'**
+  String get adapterCapsTitle;
+
+  /// No description provided for @adapterCapsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Tests what this adapter really supports — by its behaviour, not its name. Only adapter (AT) commands and read-only requests are sent; nothing is written to the car.'**
+  String get adapterCapsIntro;
+
+  /// No description provided for @adapterCapsRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Run test'**
+  String get adapterCapsRun;
+
+  /// No description provided for @adapterCapsRerun.
+  ///
+  /// In en, this message translates to:
+  /// **'Test again'**
+  String get adapterCapsRerun;
+
+  /// No description provided for @adapterCapsNotRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Not tested yet on this connection.'**
+  String get adapterCapsNotRun;
+
+  /// No description provided for @adapterCapsNeedConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect to an adapter first.'**
+  String get adapterCapsNeedConnection;
+
+  /// No description provided for @adapterCapsReplay.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available in replay mode.'**
+  String get adapterCapsReplay;
+
+  /// No description provided for @adapterCapsBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Wait for the connection to finish.'**
+  String get adapterCapsBusy;
+
+  /// No description provided for @adapterCapsIdleNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop live data and scans before testing.'**
+  String get adapterCapsIdleNote;
+
+  /// No description provided for @adapterCapsNoVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'No vehicle answered — header, filter and multi-frame tests need the ignition on.'**
+  String get adapterCapsNoVehicle;
+
+  /// No description provided for @adapterCapsSimulator.
+  ///
+  /// In en, this message translates to:
+  /// **'Simulator: these results describe the simulator, not a real adapter.'**
+  String get adapterCapsSimulator;
+
+  /// No description provided for @adapterCapsPass.
+  ///
+  /// In en, this message translates to:
+  /// **'Passed'**
+  String get adapterCapsPass;
+
+  /// No description provided for @adapterCapsFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get adapterCapsFail;
+
+  /// No description provided for @adapterCapsUntested.
+  ///
+  /// In en, this message translates to:
+  /// **'Not tested'**
+  String get adapterCapsUntested;
+
+  /// No description provided for @adapterCapsBehavioral.
+  ///
+  /// In en, this message translates to:
+  /// **'verified by behaviour'**
+  String get adapterCapsBehavioral;
+
+  /// No description provided for @adapterCapsAcceptedOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'command accepted only'**
+  String get adapterCapsAcceptedOnly;
+
+  /// No description provided for @adapterCapsRawLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Test log (raw)'**
+  String get adapterCapsRawLog;
+
+  /// No description provided for @adapterCapsCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy JSON'**
+  String get adapterCapsCopy;
+
+  /// No description provided for @adapterCapsCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get adapterCapsCopied;
+
+  /// No description provided for @adapterCapsName.
+  ///
+  /// In en, this message translates to:
+  /// **'Device name'**
+  String get adapterCapsName;
+
+  /// No description provided for @adapterCapsFirmware.
+  ///
+  /// In en, this message translates to:
+  /// **'Firmware'**
+  String get adapterCapsFirmware;
+
+  /// No description provided for @adapterCapsVoltage.
+  ///
+  /// In en, this message translates to:
+  /// **'Voltage'**
+  String get adapterCapsVoltage;
+
+  /// No description provided for @adapterCapsProtocol.
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol'**
+  String get adapterCapsProtocol;
+
+  /// No description provided for @adapterCapsConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection'**
+  String get adapterCapsConnection;
+
+  /// No description provided for @adapterCapsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Test failed: {error}'**
+  String adapterCapsError(String error);
+
+  /// No description provided for @capHeaders.
+  ///
+  /// In en, this message translates to:
+  /// **'CAN headers (ATH1)'**
+  String get capHeaders;
+
+  /// No description provided for @capFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive filter (ATCRA)'**
+  String get capFilters;
+
+  /// No description provided for @capCanFormatting.
+  ///
+  /// In en, this message translates to:
+  /// **'CAN formatting (ATCAF1)'**
+  String get capCanFormatting;
+
+  /// No description provided for @capIsoTp.
+  ///
+  /// In en, this message translates to:
+  /// **'ISO-TP transport'**
+  String get capIsoTp;
+
+  /// No description provided for @capMultiFrame.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-frame responses'**
+  String get capMultiFrame;
+
+  /// No description provided for @capFlowControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Flow control (ATFCSM)'**
+  String get capFlowControl;
+
+  /// No description provided for @capProtocolSwitching.
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol switching'**
+  String get capProtocolSwitching;
 }
 
 class _AppLocalizationsDelegate

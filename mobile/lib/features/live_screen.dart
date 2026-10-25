@@ -9,6 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:uuid/uuid.dart';
 
 import '../obd/obd.dart';
+import '../state/adapter_caps_controller.dart';
 import '../state/connection_controller.dart';
 import '../state/providers.dart';
 import '../ui/l10n_helpers.dart';
@@ -122,6 +123,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
         demoScenario: conn.scenarioKey,
         app: 'automind-mobile/$appVersion',
       );
+      r.adapterCapabilities = ref.read(adapterCapabilitiesProvider).value;
       final s = client.supported;
       if (s != null) r.setSupported(s);
       setState(() => _recorder = r);

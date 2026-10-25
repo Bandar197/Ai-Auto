@@ -310,7 +310,11 @@
   "clearDtcsConfirm": "I understand — clear codes",
   "clearCodesCount": "Clear {count} code(s)",
   "@clearCodesCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "clearWillReturnNote": "Clearing turns the light off but does not fix the fault — codes return if the problem is real.",
   "extendedModulesTitle": "Airbag / ABS modules",
@@ -346,9 +350,21 @@
   "fullScanChecking": "Scanning…",
   "fullScanAllClear": "No fault codes found in the systems scanned.",
   "fullScanSummary": "{count} fault code(s) found",
-  "@fullScanSummary": { "placeholders": { "count": { "type": "int" } } },
+  "@fullScanSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "fullScanUnverifiedNote": "Couldn't verify {count} system(s) — not shown as healthy.",
-  "@fullScanUnverifiedNote": { "placeholders": { "count": { "type": "int" } } },
+  "@fullScanUnverifiedNote": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "fullScanCoverageNote": "Engine, emissions, transmission, electrical and network come from the standard scan. Airbag, ABS and body are read per module and depend on your car's addresses being supported; a security gateway can block some modules.",
   "fullScanSaveReport": "Save & view report",
   "clearRequiresServer": "Clearing codes needs server approval. Connect to the internet and log in.",
@@ -445,5 +461,44 @@
   "srsNote": "Airbag (SRS) codes are never cleared by this app.",
   "autoStartAfterClear": "Demo: start the engine automatically after clearing",
   "monitorComplete": "complete",
-  "monitorIncomplete": "not complete"
+  "monitorIncomplete": "not complete",
+  "adapterCapsTitle": "Adapter capabilities",
+  "adapterCapsIntro": "Tests what this adapter really supports — by its behaviour, not its name. Only adapter (AT) commands and read-only requests are sent; nothing is written to the car.",
+  "adapterCapsRun": "Run test",
+  "adapterCapsRerun": "Test again",
+  "adapterCapsNotRun": "Not tested yet on this connection.",
+  "adapterCapsNeedConnection": "Connect to an adapter first.",
+  "adapterCapsReplay": "Not available in replay mode.",
+  "adapterCapsBusy": "Wait for the connection to finish.",
+  "adapterCapsIdleNote": "Stop live data and scans before testing.",
+  "adapterCapsNoVehicle": "No vehicle answered — header, filter and multi-frame tests need the ignition on.",
+  "adapterCapsSimulator": "Simulator: these results describe the simulator, not a real adapter.",
+  "adapterCapsPass": "Passed",
+  "adapterCapsFail": "Failed",
+  "adapterCapsUntested": "Not tested",
+  "adapterCapsBehavioral": "verified by behaviour",
+  "adapterCapsAcceptedOnly": "command accepted only",
+  "adapterCapsRawLog": "Test log (raw)",
+  "adapterCapsCopy": "Copy JSON",
+  "adapterCapsCopied": "Copied",
+  "adapterCapsName": "Device name",
+  "adapterCapsFirmware": "Firmware",
+  "adapterCapsVoltage": "Voltage",
+  "adapterCapsProtocol": "Protocol",
+  "adapterCapsConnection": "Connection",
+  "adapterCapsError": "Test failed: {error}",
+  "capHeaders": "CAN headers (ATH1)",
+  "capFilters": "Receive filter (ATCRA)",
+  "capCanFormatting": "CAN formatting (ATCAF1)",
+  "capIsoTp": "ISO-TP transport",
+  "capMultiFrame": "Multi-frame responses",
+  "capFlowControl": "Flow control (ATFCSM)",
+  "capProtocolSwitching": "Protocol switching",
+  "@adapterCapsError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

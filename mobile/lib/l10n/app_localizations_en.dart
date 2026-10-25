@@ -1103,4 +1103,105 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get monitorIncomplete => 'not complete';
+
+  @override
+  String get adapterCapsTitle => 'Adapter capabilities';
+
+  @override
+  String get adapterCapsIntro =>
+      'Tests what this adapter really supports — by its behaviour, not its name. Only adapter (AT) commands and read-only requests are sent; nothing is written to the car.';
+
+  @override
+  String get adapterCapsRun => 'Run test';
+
+  @override
+  String get adapterCapsRerun => 'Test again';
+
+  @override
+  String get adapterCapsNotRun => 'Not tested yet on this connection.';
+
+  @override
+  String get adapterCapsNeedConnection => 'Connect to an adapter first.';
+
+  @override
+  String get adapterCapsReplay => 'Not available in replay mode.';
+
+  @override
+  String get adapterCapsBusy => 'Wait for the connection to finish.';
+
+  @override
+  String get adapterCapsIdleNote => 'Stop live data and scans before testing.';
+
+  @override
+  String get adapterCapsNoVehicle =>
+      'No vehicle answered — header, filter and multi-frame tests need the ignition on.';
+
+  @override
+  String get adapterCapsSimulator =>
+      'Simulator: these results describe the simulator, not a real adapter.';
+
+  @override
+  String get adapterCapsPass => 'Passed';
+
+  @override
+  String get adapterCapsFail => 'Failed';
+
+  @override
+  String get adapterCapsUntested => 'Not tested';
+
+  @override
+  String get adapterCapsBehavioral => 'verified by behaviour';
+
+  @override
+  String get adapterCapsAcceptedOnly => 'command accepted only';
+
+  @override
+  String get adapterCapsRawLog => 'Test log (raw)';
+
+  @override
+  String get adapterCapsCopy => 'Copy JSON';
+
+  @override
+  String get adapterCapsCopied => 'Copied';
+
+  @override
+  String get adapterCapsName => 'Device name';
+
+  @override
+  String get adapterCapsFirmware => 'Firmware';
+
+  @override
+  String get adapterCapsVoltage => 'Voltage';
+
+  @override
+  String get adapterCapsProtocol => 'Protocol';
+
+  @override
+  String get adapterCapsConnection => 'Connection';
+
+  @override
+  String adapterCapsError(String error) {
+    return 'Test failed: $error';
+  }
+
+  @override
+  String get capHeaders => 'CAN headers (ATH1)';
+
+  @override
+  String get capFilters => 'Receive filter (ATCRA)';
+
+  @override
+  String get capCanFormatting => 'CAN formatting (ATCAF1)';
+
+  @override
+  String get capIsoTp => 'ISO-TP transport';
+
+  @override
+  String get capMultiFrame => 'Multi-frame responses';
+
+  @override
+  String get capFlowControl => 'Flow control (ATFCSM)';
+
+  @override
+  String get capProtocolSwitching => 'Protocol switching';
 }
