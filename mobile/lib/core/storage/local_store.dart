@@ -16,6 +16,13 @@ class LocalStore {
   File get _queue => File('${root.path}/upload_queue.json');
   File _json(String name) => File('${root.path}/$name.json');
 
+  /// Temp file + rename: a crash mid-write never leaves a half-written file.
+  static Future<File> _atomic(File f, String content) async {
+    final tmp = File('${f.path}.tmp');
+    await tmp.writeAsString(content, flush: true);
+    return tmp.rename(f.path);
+  }
+
   Future<void> _ensure() async {
     await _recordings.create(recursive: true);
     await _reports.create(recursive: true);
@@ -24,9 +31,7 @@ class LocalStore {
   // ------------------------------------------------------------ recordings
   Future<File> saveRecording(Recording r) async {
     await _ensure();
-    final f = File('${_recordings.path}/${r.recordingId}.json');
-    await f.writeAsString(r.toJsonString());
-    return f;
+    return _atomic(File('${_recordings.path}/${r.recordingId}.json'), r.toJsonString());
   }
 
   Future<Recording?> loadRecording(String id) async {
@@ -54,7 +59,7 @@ class LocalStore {
   // --------------------------------------------------------------- reports
   Future<void> saveReport(ScanReport r) async {
     await _ensure();
-    await File('${_reports.path}/${r.id}.json').writeAsString(jsonEncode(r.toJson()));
+    await _atomic(File('${_reports.path}/${r.id}.json'), jsonEncode(r.toJson()));
   }
 
   Future<ScanReport?> loadReport(String id) async {

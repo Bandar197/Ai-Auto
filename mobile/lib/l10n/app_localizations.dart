@@ -2257,6 +2257,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'unverified address'**
   String get moduleAddrUnverified;
+
+  /// No description provided for @interruptedBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 session was cut short (app closed or link lost).} other{{count} sessions were cut short (app closed or link lost).}} Its data up to that moment was kept on this device.'**
+  String interruptedBanner(int count);
+
+  /// No description provided for @recoverCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Recover'**
+  String get recoverCta;
+
+  /// No description provided for @recoveredDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 session recovered} other{{count} sessions recovered}}'**
+  String recoveredDone(int count);
+
+  /// No description provided for @interruptedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'INTERRUPTED'**
+  String get interruptedTag;
+
+  /// No description provided for @interruptedReportNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This session was interrupted. It contains only the data captured before it stopped — missing systems were not checked, not \"healthy\".'**
+  String get interruptedReportNote;
 }
 
 class _AppLocalizationsDelegate

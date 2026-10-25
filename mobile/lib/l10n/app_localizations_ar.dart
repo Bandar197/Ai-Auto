@@ -1212,4 +1212,36 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get moduleAddrUnverified => 'عنوان غير مؤكد';
+
+  @override
+  String interruptedBanner(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'انقطعت $count جلسات (أُغلق التطبيق أو انقطع الاتصال).',
+      one: 'انقطعت جلسة واحدة (أُغلق التطبيق أو انقطع الاتصال).',
+    );
+    return '$_temp0 حُفظت بياناتها حتى لحظة الانقطاع على هذا الجهاز.';
+  }
+
+  @override
+  String get recoverCta => 'استعادة';
+
+  @override
+  String recoveredDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'استُعيدت $count جلسات',
+      one: 'استُعيدت جلسة واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get interruptedTag => 'منقطعة';
+
+  @override
+  String get interruptedReportNote =>
+      'هذه الجلسة انقطعت. تحتوي فقط على البيانات المسجلة قبل توقفها — الأنظمة الناقصة لم تُفحص، وليست «سليمة».';
 }

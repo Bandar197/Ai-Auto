@@ -87,7 +87,7 @@ class ReportScreen extends ConsumerWidget {
       maskVin: !ref.read(settingsProvider).includeVin,
       describe: (code) => kb.lookup(code)?.description(lang),
       evidence: SessionEvidence(
-        sessionState: 'completed',
+        sessionState: r.interrupted ? 'interrupted' : 'completed',
         beforeAfter: r.diagnosis == null ? null : {'diagnosis': r.diagnosis},
       ),
     );
@@ -128,6 +128,18 @@ class ReportView extends StatelessWidget {
       child: ListView(padding: const EdgeInsets.only(bottom: 32), children: [
         ModeBanner(mode: report.dataMode, originalMode: report.originalMode, simulator: report.simulator),
         if (report.isReplay && report.originalMode == 'demo') const ModeBanner(mode: 'demo'),
+        if (report.interrupted)
+          Container(
+            key: const Key('interrupted-note'),
+            margin: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: Colors.orange.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
+            child: Row(children: [
+              const Icon(Icons.warning_amber_rounded, color: Colors.orange),
+              const SizedBox(width: 8),
+              Expanded(child: Text(l.interruptedReportNote)),
+            ]),
+          ),
         if (d == null)
           Container(
             key: const Key('offline-note'),

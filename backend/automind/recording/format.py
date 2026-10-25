@@ -98,6 +98,8 @@ class Recording(BaseModel):
     module_scans: list[RecModuleScan] = Field(default_factory=list)
     # Adapter capability probe (recording.v2 adapter_capabilities shape); None = not probed.
     adapter_capabilities: dict | None = None
+    # Raw TX/RX adapter traffic (recording.v2 tx_rx_frames). Apps strip it before upload (VIN bytes).
+    tx_rx_frames: list[dict] = Field(default_factory=list)
 
     # ------------------------------------------------------------------ io
     def to_json(self, *, indent: int | None = None) -> str:

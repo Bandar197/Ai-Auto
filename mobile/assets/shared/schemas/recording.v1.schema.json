@@ -290,6 +290,19 @@
       "type": ["object", "null"],
       "description": "Optional: what the adapter PROVED it supports during capture (see recording.v2 adapter_capabilities). Absent when no probe ran."
     },
+    "tx_rx_frames": {
+      "type": "array",
+      "description": "Optional raw adapter traffic (see recording.v2 tx_rx_frames). Kept on the device; stripped from uploads because replies can contain the VIN.",
+      "items": {
+        "type": "object",
+        "required": ["t_ms", "dir", "data"],
+        "properties": {
+          "t_ms": { "type": "integer", "minimum": 0 },
+          "dir": { "enum": ["tx", "rx"] },
+          "data": { "type": "string" }
+        }
+      }
+    },
     "module_scans": {
       "type": "array",
       "description": "Non-powertrain module reads (airbag/ABS/body/… over UDS). outcome is recorded verbatim; a module that did not answer (no_response) or refused is never recorded as 'no faults', and non-read modules carry no codes.",

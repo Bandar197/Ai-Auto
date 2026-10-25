@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../core/api/api_client.dart';
+import '../core/recording/session_journal.dart';
 import '../core/storage/clear_entry.dart';
 import '../core/storage/scan_report.dart';
 import '../obd/obd.dart';
@@ -167,12 +168,23 @@ class ScanController extends Notifier<ScanState> {
       ..setSupported(sup)
       ..adapterCapabilities = ref.read(adapterCapabilitiesProvider).value;
     final eventSub = client.events.listen((e) => rec.addEvent(e.type, e.detail, e.at));
+    rec.attachTraffic(client.elm.log);
+    // Durable journal: if the app or link dies mid-scan, the session is recoverable.
+    SessionJournal? journal;
+    try {
+      journal = await SessionJournal.start(ref.read(localStoreProvider).root, rec.journalHeader());
+      rec.onEntry = journal.write;
+    } on Object catch (_) {
+      // A journal failure never blocks the scan.
+    }
+    var saved = false;
 
     try {
       _set(ScanStep.vin, StepStatus.running);
       final vin = await client.readVin();
       _set(ScanStep.vin, vin.vin == null ? StepStatus.skipped : StepStatus.done, vin.vin ?? (vin.warning ?? ''));
       rec.vehicle = {'vin': vin.vin};
+      rec.checkpoint();
       if (_cancel) return _cancelled();
 
       _set(ScanStep.dtcs, StepStatus.running);
@@ -184,6 +196,7 @@ class ScanController extends Notifier<ScanState> {
         if (r.error != null) errs.add('${s.service}: ${r.error}');
       }
       rec.dtcs = dtcs;
+      rec.checkpoint();
       state = state.copyWith(dtcCount: dtcs.map((d) => d.code).toSet().length);
       _set(ScanStep.dtcs, StepStatus.done, [dtcs.map((d) => d.code).toSet().join(', '), ...errs].where((x) => x.isNotEmpty).join(' · '));
       if (_cancel) return _cancelled();
@@ -191,6 +204,7 @@ class ScanController extends Notifier<ScanState> {
       _set(ScanStep.freeze, StepStatus.running);
       final ff = await client.readFreezeFrame();
       if (ff != null) rec.freezeFrames = [ff];
+      rec.checkpoint();
       _set(ScanStep.freeze, ff == null ? StepStatus.skipped : StepStatus.done, ff?.dtc ?? '');
       if (_cancel) return _cancelled();
 
@@ -222,6 +236,7 @@ class ScanController extends Notifier<ScanState> {
       client.autoReconnect = false;
       _set(ScanStep.capture, rec.sampleCount == 0 ? StepStatus.failed : StepStatus.done, '${rec.sampleCount}');
 
+      rec.checkpoint();
       final recording = rec.build();
       await _finish(
         recording: recording,
@@ -233,8 +248,18 @@ class ScanController extends Notifier<ScanState> {
         milOn: milOn,
         connectionLog: conn.log?.toJson(),
       );
+      saved = true;
     } finally {
       await eventSub.cancel();
+      await rec.detachTraffic();
+      rec.onEntry = null;
+      // Saved or cancelled by the user → journal no longer needed. Anything else
+      // (error, lost link) keeps it without an end line → offered for recovery.
+      if (saved || _cancel) {
+        await journal?.complete();
+      } else {
+        await journal?.close();
+      }
     }
   }
 

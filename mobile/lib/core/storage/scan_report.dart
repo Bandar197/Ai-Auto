@@ -20,6 +20,7 @@ class ScanReport {
     this.vehicleId,
     this.connectionLog,
     this.milOn,
+    this.sessionState,
   });
 
   factory ScanReport.fromJson(Map<String, dynamic> j) => ScanReport(
@@ -42,6 +43,7 @@ class ScanReport {
         vehicleId: j['vehicle_id'] as String?,
         connectionLog: (j['connection_log'] as Map?)?.cast<String, dynamic>(),
         milOn: j['mil_on'] as bool?,
+        sessionState: j['session_state'] as String?,
       );
 
   final String id;
@@ -70,6 +72,11 @@ class ScanReport {
   final Map<String, dynamic>? connectionLog;
   final bool? milOn;
 
+  /// null/'completed' = normal; 'interrupted' = recovered from a journal after the
+  /// session was cut short (data up to the interruption only).
+  final String? sessionState;
+  bool get interrupted => sessionState == 'interrupted';
+
   bool get isDemo => dataMode == 'demo' || (dataMode == 'replay' && originalMode == 'demo');
   bool get isReplay => dataMode == 'replay';
   int? get healthScore => (diagnosis?['health_score'] as num?)?.toInt();
@@ -95,5 +102,6 @@ class ScanReport {
         'vehicle_id': vehicleId,
         'connection_log': connectionLog,
         'mil_on': milOn,
+        if (sessionState != null) 'session_state': sessionState,
       };
 }

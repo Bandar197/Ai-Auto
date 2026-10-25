@@ -380,5 +380,10 @@
   "capMultiFrame": "الردود متعددة الإطارات",
   "capFlowControl": "التحكم بالتدفق (ATFCSM)",
   "capProtocolSwitching": "تبديل البروتوكول",
-  "moduleAddrUnverified": "عنوان غير مؤكد"
+  "moduleAddrUnverified": "عنوان غير مؤكد",
+  "interruptedBanner": "{count, plural, =1{انقطعت جلسة واحدة (أُغلق التطبيق أو انقطع الاتصال).} other{انقطعت {count} جلسات (أُغلق التطبيق أو انقطع الاتصال).}} حُفظت بياناتها حتى لحظة الانقطاع على هذا الجهاز.",
+  "recoverCta": "استعادة",
+  "recoveredDone": "{count, plural, =1{استُعيدت جلسة واحدة} other{استُعيدت {count} جلسات}}",
+  "interruptedTag": "منقطعة",
+  "interruptedReportNote": "هذه الجلسة انقطعت. تحتوي فقط على البيانات المسجلة قبل توقفها — الأنظمة الناقصة لم تُفحص، وليست «سليمة»."
 }

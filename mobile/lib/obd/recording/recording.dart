@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import '../client/capability_probe.dart';
+import 'traffic.dart';
 import '../decode/dtc.dart';
 import '../decode/uds.dart';
 import '../services/obd_models.dart';
@@ -144,6 +145,7 @@ class Recording {
     this.readiness,
     this.moduleScans = const [],
     this.adapterCapabilities,
+    this.txRxFrames = const [],
   });
 
   factory Recording.fromJsonString(String s) => Recording.fromJson(jsonDecode(s) as Map<String, dynamic>);
@@ -181,6 +183,9 @@ class Recording {
       adapterCapabilities: j['adapter_capabilities'] is Map
           ? AdapterCapabilities.fromJson((j['adapter_capabilities'] as Map).cast<String, dynamic>())
           : null,
+      txRxFrames: [
+        for (final f in (j['tx_rx_frames'] as List? ?? const [])) TxRxFrame.fromJson((f as Map).cast<String, dynamic>()),
+      ],
     );
   }
 
@@ -207,6 +212,10 @@ class Recording {
   /// What the adapter proved it can do when this was captured (null = not probed).
   final AdapterCapabilities? adapterCapabilities;
 
+  /// Raw adapter traffic (every command and reply, exact text, ms timing). Empty when
+  /// not captured (older files, replays of them).
+  final List<TxRxFrame> txRxFrames;
+
   String? get demoScenario => source['demo_scenario'] as String?;
 
   Map<String, dynamic> toJson() => {
@@ -227,6 +236,7 @@ class Recording {
         if (readiness != null) 'readiness': readiness,
         if (moduleScans.isNotEmpty) 'module_scans': [for (final m in moduleScans) m.toJson()],
         if (adapterCapabilities != null) 'adapter_capabilities': adapterCapabilities!.toJson(),
+        if (txRxFrames.isNotEmpty) 'tx_rx_frames': [for (final f in txRxFrames) f.toJson()],
       };
 
   String toJsonString({bool pretty = false}) =>
@@ -262,6 +272,8 @@ class Recording {
         readiness: readiness,
         moduleScans: moduleScans,
         adapterCapabilities: adapterCapabilities,
+        // Raw traffic contains the VIN reply bytes: it never leaves the device with an upload.
+        txRxFrames: const [],
       );
 
   /// Required top-level fields per the JSON schema; returns problems found.

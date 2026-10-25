@@ -1207,4 +1207,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moduleAddrUnverified => 'unverified address';
+
+  @override
+  String interruptedBanner(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sessions were cut short (app closed or link lost).',
+      one: '1 session was cut short (app closed or link lost).',
+    );
+    return '$_temp0 Its data up to that moment was kept on this device.';
+  }
+
+  @override
+  String get recoverCta => 'Recover';
+
+  @override
+  String recoveredDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sessions recovered',
+      one: '1 session recovered',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get interruptedTag => 'INTERRUPTED';
+
+  @override
+  String get interruptedReportNote =>
+      'This session was interrupted. It contains only the data captured before it stopped — missing systems were not checked, not \"healthy\".';
 }

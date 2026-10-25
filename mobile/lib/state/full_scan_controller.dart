@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../core/api/api_client.dart';
+import '../core/kb/local_kb.dart';
+import '../core/recording/session_journal.dart';
 import '../core/storage/scan_report.dart';
 import '../core/systems.dart';
 import '../obd/obd.dart';
@@ -21,8 +23,10 @@ Recording buildFullScanRecording({
   String? protocolName,
   String? scenarioKey,
   AdapterCapabilities? adapterCapabilities,
+  List<TxRxFrame> txRxFrames = const [],
+  DateTime? startedAt, // TX/RX t_ms are relative to this
 }) {
-  final now = DateTime.now().toUtc();
+  final now = startedAt ?? DateTime.now().toUtc();
   return Recording(
     recordingId: const Uuid().v4(),
     createdAt: now,
@@ -44,6 +48,7 @@ Recording buildFullScanRecording({
     dtcs: obdDtcs,
     moduleScans: [for (final m in moduleScans) RecordingModuleScan.fromScan(m)],
     adapterCapabilities: adapterCapabilities,
+    txRxFrames: txRxFrames,
   );
 }
 
@@ -138,6 +143,8 @@ class FullScanController extends Notifier<FullScanState> {
   @override
   FullScanState build() => const FullScanState();
 
+  TrafficTap? _traffic;
+
   Map<String, SystemGroup> _empty() => {for (final s in kVehicleSystems) s.id: SystemGroup(system: s)};
 
   void _addCode(Map<String, SystemGroup> groups, String systemId, ScanCode c) {
@@ -158,6 +165,52 @@ class FullScanController extends Notifier<FullScanState> {
     final lang = ref.read(settingsProvider).locale;
     final groups = _empty();
     state = FullScanState(running: true, groups: groups, stage: 'engine');
+    // Capture every command/reply of this scan (kept for the evidence log), and journal
+    // it durably so a scan cut short (app killed, link lost) can be recovered.
+    await _traffic?.detach();
+    final startedAt = DateTime.now().toUtc();
+    SessionJournal? journal;
+    if (conn.mode == DataMode.live || conn.mode == DataMode.demo) {
+      try {
+        journal = await SessionJournal.start(ref.read(localStoreProvider).root, {
+          'recording_id': const Uuid().v4(),
+          'created_at': startedAt.toIso8601String(),
+          'data_mode': conn.mode!.apiValue,
+          'source': {'kind': conn.sourceKind, 'app': 'full_scan', 'demo_scenario': ?conn.scenarioKey},
+        });
+      } on Object catch (_) {}
+    }
+    _traffic = TrafficTap(startedAt: startedAt, onFrame: (f) => journal?.write({'type': 'frame', 'f': f.toJson()}))
+      ..attach(client.elm.log);
+    void snapshot() => journal?.write({
+          'type': 'snapshot',
+          'r': {
+            'dtcs': [for (final d in state.obdDtcs) d.toJson()],
+            'module_scans': [for (final m in state.moduleScans) RecordingModuleScan.fromScan(m).toJson()],
+          },
+        });
+    try {
+      await _runStages(client, conn, kb, lang, groups, snapshot);
+    } finally {
+      await _traffic?.detach();
+      // Finished normally → the result is in memory (and saved via finalizeToReport).
+      // Thrown midway → keep the journal without an end line for recovery.
+      if (state.done) {
+        await journal?.complete();
+      } else {
+        await journal?.close();
+      }
+    }
+  }
+
+  Future<void> _runStages(
+    ObdClient client,
+    ConnState conn,
+    LocalKb kb,
+    String lang,
+    Map<String, SystemGroup> groups,
+    void Function() snapshot,
+  ) async {
 
     // --- Stage 1: standard OBD codes (engine / emissions / transmission / electrical / network) ---
     final obdDtcs = <Dtc>[];
@@ -188,6 +241,7 @@ class FullScanController extends Notifier<FullScanState> {
     }
 
     state = state.copy(obdDtcs: obdDtcs);
+    snapshot();
 
     // --- Stage 2: non-powertrain modules via UDS (SRS / ABS / body) — live only ---
     if (conn.mode != DataMode.replay) {
@@ -202,6 +256,7 @@ class FullScanController extends Notifier<FullScanState> {
           includeNoResponse: true, // so a module that didn't answer is shown honestly, not as "no faults"
         );
         state = state.copy(moduleScans: found);
+        snapshot();
         for (final m in found) {
           final sysId = systemIdForModuleCategory(m.module.category);
           final g = groups[sysId] ?? SystemGroup(system: systemById(sysId));
@@ -246,6 +301,8 @@ class FullScanController extends Notifier<FullScanState> {
         sourceKind: conn.sourceKind,
         scenarioKey: conn.scenarioKey,
         adapterCapabilities: ref.read(adapterCapabilitiesProvider).value,
+        txRxFrames: _traffic?.frames ?? const [],
+        startedAt: _traffic?.startedAt,
       );
       final store = ref.read(localStoreProvider);
       await store.saveRecording(rec);

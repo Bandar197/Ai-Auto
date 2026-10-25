@@ -501,5 +501,24 @@
       }
     }
   },
-  "moduleAddrUnverified": "unverified address"
+  "moduleAddrUnverified": "unverified address",
+  "interruptedBanner": "{count, plural, =1{1 session was cut short (app closed or link lost).} other{{count} sessions were cut short (app closed or link lost).}} Its data up to that moment was kept on this device.",
+  "recoverCta": "Recover",
+  "recoveredDone": "{count, plural, =1{1 session recovered} other{{count} sessions recovered}}",
+  "interruptedTag": "INTERRUPTED",
+  "interruptedReportNote": "This session was interrupted. It contains only the data captured before it stopped — missing systems were not checked, not \"healthy\".",
+  "@interruptedBanner": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@recoveredDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

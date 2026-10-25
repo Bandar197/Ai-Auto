@@ -83,11 +83,25 @@ class ExportService {
 
   /// raw.log — adapter traffic exactly as recorded (TX/RX frames when available, else the
   /// raw bytes kept with each sample).
-  static String rawLog(Recording r, {List<Map<String, dynamic>> txRxFrames = const []}) {
+  /// TX/RX frames to export: explicit evidence first, else those captured in [r];
+  /// VIN-bearing replies masked when [maskVin].
+  static List<Map<String, dynamic>> trafficFor(Recording r, {List<Map<String, dynamic>> txRxFrames = const [], bool maskVin = false}) {
+    final frames = txRxFrames.isNotEmpty ? [for (final f in txRxFrames) TxRxFrame.fromJson(f)] : r.txRxFrames;
+    return [for (final f in (maskVin ? maskVinTraffic(frames) : frames)) f.toJson()];
+  }
+
+  static String rawLog(Recording r, {List<Map<String, dynamic>> txRxFrames = const [], bool maskVin = false}) {
     final b = StringBuffer();
-    if (txRxFrames.isNotEmpty) {
-      for (final f in txRxFrames) {
-        b.writeln('${f['t_ms']}\t${(f['dir'] ?? '').toString().toUpperCase()}\t${f['can_id'] ?? ''}\t${f['data'] ?? ''}');
+    final frames = trafficFor(r, txRxFrames: txRxFrames, maskVin: maskVin);
+    if (frames.isNotEmpty) {
+      for (final f in frames) {
+        // Line breaks inside a reply are escaped so one frame stays on one line.
+        final data = '${f['data'] ?? ''}'.replaceAll('\r', r'\r').replaceAll('\n', r'\n');
+        final extra = [
+          if (f['duration_ms'] != null) '${f['duration_ms']}ms',
+          if (f['timeout'] == true) 'TIMEOUT',
+        ].join(' ');
+        b.writeln('${f['t_ms']}\t${(f['dir'] ?? '').toString().toUpperCase()}\t${f['can_id'] ?? ''}\t$data${extra.isEmpty ? '' : '\t$extra'}');
       }
     } else {
       for (final s in r.samples) {
@@ -111,7 +125,7 @@ class ExportService {
     // Explicit evidence wins; otherwise the capabilities probed during capture.
     j['adapter_capabilities'] = evidence.adapterCapabilities ?? r.adapterCapabilities?.toJson();
     j['ecu_coverage'] = evidence.ecuCoverage;
-    j['tx_rx_frames'] = evidence.txRxFrames;
+    j['tx_rx_frames'] = trafficFor(r, txRxFrames: evidence.txRxFrames, maskVin: maskVin);
     j['clear_operations'] = evidence.clearOperations;
     j['verification'] = evidence.verification;
     j['warnings'] = evidence.warnings;
@@ -139,7 +153,7 @@ class ExportService {
     final files = <String, List<int>>{
       'dtcs.csv': utf8.encode(dtcsCsv(r, describe: describe)),
       'live_data.csv': utf8.encode(liveDataCsv(r)),
-      'raw.log': utf8.encode(rawLog(r, txRxFrames: evidence.txRxFrames)),
+      'raw.log': utf8.encode(rawLog(r, txRxFrames: evidence.txRxFrames, maskVin: maskVin)),
       'before_after.json': utf8.encode(const JsonEncoder.withIndent(' ').convert(evidence.beforeAfter ?? const {})),
       'report.pdf': ?reportPdf,
       if (reportHtml != null) 'report.html': utf8.encode(reportHtml),

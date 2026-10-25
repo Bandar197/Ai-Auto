@@ -16,6 +16,7 @@ class HistoryScreen extends ConsumerWidget {
     final l = context.l10n;
     final reports = ref.watch(reportsProvider);
     final user = ref.watch(authProvider).value;
+    final interrupted = ref.watch(interruptedSessionsProvider).value ?? 0;
     return Scaffold(
       appBar: AppBar(title: Text(l.historyTitle)),
       body: RefreshIndicator(
@@ -27,6 +28,30 @@ class HistoryScreen extends ConsumerWidget {
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (e, _) => Center(child: Text(l.errorGeneric('$e'))),
           data: (list) => ListView(children: [
+            if (interrupted > 0)
+              Card(
+                key: const Key('interrupted-banner'),
+                margin: const EdgeInsets.fromLTRB(12, 12, 12, 4),
+                color: Colors.orange.withValues(alpha: 0.12),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(children: [
+                    const Icon(Icons.restore_page_outlined, color: Colors.orange),
+                    const SizedBox(width: 10),
+                    Expanded(child: Text(l.interruptedBanner(interrupted))),
+                    const SizedBox(width: 8),
+                    FilledButton(
+                      key: const Key('recover-sessions'),
+                      onPressed: () async {
+                        final messenger = ScaffoldMessenger.of(context);
+                        final n = await ref.read(reportsProvider.notifier).recoverInterrupted();
+                        messenger.showSnackBar(SnackBar(content: Text(l.recoveredDone(n))));
+                      },
+                      child: Text(l.recoverCta),
+                    ),
+                  ]),
+                ),
+              ),
             if (list.isEmpty) Padding(padding: const EdgeInsets.all(24), child: Center(child: Text(l.noSessions))),
             for (final r in list)
               Dismissible(
@@ -64,6 +89,14 @@ class HistoryScreen extends ConsumerWidget {
                   title: Row(children: [
                     Flexible(child: Text(DateFormat.yMMMd(context.lang).add_Hm().format(r.createdAt.toLocal()))),
                     const SizedBox(width: 6),
+                    if (r.interrupted) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                        decoration: BoxDecoration(color: Colors.orange.shade800, borderRadius: BorderRadius.circular(4)),
+                        child: Text(l.interruptedTag, style: const TextStyle(color: Colors.white, fontSize: 11)),
+                      ),
+                      const SizedBox(width: 4),
+                    ],
                     if (r.dataMode != 'live')
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),

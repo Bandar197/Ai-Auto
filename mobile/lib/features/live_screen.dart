@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uuid/uuid.dart';
 
+import '../core/recording/session_journal.dart';
 import '../obd/obd.dart';
 import '../state/adapter_caps_controller.dart';
 import '../state/connection_controller.dart';
@@ -36,6 +37,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
   final Stopwatch _clock = Stopwatch();
   Set<int> _selected = {};
   Recorder? _recorder;
+  SessionJournal? _journal;
   ObdClient? _boundClient;
   Recording? _boundReplay;
   String? _compareName;
@@ -48,6 +50,10 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
 
   void _teardown() {
     _sub?.cancel();
+    _recorder?.detachTraffic();
+    // Left the screen while recording: keep the journal (no end line) for recovery.
+    _journal?.close();
+    _journal = null;
     _replaySub?.cancel();
     _ticker?.cancel();
     _poller?.dispose();
@@ -124,13 +130,28 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
         app: 'automind-mobile/$appVersion',
       );
       r.adapterCapabilities = ref.read(adapterCapabilitiesProvider).value;
+      r.attachTraffic(client.elm.log);
       final s = client.supported;
       if (s != null) r.setSupported(s);
       setState(() => _recorder = r);
+      SessionJournal.start(ref.read(localStoreProvider).root, r.journalHeader()).then((j) {
+        if (identical(_recorder, r)) {
+          _journal = j;
+          r.onEntry = j.write;
+          r.checkpoint();
+        } else {
+          unawaited(j.complete());
+        }
+      }, onError: (Object _) {});
     } else {
+      unawaited(_recorder!.detachTraffic());
+      _recorder!.onEntry = null;
       final rec = _recorder!.build();
+      final journal = _journal;
+      _journal = null;
       setState(() => _recorder = null);
-      ref.read(localStoreProvider).saveRecording(rec).then((_) {
+      ref.read(localStoreProvider).saveRecording(rec).then((_) async {
+        await journal?.complete();
         if (mounted) showSnack(context, l.recordingSaved);
       });
     }

@@ -7,6 +7,8 @@ import '../core/api/api_client.dart';
 import '../core/api/automind_api.dart';
 import '../core/api/token_store.dart';
 import '../core/settings.dart';
+import '../core/recording/journal_recovery.dart';
+import '../core/recording/session_journal.dart';
 import '../core/storage/local_store.dart';
 import '../core/storage/scan_report.dart';
 import '../core/upload_queue.dart';
@@ -97,7 +99,19 @@ class ReportsNotifier extends AsyncNotifier<List<ScanReport>> {
     await refresh();
     await ref.read(pendingUploadsProvider.notifier).refresh();
   }
+
+  /// Recover sessions cut short (app killed / link lost) from their on-device journals.
+  Future<int> recoverInterrupted() async {
+    final n = (await recoverInterruptedSessions(ref.read(localStoreProvider))).length;
+    await refresh();
+    ref.invalidate(interruptedSessionsProvider);
+    return n;
+  }
 }
+
+/// How many interrupted sessions are waiting to be recovered.
+final interruptedSessionsProvider = FutureProvider<int>(
+    (ref) async => (await SessionJournal.interrupted(ref.watch(localStoreProvider).root)).length);
 
 final reportsProvider = AsyncNotifierProvider<ReportsNotifier, List<ScanReport>>(ReportsNotifier.new);
 

@@ -1,3 +1,4 @@
+import 'package:automind_app/core/recording/session_journal.dart';
 import 'package:automind_app/state/connection_controller.dart';
 import 'package:automind_app/state/providers.dart';
 import 'package:automind_app/state/scan_controller.dart';
@@ -46,5 +47,10 @@ void main() {
     expect(rec!.dataMode, 'demo');
     expect(rec.samples.length, greaterThan(5));
     expect(rec.source['kind'], 'simulator');
+    // Full TX/RX traffic is kept with the local recording (incl. the VIN request).
+    expect(rec.txRxFrames.where((f) => f.dir == 'tx').map((f) => f.data), contains('0902'));
+    expect(rec.txRxFrames.length.isEven, isTrue);
+    // A scan that finished normally leaves no journal behind to 'recover'.
+    expect(await SessionJournal.interrupted(store.root), isEmpty);
   });
 }
