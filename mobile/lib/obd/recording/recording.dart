@@ -251,6 +251,7 @@ class Recording {
         samples: samples,
         events: events,
         readiness: readiness,
+        moduleScans: moduleScans,
       );
 
   /// Required top-level fields per the JSON schema; returns problems found.

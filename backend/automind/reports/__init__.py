@@ -71,7 +71,12 @@ def render_report_pdf(result: DiagnosisResult, meta: ReportMeta, lang: Literal["
             "PDF rendering needs WeasyPrint and its native libraries; "
             "install 'automind[pdf]' or print the HTML report to PDF from a browser."
         ) from exc
-    return HTML(string=html).write_pdf()
+    try:
+        return HTML(string=html).write_pdf()
+    except Exception as exc:  # a render-time failure must not become a 500 — HTML print still works
+        raise ReportRendererUnavailable(
+            "PDF rendering failed; open the HTML report and print it to PDF instead."
+        ) from exc
 
 
 _T: dict[str, dict[str, str]] = {

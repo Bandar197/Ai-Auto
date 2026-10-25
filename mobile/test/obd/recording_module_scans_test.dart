@@ -65,6 +65,10 @@ void main() {
     expect(back.moduleScans.length, 2);
     expect(back.moduleScans[0].outcome, 'no_response');
     expect(back.moduleScans[1].codes.single.code, 'B0051');
+    // redactVin() (the default upload path when VIN is excluded) must keep module scans.
+    expect(rec.redactVin().moduleScans.length, 2);
+    expect(rec.redactVin().toJson().containsKey('module_scans'), isTrue);
+
     // A recording with no module scans omits the key entirely.
     final bare = Recording(
       recordingId: 'r2', createdAt: DateTime.utc(2026), dataMode: 'live',

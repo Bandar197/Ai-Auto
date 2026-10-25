@@ -70,7 +70,7 @@ class FullScanScreen extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
             child: Text(l.fullScanCoverageNote, style: Theme.of(context).textTheme.bodySmall),
           ),
-        if (scan.done && conn.mode != DataMode.replay)
+        if (scan.done && conn.mode != null && conn.mode != DataMode.replay)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: scan.uploading

@@ -258,7 +258,9 @@ async def store_readiness(conn: AsyncConnection, session: Mapping[str, Any], rea
 async def ingest_recording_into_session(conn: AsyncConnection, session: Mapping[str, Any], rec: Recording) -> None:
     """Derive DTC and telemetry rows from a recording unless they were uploaded separately."""
     if rec.readiness:
-        await store_readiness(conn, session, rec.readiness)
+        # Reassign: store_readiness returns the summary-updated mapping so a later
+        # summary write (module_scans, below) merges onto it instead of clobbering it.
+        session = await store_readiness(conn, session, rec.readiness)
     has_dtcs = (
         await conn.execute(
             select(t.diagnostic_trouble_codes.c.id).where(t.diagnostic_trouble_codes.c.session_id == session["id"]).limit(1)

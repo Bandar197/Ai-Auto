@@ -232,41 +232,47 @@ class FullScanController extends Notifier<FullScanState> {
     if (mode == null || mode == DataMode.replay) return; // only a fresh live/demo scan is recordable
     state = state.copy(uploading: true, error: null);
 
-    final rec = buildFullScanRecording(
-      dataMode: mode.apiValue,
-      moduleScans: state.moduleScans,
-      obdDtcs: state.obdDtcs,
-      vehicle: ref.read(selectedVehicleProvider),
-      sourceKind: conn.sourceKind,
-      scenarioKey: conn.scenarioKey,
-    );
-    final store = ref.read(localStoreProvider);
-    await store.saveRecording(rec);
-    final vehicleId = ref.read(settingsProvider).selectedVehicleId;
-    final report = ScanReport(
-      id: const Uuid().v4(),
-      createdAt: DateTime.now().toUtc(),
-      dataMode: mode.apiValue,
-      simulator: conn.isSimulator,
-      scenarioKey: conn.scenarioKey,
-      recordingId: rec.recordingId,
-      dtcs: [for (final d in rec.dtcs) d.toJson()],
-      vehicleId: vehicleId != null && !vehicleId.startsWith('local-') ? vehicleId : null,
-    );
-    await store.saveReport(report);
-
-    final queue = ref.read(uploadQueueProvider);
-    final user = ref.read(authProvider).value;
+    String? reportId;
+    String? error;
     try {
+      final rec = buildFullScanRecording(
+        dataMode: mode.apiValue,
+        moduleScans: state.moduleScans,
+        obdDtcs: state.obdDtcs,
+        vehicle: ref.read(selectedVehicleProvider),
+        sourceKind: conn.sourceKind,
+        scenarioKey: conn.scenarioKey,
+      );
+      final store = ref.read(localStoreProvider);
+      await store.saveRecording(rec);
+      final vehicleId = ref.read(settingsProvider).selectedVehicleId;
+      final report = ScanReport(
+        id: const Uuid().v4(),
+        createdAt: DateTime.now().toUtc(),
+        dataMode: mode.apiValue,
+        simulator: conn.isSimulator,
+        scenarioKey: conn.scenarioKey,
+        recordingId: rec.recordingId,
+        dtcs: [for (final d in rec.dtcs) d.toJson()],
+        vehicleId: vehicleId != null && !vehicleId.startsWith('local-') ? vehicleId : null,
+      );
+      await store.saveReport(report);
+      reportId = report.id; // saved locally — viewable even if the upload fails
+
+      final queue = ref.read(uploadQueueProvider);
+      final user = ref.read(authProvider).value;
       if (user == null) {
         await queue.enqueue(report.id); // offline: report viewable once signed in / online
       } else {
         await queue.uploadOne(report);
       }
-      state = state.copy(uploading: false, reportId: report.id);
     } on ApiException catch (e) {
-      // The report is saved locally; surface the upload error but still expose the id.
-      state = state.copy(uploading: false, reportId: report.id, error: '${e.code}: ${e.message}');
+      error = '${e.code}: ${e.message}'; // report is saved locally; surface the upload error
+    } on Object catch (e) {
+      error = e.toString();
+    } finally {
+      // Always clear the spinner; expose the local report id when we got that far.
+      state = state.copy(uploading: false, reportId: reportId, error: error);
     }
   }
 }
