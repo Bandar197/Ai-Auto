@@ -35,6 +35,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteScanDone => 'Scan deleted.';
 
   @override
+  String get knowledgeTitle => 'Guide & tips';
+
+  @override
+  String get knowledgeSubtitle =>
+      'What the warning lights mean, how each system is read, and practical maintenance tips.';
+
+  @override
   String get edit => 'Edit';
 
   @override

@@ -11,13 +11,53 @@ import 'state/providers.dart';
 
 const String appFont = 'IBMPlexSansArabic';
 
+/// AutoMind brand seed (teal). The whole palette derives from it per brightness.
+const Color brandSeed = Color(0xFF00A88F);
+
 ThemeData buildTheme(Brightness b) {
-  final scheme = ColorScheme.fromSeed(seedColor: const Color(0xFF00A88F), brightness: b);
+  final dark = b == Brightness.dark;
+  final scheme = ColorScheme.fromSeed(seedColor: brandSeed, brightness: b);
+  final buttonShape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(12));
   return ThemeData(
     colorScheme: scheme,
     useMaterial3: true,
     fontFamily: appFont,
-    appBarTheme: const AppBarTheme(centerTitle: false),
+    scaffoldBackgroundColor: dark ? scheme.surface : const Color(0xFFF5F7F8),
+    appBarTheme: AppBarTheme(
+      centerTitle: false,
+      scrolledUnderElevation: 2,
+      backgroundColor: dark ? scheme.surface : scheme.surface,
+      foregroundColor: scheme.onSurface,
+      titleTextStyle: TextStyle(
+        fontFamily: appFont, fontSize: 20, fontWeight: FontWeight.w700, color: scheme.onSurface),
+    ),
+    cardTheme: CardThemeData(
+      elevation: 0,
+      clipBehavior: Clip.antiAlias,
+      color: scheme.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: scheme.outlineVariant),
+      ),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48), shape: buttonShape),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48), shape: buttonShape),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+    ),
+    chipTheme: ChipThemeData(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+    dividerTheme: DividerThemeData(color: scheme.outlineVariant, space: 1, thickness: 1),
+    snackBarTheme: SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
   );
 }
 

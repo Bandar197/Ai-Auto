@@ -146,6 +146,18 @@ abstract class AppLocalizations {
   /// **'Scan deleted.'**
   String get deleteScanDone;
 
+  /// No description provided for @knowledgeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Guide & tips'**
+  String get knowledgeTitle;
+
+  /// No description provided for @knowledgeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What the warning lights mean, how each system is read, and practical maintenance tips.'**
+  String get knowledgeSubtitle;
+
   /// No description provided for @edit.
   ///
   /// In en, this message translates to:

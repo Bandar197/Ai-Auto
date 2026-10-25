@@ -35,6 +35,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deleteScanDone => 'تم حذف الفحص.';
 
   @override
+  String get knowledgeTitle => 'الدليل والنصائح';
+
+  @override
+  String get knowledgeSubtitle =>
+      'معاني لمبات التحذير، وكيف يُقرأ كل نظام، ونصائح صيانة عملية.';
+
+  @override
   String get edit => 'تعديل';
 
   @override

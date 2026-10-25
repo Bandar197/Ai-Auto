@@ -171,6 +171,19 @@ class HomeScreen extends ConsumerWidget {
             ),
           ),
           Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                child: Icon(Icons.menu_book_outlined, color: Theme.of(context).colorScheme.onPrimaryContainer),
+              ),
+              title: Text(l.knowledgeTitle),
+              subtitle: Text(l.knowledgeSubtitle, maxLines: 2, overflow: TextOverflow.ellipsis),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/knowledge'),
+            ),
+          ),
+          Padding(
             padding: const EdgeInsets.all(12),
             child: Row(children: [
               Expanded(
