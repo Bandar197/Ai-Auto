@@ -158,6 +158,42 @@ abstract class AppLocalizations {
   /// **'What the warning lights mean, how each system is read, and practical maintenance tips.'**
   String get knowledgeSubtitle;
 
+  /// No description provided for @reportModulesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Module scan (airbag / ABS / body)'**
+  String get reportModulesTitle;
+
+  /// No description provided for @moduleReadCodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Stored codes'**
+  String get moduleReadCodes;
+
+  /// No description provided for @moduleNoCodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Read — no stored codes'**
+  String get moduleNoCodes;
+
+  /// No description provided for @moduleRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'Present but refused the read (security gateway)'**
+  String get moduleRefused;
+
+  /// No description provided for @moduleNoResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'No response — couldn\'t verify'**
+  String get moduleNoResponse;
+
+  /// No description provided for @moduleAirbagUnverified.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t verify the airbag (SRS). If the light is on it may be a real fault — see a specialist.'**
+  String get moduleAirbagUnverified;
+
   /// No description provided for @edit.
   ///
   /// In en, this message translates to:

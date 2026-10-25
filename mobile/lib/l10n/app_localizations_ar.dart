@@ -42,6 +42,25 @@ class AppLocalizationsAr extends AppLocalizations {
       'معاني لمبات التحذير، وكيف يُقرأ كل نظام، ونصائح صيانة عملية.';
 
   @override
+  String get reportModulesTitle => 'فحص الوحدات (الإيرباق / ABS / الهيكل)';
+
+  @override
+  String get moduleReadCodes => 'أكواد مخزّنة';
+
+  @override
+  String get moduleNoCodes => 'تمت القراءة — لا أكواد مخزّنة';
+
+  @override
+  String get moduleRefused => 'موجودة لكن رفضت القراءة (بوابة أمنية)';
+
+  @override
+  String get moduleNoResponse => 'لا استجابة — تعذّر التحقق';
+
+  @override
+  String get moduleAirbagUnverified =>
+      'تعذّر التحقق من الإيرباق (SRS). إذا كانت اللمبة مضاءة فقد يكون عطلاً فعلياً — راجع متخصصاً.';
+
+  @override
   String get edit => 'تعديل';
 
   @override

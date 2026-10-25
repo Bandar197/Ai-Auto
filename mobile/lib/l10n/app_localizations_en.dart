@@ -42,6 +42,25 @@ class AppLocalizationsEn extends AppLocalizations {
       'What the warning lights mean, how each system is read, and practical maintenance tips.';
 
   @override
+  String get reportModulesTitle => 'Module scan (airbag / ABS / body)';
+
+  @override
+  String get moduleReadCodes => 'Stored codes';
+
+  @override
+  String get moduleNoCodes => 'Read — no stored codes';
+
+  @override
+  String get moduleRefused => 'Present but refused the read (security gateway)';
+
+  @override
+  String get moduleNoResponse => 'No response — couldn\'t verify';
+
+  @override
+  String get moduleAirbagUnverified =>
+      'Couldn\'t verify the airbag (SRS). If the light is on it may be a real fault — see a specialist.';
+
+  @override
   String get edit => 'Edit';
 
   @override

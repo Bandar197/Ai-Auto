@@ -156,6 +156,17 @@ class ReportView extends StatelessWidget {
                 ),
             ]),
           ),
+        if (d != null && (d['module_scans'] as List?)?.isNotEmpty == true)
+          SectionCard(
+            title: l.reportModulesTitle,
+            icon: Icons.memory_outlined,
+            child: Column(
+              children: [
+                for (final m in (d['module_scans'] as List).cast<Map<String, dynamic>>())
+                  _moduleRow(context, m),
+              ],
+            ),
+          ),
         if (report.freezeFrames.isNotEmpty)
           SectionCard(
             title: '${l.freezeFrame} ${report.freezeFrames.first['dtc'] ?? ''}',
@@ -185,6 +196,45 @@ class ReportView extends StatelessWidget {
           ),
       ]),
     );
+  }
+
+  /// One module-scan row, coloured by its honest outcome. A module that didn't
+  /// answer or refused is never shown as healthy; an unverified airbag is flagged.
+  Widget _moduleRow(BuildContext context, Map<String, dynamic> m) {
+    final l = context.l10n;
+    final lang = context.lang;
+    final outcome = m['outcome'] as String?;
+    final (IconData icon, Color color, String text) = switch (outcome) {
+      'read_codes' => (Icons.error_outline, Colors.red, l.moduleReadCodes),
+      'read_no_codes' => (Icons.check_circle_outline, Colors.green, l.moduleNoCodes),
+      'refused' => (Icons.lock_outline, Colors.orange, l.moduleRefused),
+      _ => (Icons.help_outline, Colors.grey, l.moduleNoResponse),
+    };
+    final codes = ((m['codes'] as List?) ?? const []).cast<Map<String, dynamic>>();
+    final isAirbagUnverified = outcome == 'no_response' && m['category'] == 'airbag';
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Icon(icon, color: color),
+        title: Text(pickLang(m, 'name', lang), style: const TextStyle(fontWeight: FontWeight.w600)),
+        subtitle: Text(text, style: TextStyle(color: color)),
+        trailing: m['address'] == null ? null : Text('${m['address']}', textDirection: TextDirection.ltr, style: Theme.of(context).textTheme.bodySmall),
+      ),
+      for (final c in codes)
+        Padding(
+          padding: const EdgeInsetsDirectional.only(start: 56, bottom: 6),
+          child: Text(
+            '${c['code']}${c['known'] == true ? ' · ${pickLang(c, 'description', lang)}' : ''}',
+            textDirection: TextDirection.ltr,
+            textAlign: TextAlign.start,
+          ),
+        ),
+      if (isAirbagUnverified)
+        Padding(
+          padding: const EdgeInsetsDirectional.only(start: 56, bottom: 8),
+          child: Text(l.moduleAirbagUnverified, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.red)),
+        ),
+    ]);
   }
 
   Widget _dtcs(BuildContext context, List<Map<String, dynamic>> serverDtcs) {
