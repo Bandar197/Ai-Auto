@@ -1244,4 +1244,71 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get interruptedReportNote =>
       'هذه الجلسة انقطعت. تحتوي فقط على البيانات المسجلة قبل توقفها — الأنظمة الناقصة لم تُفحص، وليست «سليمة».';
+
+  @override
+  String get importSession => 'استيراد جلسة';
+
+  @override
+  String get importDone => 'تم استيراد الجلسة';
+
+  @override
+  String get importDuplicate => 'هذه الجلسة موجودة في سجلك بالفعل';
+
+  @override
+  String importTampered(String files) {
+    return 'مرفوض: حزمة الأدلة عُدّلت (بصمة SHA-256 لا تطابق: $files)';
+  }
+
+  @override
+  String get importInvalid => 'الملف ليس جلسة من التطبيق';
+
+  @override
+  String get importedTag => 'مستوردة';
+
+  @override
+  String get compareTitle => 'مقارنة جلستين';
+
+  @override
+  String get compareBefore => 'الجلسة الأقدم';
+
+  @override
+  String get compareAfter => 'الجلسة الأحدث';
+
+  @override
+  String get compareNeedTwo => 'احفظ جلستين على الأقل للمقارنة.';
+
+  @override
+  String get compareNew => 'أكواد جديدة';
+
+  @override
+  String get compareResolved => 'اختفت — مؤكَّد بقراءة ناجحة';
+
+  @override
+  String get comparePersisting => 'ما زالت موجودة';
+
+  @override
+  String get compareUnverified =>
+      'لم تُفحص في الجلسة الأحدث (لم تُقرأ الوحدة/OBD) — لا تُحسب مُصلَحة';
+
+  @override
+  String get compareModules => 'تغيّرات قراءة الوحدات';
+
+  @override
+  String get compareMixedModes =>
+      'إحدى الجلستين تجريبية (DEMO) والأخرى حقيقية — قارن بحذر.';
+
+  @override
+  String get compareNoChanges => 'لا اختلاف في أكواد الأعطال.';
+
+  @override
+  String get compareNotRead => 'لم تُجرَّب';
+
+  @override
+  String get exportFolder => 'مجلد التصدير';
+
+  @override
+  String get exportFolderDefault => 'مجلد التطبيق (افتراضي)';
+
+  @override
+  String get exportFolderReset => 'استخدم الافتراضي';
 }

@@ -1239,4 +1239,71 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get interruptedReportNote =>
       'This session was interrupted. It contains only the data captured before it stopped — missing systems were not checked, not \"healthy\".';
+
+  @override
+  String get importSession => 'Import session';
+
+  @override
+  String get importDone => 'Session imported';
+
+  @override
+  String get importDuplicate => 'This session is already in your history';
+
+  @override
+  String importTampered(String files) {
+    return 'Refused: the evidence bundle was modified (SHA-256 mismatch: $files)';
+  }
+
+  @override
+  String get importInvalid => 'Not an AutoMind session file';
+
+  @override
+  String get importedTag => 'IMPORTED';
+
+  @override
+  String get compareTitle => 'Compare sessions';
+
+  @override
+  String get compareBefore => 'Earlier session';
+
+  @override
+  String get compareAfter => 'Later session';
+
+  @override
+  String get compareNeedTwo => 'Save at least two sessions to compare.';
+
+  @override
+  String get compareNew => 'New codes';
+
+  @override
+  String get compareResolved => 'Gone — confirmed by a successful read';
+
+  @override
+  String get comparePersisting => 'Still present';
+
+  @override
+  String get compareUnverified =>
+      'Not checked in the later session (module/OBD not read) — not counted as fixed';
+
+  @override
+  String get compareModules => 'Module read changes';
+
+  @override
+  String get compareMixedModes =>
+      'One session is DEMO and the other LIVE — compare with care.';
+
+  @override
+  String get compareNoChanges => 'No differences in fault codes.';
+
+  @override
+  String get compareNotRead => 'not attempted';
+
+  @override
+  String get exportFolder => 'Export folder';
+
+  @override
+  String get exportFolderDefault => 'App folder (default)';
+
+  @override
+  String get exportFolderReset => 'Use default';
 }

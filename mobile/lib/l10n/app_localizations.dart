@@ -2287,6 +2287,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This session was interrupted. It contains only the data captured before it stopped — missing systems were not checked, not \"healthy\".'**
   String get interruptedReportNote;
+
+  /// No description provided for @importSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Import session'**
+  String get importSession;
+
+  /// No description provided for @importDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Session imported'**
+  String get importDone;
+
+  /// No description provided for @importDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'This session is already in your history'**
+  String get importDuplicate;
+
+  /// No description provided for @importTampered.
+  ///
+  /// In en, this message translates to:
+  /// **'Refused: the evidence bundle was modified (SHA-256 mismatch: {files})'**
+  String importTampered(String files);
+
+  /// No description provided for @importInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Not an AutoMind session file'**
+  String get importInvalid;
+
+  /// No description provided for @importedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'IMPORTED'**
+  String get importedTag;
+
+  /// No description provided for @compareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare sessions'**
+  String get compareTitle;
+
+  /// No description provided for @compareBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier session'**
+  String get compareBefore;
+
+  /// No description provided for @compareAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'Later session'**
+  String get compareAfter;
+
+  /// No description provided for @compareNeedTwo.
+  ///
+  /// In en, this message translates to:
+  /// **'Save at least two sessions to compare.'**
+  String get compareNeedTwo;
+
+  /// No description provided for @compareNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New codes'**
+  String get compareNew;
+
+  /// No description provided for @compareResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Gone — confirmed by a successful read'**
+  String get compareResolved;
+
+  /// No description provided for @comparePersisting.
+  ///
+  /// In en, this message translates to:
+  /// **'Still present'**
+  String get comparePersisting;
+
+  /// No description provided for @compareUnverified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not checked in the later session (module/OBD not read) — not counted as fixed'**
+  String get compareUnverified;
+
+  /// No description provided for @compareModules.
+  ///
+  /// In en, this message translates to:
+  /// **'Module read changes'**
+  String get compareModules;
+
+  /// No description provided for @compareMixedModes.
+  ///
+  /// In en, this message translates to:
+  /// **'One session is DEMO and the other LIVE — compare with care.'**
+  String get compareMixedModes;
+
+  /// No description provided for @compareNoChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'No differences in fault codes.'**
+  String get compareNoChanges;
+
+  /// No description provided for @compareNotRead.
+  ///
+  /// In en, this message translates to:
+  /// **'not attempted'**
+  String get compareNotRead;
+
+  /// No description provided for @exportFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Export folder'**
+  String get exportFolder;
+
+  /// No description provided for @exportFolderDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'App folder (default)'**
+  String get exportFolderDefault;
+
+  /// No description provided for @exportFolderReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Use default'**
+  String get exportFolderReset;
 }
 
 class _AppLocalizationsDelegate

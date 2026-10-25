@@ -63,9 +63,11 @@ class Recorder {
   /// snapshots — wire it to a durable journal so an interrupted session survives.
   void Function(Map<String, dynamic> entry)? onEntry;
 
-  /// Start capturing every adapter command/reply (TX/RX) into this recording.
+  /// Start capturing every adapter command/reply (TX/RX) into this recording. Calling
+  /// it again (e.g. after a reconnect) follows the new link and keeps earlier frames.
   TrafficTap attachTraffic(Stream<ElmResponse> log) {
-    _traffic?.detach();
+    final existing = _traffic;
+    if (existing != null) return existing..attach(log);
     return _traffic = TrafficTap(
       startedAt: _startedAt,
       now: _now,

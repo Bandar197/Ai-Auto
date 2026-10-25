@@ -82,4 +82,19 @@ void main() {
     final v2 = ExportService.sessionV2(rec(), maskVin: true);
     expect(((v2['tx_rx_frames'] as List)[1] as Map)['data'], '[VIN masked]');
   });
+
+  test('re-attaching after a reconnect keeps earlier frames', () async {
+    final rec = Recorder(dataMode: DataMode.live, sourceKind: 'elm327_ble', table: loadTable(), newId: () => 'x');
+    for (final reply in ['A', 'B']) {
+      final t = ScriptedTransport({'ATI': reply});
+      await t.connect();
+      final elm = Elm327(t)..attach();
+      rec.attachTraffic(elm.log);
+      await elm.send('ATI');
+      await Future<void>.delayed(Duration.zero);
+    }
+    await rec.detachTraffic();
+    final rx = rec.build().txRxFrames.where((f) => f.dir == 'rx').map((f) => f.data.trim()).toList();
+    expect(rx, ['A', 'B']);
+  });
 }

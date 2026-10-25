@@ -1,3 +1,6 @@
+import 'dart:io' show Platform;
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -66,6 +69,23 @@ class SettingsScreen extends ConsumerWidget {
           subtitle: Text(s.backendUrl, textDirection: TextDirection.ltr),
           onTap: () => _editText(context, ref, l.backendUrl, s.backendUrl, (x, v) => x.copyWith(backendUrl: v)),
         ),
+        if (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
+          ListTile(
+            key: const Key('export-folder'),
+            leading: const Icon(Icons.folder_outlined),
+            title: Text(l.exportFolder),
+            subtitle: Text(s.exportDir.isEmpty ? l.exportFolderDefault : s.exportDir, textDirection: TextDirection.ltr),
+            trailing: s.exportDir.isEmpty
+                ? null
+                : TextButton(
+                    onPressed: () => ref.read(settingsProvider.notifier).change((x) => x.copyWith(exportDir: '')),
+                    child: Text(l.exportFolderReset),
+                  ),
+            onTap: () async {
+              final dir = await FilePicker.getDirectoryPath();
+              if (dir != null) await ref.read(settingsProvider.notifier).change((x) => x.copyWith(exportDir: dir));
+            },
+          ),
         SwitchListTile(
           secondary: const Icon(Icons.badge_outlined),
           title: Text(l.includeVin),

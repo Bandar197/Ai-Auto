@@ -8,6 +8,7 @@ import '../core/api/automind_api.dart';
 import '../core/api/token_store.dart';
 import '../core/settings.dart';
 import '../core/recording/journal_recovery.dart';
+import '../core/recording/session_import.dart';
 import '../core/recording/session_journal.dart';
 import '../core/storage/local_store.dart';
 import '../core/storage/scan_report.dart';
@@ -28,6 +29,7 @@ class SettingsNotifier extends Notifier<AppSettings> {
 
   Future<void> change(AppSettings Function(AppSettings s) f) async {
     state = f(state);
+    ref.read(localStoreProvider).exportDir = state.exportDir;
     await state.save(ref.read(sharedPrefsProvider));
   }
 }
@@ -98,6 +100,22 @@ class ReportsNotifier extends AsyncNotifier<List<ScanReport>> {
     await ref.read(localStoreProvider).deleteReport(id);
     await refresh();
     await ref.read(pendingUploadsProvider.notifier).refresh();
+  }
+
+  /// Add a session read from a file to History (local only, mode kept as recorded).
+  /// Returns null when that recording is already on this device (nothing overwritten).
+  Future<ScanReport?> importSession(ImportedSession s) async {
+    final store = ref.read(localStoreProvider);
+    if (await store.loadRecording(s.recording.recordingId) != null) return null;
+    await store.saveRecording(s.recording);
+    final report = localReportFor(
+      s.recording,
+      sessionState: s.sessionState == 'interrupted' ? 'interrupted' : null,
+      origin: 'imported',
+    );
+    await store.saveReport(report);
+    await refresh();
+    return report;
   }
 
   /// Recover sessions cut short (app killed / link lost) from their on-device journals.

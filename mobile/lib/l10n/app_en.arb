@@ -520,5 +520,33 @@
         "type": "int"
       }
     }
+  },
+  "importSession": "Import session",
+  "importDone": "Session imported",
+  "importDuplicate": "This session is already in your history",
+  "importTampered": "Refused: the evidence bundle was modified (SHA-256 mismatch: {files})",
+  "importInvalid": "Not an AutoMind session file",
+  "importedTag": "IMPORTED",
+  "compareTitle": "Compare sessions",
+  "compareBefore": "Earlier session",
+  "compareAfter": "Later session",
+  "compareNeedTwo": "Save at least two sessions to compare.",
+  "compareNew": "New codes",
+  "compareResolved": "Gone — confirmed by a successful read",
+  "comparePersisting": "Still present",
+  "compareUnverified": "Not checked in the later session (module/OBD not read) — not counted as fixed",
+  "compareModules": "Module read changes",
+  "compareMixedModes": "One session is DEMO and the other LIVE — compare with care.",
+  "compareNoChanges": "No differences in fault codes.",
+  "compareNotRead": "not attempted",
+  "exportFolder": "Export folder",
+  "exportFolderDefault": "App folder (default)",
+  "exportFolderReset": "Use default",
+  "@importTampered": {
+    "placeholders": {
+      "files": {
+        "type": "String"
+      }
+    }
   }
 }

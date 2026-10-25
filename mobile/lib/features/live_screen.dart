@@ -45,15 +45,15 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
   @override
   void dispose() {
     _teardown();
+    // Left the screen while recording: keep the journal (no end line) for recovery.
+    _recorder?.detachTraffic();
+    _journal?.close();
+    _journal = null;
     super.dispose();
   }
 
   void _teardown() {
     _sub?.cancel();
-    _recorder?.detachTraffic();
-    // Left the screen while recording: keep the journal (no end line) for recovery.
-    _journal?.close();
-    _journal = null;
     _replaySub?.cancel();
     _ticker?.cancel();
     _poller?.dispose();
@@ -77,6 +77,8 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
     _teardown();
     _boundClient = client;
     _series.clear();
+    // Recording continues across a reconnect: follow the new link's traffic.
+    _recorder?.attachTraffic(client.elm.log);
     if (client.supported == null) await client.readSupportedPids();
     final sup = client.supported!.all;
     _selected = {for (final p in defaultPids) if (sup.contains(p)) p};

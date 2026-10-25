@@ -11,6 +11,28 @@ class LocalStore {
 
   final Directory root;
 
+  /// User-chosen export folder ('' / null = `<app folder>/exports`). If it can't be
+  /// written (removed drive, no permission) exports fall back to the app folder.
+  String? exportDir;
+
+  Directory get defaultExportDir => Directory('${root.path}/exports');
+
+  Future<Directory> _exportTarget() async {
+    final custom = exportDir;
+    if (custom != null && custom.isNotEmpty) {
+      try {
+        final d = Directory(custom);
+        await d.create(recursive: true);
+        final probe = File('${d.path}/.automind_write_test');
+        await probe.writeAsString('ok', flush: true);
+        await probe.delete();
+        return d;
+      } on FileSystemException catch (_) {}
+    }
+    await defaultExportDir.create(recursive: true);
+    return defaultExportDir;
+  }
+
   Directory get _recordings => Directory('${root.path}/recordings');
   Directory get _reports => Directory('${root.path}/reports');
   File get _queue => File('${root.path}/upload_queue.json');
@@ -130,18 +152,14 @@ class LocalStore {
   /// Write a binary export (e.g. an evidence ZIP) atomically: temp file, then rename,
   /// so a crash mid-write never leaves a half-written bundle under the final name.
   Future<File> writeExportBytes(String fileName, List<int> bytes) async {
-    final dir = Directory('${root.path}/exports');
-    await dir.create(recursive: true);
+    final dir = await _exportTarget();
     final tmp = File('${dir.path}/$fileName.tmp');
     await tmp.writeAsBytes(bytes, flush: true);
     return tmp.rename('${dir.path}/$fileName');
   }
 
   Future<File> writeExport(String fileName, String content) async {
-    final dir = Directory('${root.path}/exports');
-    await dir.create(recursive: true);
-    final f = File('${dir.path}/$fileName');
-    await f.writeAsString(content);
-    return f;
+    final dir = await _exportTarget();
+    return _atomic(File('${dir.path}/$fileName'), content);
   }
 }

@@ -1,9 +1,11 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import '../core/api/api_client.dart';
+import '../core/recording/session_import.dart';
 import '../state/providers.dart';
 import '../ui/l10n_helpers.dart';
 import '../ui/widgets.dart';
@@ -18,7 +20,20 @@ class HistoryScreen extends ConsumerWidget {
     final user = ref.watch(authProvider).value;
     final interrupted = ref.watch(interruptedSessionsProvider).value ?? 0;
     return Scaffold(
-      appBar: AppBar(title: Text(l.historyTitle)),
+      appBar: AppBar(title: Text(l.historyTitle), actions: [
+        IconButton(
+          key: const Key('compare-sessions'),
+          tooltip: l.compareTitle,
+          icon: const Icon(Icons.compare_arrows),
+          onPressed: () => context.push('/compare'),
+        ),
+        IconButton(
+          key: const Key('import-session'),
+          tooltip: l.importSession,
+          icon: const Icon(Icons.file_open_outlined),
+          onPressed: () => _import(context, ref),
+        ),
+      ]),
       body: RefreshIndicator(
         onRefresh: () async {
           await ref.read(pendingUploadsProvider.notifier).sync();
@@ -89,6 +104,14 @@ class HistoryScreen extends ConsumerWidget {
                   title: Row(children: [
                     Flexible(child: Text(DateFormat.yMMMd(context.lang).add_Hm().format(r.createdAt.toLocal()))),
                     const SizedBox(width: 6),
+                    if (r.imported) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                        decoration: BoxDecoration(color: Colors.blueGrey, borderRadius: BorderRadius.circular(4)),
+                        child: Text(l.importedTag, style: const TextStyle(color: Colors.white, fontSize: 11)),
+                      ),
+                      const SizedBox(width: 4),
+                    ],
                     if (r.interrupted) ...[
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
@@ -115,6 +138,23 @@ class HistoryScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Pick a recording JSON (v1/v2) or an evidence ZIP and add it to History.
+Future<void> _import(BuildContext context, WidgetRef ref) async {
+  final l = context.l10n;
+  final messenger = ScaffoldMessenger.of(context);
+  final files = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['json', 'zip']);
+  if (files.isEmpty) return;
+  String msg;
+  try {
+    final s = importSessionBytes(await files.first.readAsBytes(), fileName: files.first.name);
+    final report = await ref.read(reportsProvider.notifier).importSession(s);
+    msg = report == null ? l.importDuplicate : l.importDone;
+  } on ImportException catch (e) {
+    msg = e.error == ImportError.tampered ? l.importTampered(e.detail ?? '') : l.importInvalid;
+  }
+  messenger.showSnackBar(SnackBar(content: Text(msg)));
 }
 
 class _ServerSessions extends ConsumerWidget {

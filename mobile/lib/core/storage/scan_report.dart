@@ -21,6 +21,7 @@ class ScanReport {
     this.connectionLog,
     this.milOn,
     this.sessionState,
+    this.origin,
   });
 
   factory ScanReport.fromJson(Map<String, dynamic> j) => ScanReport(
@@ -44,6 +45,7 @@ class ScanReport {
         connectionLog: (j['connection_log'] as Map?)?.cast<String, dynamic>(),
         milOn: j['mil_on'] as bool?,
         sessionState: j['session_state'] as String?,
+        origin: j['origin'] as String?,
       );
 
   final String id;
@@ -77,6 +79,10 @@ class ScanReport {
   final String? sessionState;
   bool get interrupted => sessionState == 'interrupted';
 
+  /// null = captured on this device; 'imported' = read from a file.
+  final String? origin;
+  bool get imported => origin == 'imported';
+
   bool get isDemo => dataMode == 'demo' || (dataMode == 'replay' && originalMode == 'demo');
   bool get isReplay => dataMode == 'replay';
   int? get healthScore => (diagnosis?['health_score'] as num?)?.toInt();
@@ -103,5 +109,6 @@ class ScanReport {
         'connection_log': connectionLog,
         'mil_on': milOn,
         if (sessionState != null) 'session_state': sessionState,
+        if (origin != null) 'origin': origin,
       };
 }

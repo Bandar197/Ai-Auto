@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
+import 'core/settings.dart';
 import 'core/storage/local_store.dart';
 import 'state/app_assets.dart';
 import 'state/providers.dart';
@@ -20,7 +21,7 @@ Future<void> main() async {
       retry: (_, _) => null,
       overrides: [
         sharedPrefsProvider.overrideWithValue(prefs),
-        localStoreProvider.overrideWithValue(LocalStore(dir)),
+        localStoreProvider.overrideWithValue(LocalStore(dir)..exportDir = AppSettings.load(prefs).exportDir),
         appAssetsProvider.overrideWithValue(assets),
       ],
       child: const AutoMindApp(),

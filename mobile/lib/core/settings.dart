@@ -25,6 +25,7 @@ class AppSettings {
     this.onboardingDone = false,
     this.offlineMode = false,
     this.selectedVehicleId,
+    this.exportDir = '',
   });
 
   /// Android emulator → host machine. Change in Settings for a device.
@@ -62,6 +63,9 @@ class AppSettings {
   final bool offlineMode;
   final String? selectedVehicleId;
 
+  /// Folder for exports (evidence ZIP, CSV, JSON). '' = the app's own folder.
+  final String exportDir;
+
   AppSettings copyWith({
     String? locale,
     String? backendUrl,
@@ -83,6 +87,7 @@ class AppSettings {
     bool? offlineMode,
     String? selectedVehicleId,
     bool clearVehicle = false,
+    String? exportDir,
   }) =>
       AppSettings(
         locale: locale ?? this.locale,
@@ -104,6 +109,7 @@ class AppSettings {
         onboardingDone: onboardingDone ?? this.onboardingDone,
         offlineMode: offlineMode ?? this.offlineMode,
         selectedVehicleId: clearVehicle ? null : (selectedVehicleId ?? this.selectedVehicleId),
+        exportDir: exportDir ?? this.exportDir,
       );
 
   static AppSettings load(SharedPreferences p) => AppSettings(
@@ -126,6 +132,7 @@ class AppSettings {
         onboardingDone: p.getBool('onboardingDone') ?? false,
         offlineMode: p.getBool('offlineMode') ?? false,
         selectedVehicleId: p.getString('selectedVehicleId'),
+        exportDir: p.getString('exportDir') ?? '',
       );
 
   Future<void> save(SharedPreferences p) async {
@@ -147,6 +154,7 @@ class AppSettings {
     await p.setInt('captureSeconds', captureSeconds);
     await p.setBool('onboardingDone', onboardingDone);
     await p.setBool('offlineMode', offlineMode);
+    await p.setString('exportDir', exportDir);
     if (selectedVehicleId == null) {
       await p.remove('selectedVehicleId');
     } else {
