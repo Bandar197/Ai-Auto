@@ -54,6 +54,8 @@ dependencies:
   flutter_libserialport:
     path: third_party/flutter_libserialport
   url_launcher: ^6.3.3
+  archive: ^4.5.2
+  crypto: ^3.0.7
 
 dev_dependencies:
   flutter_test:

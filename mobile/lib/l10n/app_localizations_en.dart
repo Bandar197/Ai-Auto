@@ -93,6 +93,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportJson => 'Export JSON';
 
   @override
+  String get exportEvidence => 'Export evidence bundle (ZIP)';
+
+  @override
+  String get exportEvidenceNoRecording =>
+      'No local recording for this scan — the evidence bundle needs the saved session.';
+
+  @override
   String get exportCsv => 'Export CSV';
 
   @override

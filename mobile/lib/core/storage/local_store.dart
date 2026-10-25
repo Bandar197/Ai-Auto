@@ -122,6 +122,16 @@ class LocalStore {
     await _json(name).writeAsString(jsonEncode(value));
   }
 
+  /// Write a binary export (e.g. an evidence ZIP) atomically: temp file, then rename,
+  /// so a crash mid-write never leaves a half-written bundle under the final name.
+  Future<File> writeExportBytes(String fileName, List<int> bytes) async {
+    final dir = Directory('${root.path}/exports');
+    await dir.create(recursive: true);
+    final tmp = File('${dir.path}/$fileName.tmp');
+    await tmp.writeAsBytes(bytes, flush: true);
+    return tmp.rename('${dir.path}/$fileName');
+  }
+
   Future<File> writeExport(String fileName, String content) async {
     final dir = Directory('${root.path}/exports');
     await dir.create(recursive: true);

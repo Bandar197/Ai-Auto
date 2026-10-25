@@ -26,6 +26,8 @@
   "done": "تم",
   "share": "مشاركة",
   "exportJson": "تصدير JSON",
+  "exportEvidence": "تصدير حزمة الأدلة (ZIP)",
+  "exportEvidenceNoRecording": "لا يوجد تسجيل محلي لهذا الفحص — حزمة الأدلة تحتاج الجلسة المحفوظة.",
   "exportCsv": "تصدير CSV",
   "notAvailable": "غير متوفر",
   "modeLive": "مباشر",

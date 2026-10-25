@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../core/api/api_client.dart';
 import '../core/kb/local_kb.dart';
+import '../core/recording/export_service.dart';
 import '../core/storage/scan_report.dart';
 import '../state/connection_controller.dart';
 import '../state/providers.dart';
@@ -25,6 +26,12 @@ class ReportScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l.reportTitle),
         actions: [
+          if (async.value != null)
+            IconButton(
+              icon: const Icon(Icons.folder_zip_outlined),
+              tooltip: l.exportEvidence,
+              onPressed: () => _shareEvidence(context, ref, async.value!),
+            ),
           if (async.value != null)
             IconButton(
               icon: const Icon(Icons.ios_share),
@@ -61,6 +68,31 @@ class ReportScreen extends ConsumerWidget {
               ),
       ),
     );
+  }
+
+  /// Evidence ZIP (manifest + v2 session + CSVs + raw.log, each with SHA-256). The VIN
+  /// is masked unless the user opted to include it; the local recording is never altered.
+  Future<void> _shareEvidence(BuildContext context, WidgetRef ref, ScanReport r) async {
+    final l = context.l10n;
+    final lang = context.lang;
+    final store = ref.read(localStoreProvider);
+    final rec = r.recordingId == null ? null : await store.loadRecording(r.recordingId!);
+    if (rec == null) {
+      if (context.mounted) showSnack(context, l.exportEvidenceNoRecording);
+      return;
+    }
+    final kb = ref.read(appAssetsProvider).kb;
+    final zip = ExportService.evidenceZip(
+      rec,
+      maskVin: !ref.read(settingsProvider).includeVin,
+      describe: (code) => kb.lookup(code)?.description(lang),
+      evidence: SessionEvidence(
+        sessionState: 'completed',
+        beforeAfter: r.diagnosis == null ? null : {'diagnosis': r.diagnosis},
+      ),
+    );
+    final f = await store.writeExportBytes(ExportService.bundleFileName(rec), zip);
+    await SharePlus.instance.share(ShareParams(files: [XFile(f.path, mimeType: 'application/zip')], subject: 'Evidence bundle'));
   }
 
   Future<void> _share(BuildContext context, WidgetRef ref, ScanReport r) async {

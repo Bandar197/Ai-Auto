@@ -254,6 +254,18 @@ abstract class AppLocalizations {
   /// **'Export JSON'**
   String get exportJson;
 
+  /// No description provided for @exportEvidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Export evidence bundle (ZIP)'**
+  String get exportEvidence;
+
+  /// No description provided for @exportEvidenceNoRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'No local recording for this scan — the evidence bundle needs the saved session.'**
+  String get exportEvidenceNoRecording;
+
   /// No description provided for @exportCsv.
   ///
   /// In en, this message translates to:

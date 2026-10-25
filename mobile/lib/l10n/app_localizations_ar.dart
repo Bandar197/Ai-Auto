@@ -93,6 +93,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get exportJson => 'تصدير JSON';
 
   @override
+  String get exportEvidence => 'تصدير حزمة الأدلة (ZIP)';
+
+  @override
+  String get exportEvidenceNoRecording =>
+      'لا يوجد تسجيل محلي لهذا الفحص — حزمة الأدلة تحتاج الجلسة المحفوظة.';
+
+  @override
   String get exportCsv => 'تصدير CSV';
 
   @override

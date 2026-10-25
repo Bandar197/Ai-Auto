@@ -31,6 +31,8 @@
   "done": "Done",
   "share": "Share",
   "exportJson": "Export JSON",
+  "exportEvidence": "Export evidence bundle (ZIP)",
+  "exportEvidenceNoRecording": "No local recording for this scan — the evidence bundle needs the saved session.",
   "exportCsv": "Export CSV",
   "notAvailable": "Not available",
   "modeLive": "Live",
