@@ -134,6 +134,13 @@ class SettingsScreen extends ConsumerWidget {
             return x.copyWith(bleService: p[0], bleNotify: p[1], bleWrite: p[2]);
           }),
         ),
+        ListTile(
+          key: const Key('open-dev-console'),
+          leading: const Icon(Icons.terminal),
+          title: Text(l.devConsoleTitle),
+          subtitle: Text(l.devConsoleSubtitle),
+          onTap: () => context.push('/dev-console'),
+        ),
         const Divider(),
         ListTile(
           leading: const Icon(Icons.info_outline),

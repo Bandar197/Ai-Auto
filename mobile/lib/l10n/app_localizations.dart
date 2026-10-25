@@ -3079,6 +3079,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'value {value} · limits {min} … {max} · UASID {uasid}'**
   String monitorValues(String value, String min, String max, String uasid);
+
+  /// No description provided for @exportXlsx.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Excel (XLSX)'**
+  String get exportXlsx;
+
+  /// No description provided for @devConsoleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer diagnostics'**
+  String get devConsoleTitle;
+
+  /// No description provided for @devConsoleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live adapter traffic (TX/RX) and read-only commands'**
+  String get devConsoleSubtitle;
+
+  /// No description provided for @devConsoleIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Every command and reply on the adapter link, live. You may send only read-only commands: adapter info (ATI, AT@1, ATRV, ATDP, ATDPN, ATCS, ATKW, ATIGN, ATPPS) and OBD read services 01, 02, 03, 06, 07, 09, 0A. Clearing, writing and adapter-changing commands are refused.'**
+  String get devConsoleIntro;
+
+  /// No description provided for @devConsoleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 0100 or ATRV'**
+  String get devConsoleHint;
+
+  /// No description provided for @devConsoleSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get devConsoleSend;
+
+  /// No description provided for @devConsoleBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Refused: only read-only commands are allowed here.'**
+  String get devConsoleBlocked;
+
+  /// No description provided for @devConsoleExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export log'**
+  String get devConsoleExport;
+
+  /// No description provided for @devConsoleClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear view'**
+  String get devConsoleClear;
+
+  /// No description provided for @devConsoleNotConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect to an adapter to see live traffic.'**
+  String get devConsoleNotConnected;
+
+  /// No description provided for @saveSessionFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Save session folder'**
+  String get saveSessionFolder;
+
+  /// No description provided for @sessionFolderSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved: {path}'**
+  String sessionFolderSaved(String path);
+
+  /// No description provided for @openFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Open folder'**
+  String get openFolder;
+
+  /// No description provided for @historySearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search code, VIN, module, make, date…'**
+  String get historySearchHint;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @filterLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live'**
+  String get filterLive;
+
+  /// No description provided for @filterDemo.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo'**
+  String get filterDemo;
+
+  /// No description provided for @filterInterrupted.
+  ///
+  /// In en, this message translates to:
+  /// **'Interrupted'**
+  String get filterInterrupted;
+
+  /// No description provided for @filterImported.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported'**
+  String get filterImported;
+
+  /// No description provided for @openSessionsFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Open sessions folder'**
+  String get openSessionsFolder;
 }
 
 class _AppLocalizationsDelegate

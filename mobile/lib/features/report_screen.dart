@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../core/api/api_client.dart';
 import '../core/clear/clear_audit.dart';
+import '../core/open_folder.dart';
 import '../core/kb/local_kb.dart';
 import '../core/recording/export_service.dart';
 import '../core/storage/scan_report.dart';
@@ -33,6 +34,20 @@ class ReportScreen extends ConsumerWidget {
               icon: const Icon(Icons.folder_zip_outlined),
               tooltip: l.exportEvidence,
               onPressed: () => _shareEvidence(context, ref, async.value!),
+            ),
+          if (async.value != null)
+            IconButton(
+              key: const Key('save-session-folder'),
+              icon: const Icon(Icons.save_outlined),
+              tooltip: l.saveSessionFolder,
+              onPressed: () => _saveFolder(context, ref, async.value!),
+            ),
+          if (async.value != null)
+            IconButton(
+              key: const Key('export-xlsx'),
+              icon: const Icon(Icons.table_view_outlined),
+              tooltip: l.exportXlsx,
+              onPressed: () => _shareXlsx(context, ref, async.value!),
             ),
           if (async.value != null)
             IconButton(
@@ -100,6 +115,66 @@ class ReportScreen extends ConsumerWidget {
     );
     final f = await store.writeExportBytes(ExportService.bundleFileName(rec), zip);
     await SharePlus.instance.share(ShareParams(files: [XFile(f.path, mimeType: 'application/zip')], subject: 'Evidence bundle'));
+  }
+
+  /// Writes the full session (manifest, session.json, CSV, XLSX, raw.log …) as a plain
+  /// folder `Sessions/YYYY/MM/<id>` — `%LOCALAPPDATA%\AutoMind\Sessions` on Windows.
+  /// The local copy keeps the VIN unless masking is on, like the other exports.
+  Future<void> _saveFolder(BuildContext context, WidgetRef ref, ScanReport r) async {
+    final l = context.l10n;
+    final lang = context.lang;
+    final store = ref.read(localStoreProvider);
+    final rec = r.recordingId == null ? null : await store.loadRecording(r.recordingId!);
+    if (rec == null) {
+      if (context.mounted) showSnack(context, l.exportEvidenceNoRecording);
+      return;
+    }
+    final kb = ref.read(appAssetsProvider).kb;
+    final make = effectiveMake(ref.read(selectedVehicleProvider), r.vin, ref.read(appAssetsProvider));
+    final audit = await ref.read(clearAuditProvider).read(reportId: r.id);
+    final files = ExportService.evidenceFiles(
+      rec,
+      maskVin: !ref.read(settingsProvider).includeVin,
+      describe: (code) => kb.lookupFor(code, make: make)?.description(lang),
+      evidence: SessionEvidence(
+        sessionState: r.interrupted ? 'interrupted' : 'completed',
+        auditEvents: audit,
+        clearOperations: ClearAuditLog.operations(audit),
+        beforeAfter: r.diagnosis == null ? null : {'diagnosis': r.diagnosis},
+      ),
+    );
+    final dir = await store.saveSessionFolder(rec.recordingId, rec.createdAt, files);
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      duration: const Duration(seconds: 8),
+      content: Text(l.sessionFolderSaved(dir.path), textDirection: TextDirection.ltr),
+      action: canOpenFolders ? SnackBarAction(label: l.openFolder, onPressed: () => openFolder(dir.path)) : null,
+    ));
+  }
+
+  /// Excel workbook (Summary / DTCs / Modules / Live data / TX-RX); VIN masked unless allowed.
+  Future<void> _shareXlsx(BuildContext context, WidgetRef ref, ScanReport r) async {
+    final l = context.l10n;
+    final lang = context.lang;
+    final store = ref.read(localStoreProvider);
+    final rec = r.recordingId == null ? null : await store.loadRecording(r.recordingId!);
+    if (rec == null) {
+      if (context.mounted) showSnack(context, l.exportEvidenceNoRecording);
+      return;
+    }
+    final kb = ref.read(appAssetsProvider).kb;
+    final make = effectiveMake(ref.read(selectedVehicleProvider), r.vin, ref.read(appAssetsProvider));
+    final bytes = ExportService.sessionXlsx(
+      rec,
+      maskVin: !ref.read(settingsProvider).includeVin,
+      describe: (code) => kb.lookupFor(code, make: make)?.description(lang),
+      sessionState: r.interrupted ? 'interrupted' : 'completed',
+    );
+    final f = await store.writeExportBytes('automind_session_${rec.recordingId}${rec.dataMode == 'demo' ? '_DEMO' : ''}.xlsx', bytes);
+    await SharePlus.instance.share(ShareParams(
+      files: [XFile(f.path, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')],
+      subject: 'AutoMind session',
+    ));
   }
 
   Future<void> _share(BuildContext context, WidgetRef ref, ScanReport r) async {

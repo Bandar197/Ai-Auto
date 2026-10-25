@@ -1685,4 +1685,70 @@ class AppLocalizationsAr extends AppLocalizations {
   String monitorValues(String value, String min, String max, String uasid) {
     return 'القيمة $value · الحدود $min … $max · UASID $uasid';
   }
+
+  @override
+  String get exportXlsx => 'تصدير Excel ‏(XLSX)';
+
+  @override
+  String get devConsoleTitle => 'تشخيص المطوّر';
+
+  @override
+  String get devConsoleSubtitle =>
+      'حركة الجهاز المباشرة (إرسال/استقبال) وأوامر القراءة فقط';
+
+  @override
+  String get devConsoleIntro =>
+      'كل أمر ورد على خط الجهاز، مباشرة. يُسمح بإرسال أوامر القراءة فقط: معلومات الجهاز (ATI، AT@1، ATRV، ATDP، ATDPN، ATCS، ATKW، ATIGN، ATPPS) وخدمات القراءة 01 و02 و03 و06 و07 و09 و0A. أوامر المسح والكتابة وتغيير إعدادات الجهاز مرفوضة.';
+
+  @override
+  String get devConsoleHint => 'مثال: 0100 أو ATRV';
+
+  @override
+  String get devConsoleSend => 'إرسال';
+
+  @override
+  String get devConsoleBlocked => 'مرفوض: يُسمح هنا بأوامر القراءة فقط.';
+
+  @override
+  String get devConsoleExport => 'تصدير السجل';
+
+  @override
+  String get devConsoleClear => 'مسح العرض';
+
+  @override
+  String get devConsoleNotConnected =>
+      'اتصل بجهاز الفحص لرؤية الحركة المباشرة.';
+
+  @override
+  String get saveSessionFolder => 'حفظ مجلد الجلسة';
+
+  @override
+  String sessionFolderSaved(String path) {
+    return 'حُفظ في: $path';
+  }
+
+  @override
+  String get openFolder => 'فتح المجلد';
+
+  @override
+  String get historySearchHint =>
+      'ابحث بالكود أو رقم الهيكل أو الوحدة أو الماركة أو التاريخ…';
+
+  @override
+  String get filterAll => 'الكل';
+
+  @override
+  String get filterLive => 'حقيقي';
+
+  @override
+  String get filterDemo => 'تجريبي';
+
+  @override
+  String get filterInterrupted => 'منقطعة';
+
+  @override
+  String get filterImported => 'مستوردة';
+
+  @override
+  String get openSessionsFolder => 'فتح مجلد الجلسات';
 }

@@ -7,12 +7,14 @@ import '../core/api/api_client.dart';
 import '../core/api/automind_api.dart';
 import '../core/api/token_store.dart';
 import '../core/settings.dart';
+import '../core/history_search.dart';
 import '../core/recording/journal_recovery.dart';
 import '../core/recording/session_import.dart';
 import '../core/recording/session_journal.dart';
 import '../core/storage/local_store.dart';
 import '../core/storage/scan_report.dart';
 import '../core/upload_queue.dart';
+import '../obd/obd.dart';
 import 'app_assets.dart';
 
 const String appVersion = '1.0.0';
@@ -126,6 +128,21 @@ class ReportsNotifier extends AsyncNotifier<List<ScanReport>> {
     return n;
   }
 }
+
+/// report id → searchable text (codes incl. module codes, VIN, make/model, date).
+final historySearchIndexProvider = FutureProvider<Map<String, String>>((ref) async {
+  final reports = await ref.watch(reportsProvider.future);
+  final store = ref.read(localStoreProvider);
+  final out = <String, String>{};
+  for (final r in reports) {
+    Recording? rec;
+    try {
+      rec = r.recordingId == null ? null : await store.loadRecording(r.recordingId!);
+    } on Object catch (_) {}
+    out[r.id] = searchTextFor(r, rec);
+  }
+  return out;
+});
 
 /// How many interrupted sessions are waiting to be recovered.
 final interruptedSessionsProvider = FutureProvider<int>(

@@ -158,6 +158,42 @@ class LocalStore {
     return tmp.rename('${dir.path}/$fileName');
   }
 
+  /// Root of saved session folders: `<export folder>/Sessions` when one is chosen,
+  /// `%LOCALAPPDATA%\AutoMind\Sessions` on Windows, else `<app folder>/Sessions`.
+  Directory sessionsRoot({Map<String, String>? env, bool? windows}) {
+    final custom = exportDir;
+    if (custom != null && custom.isNotEmpty) return Directory('$custom${Platform.pathSeparator}Sessions');
+    final e = env ?? Platform.environment;
+    final local = e['LOCALAPPDATA'];
+    if ((windows ?? Platform.isWindows) && local != null && local.isNotEmpty) {
+      return Directory('$local\\AutoMind\\Sessions');
+    }
+    return Directory('${root.path}/Sessions');
+  }
+
+  /// Writes [files] into `<sessionsRoot>/YYYY/MM/<id>/` (each file atomically) and returns
+  /// the folder. Falls back to the app folder when the chosen location can't be written.
+  Future<Directory> saveSessionFolder(String id, DateTime createdAt, Map<String, List<int>> files) async {
+    final sep = Platform.pathSeparator;
+    final rel = '${createdAt.toUtc().year.toString().padLeft(4, '0')}$sep${createdAt.toUtc().month.toString().padLeft(2, '0')}$sep$id';
+    Future<Directory> writeTo(Directory base) async {
+      final dir = Directory('${base.path}$sep$rel');
+      await dir.create(recursive: true);
+      for (final e in files.entries) {
+        final tmp = File('${dir.path}$sep${e.key}.tmp');
+        await tmp.writeAsBytes(e.value, flush: true);
+        await tmp.rename('${dir.path}$sep${e.key}');
+      }
+      return dir;
+    }
+
+    try {
+      return await writeTo(sessionsRoot());
+    } on FileSystemException catch (_) {
+      return writeTo(Directory('${root.path}/Sessions'));
+    }
+  }
+
   Future<File> writeExport(String fileName, String content) async {
     final dir = await _exportTarget();
     return _atomic(File('${dir.path}/$fileName'), content);

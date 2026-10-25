@@ -5,22 +5,43 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import '../core/api/api_client.dart';
+import '../core/history_search.dart';
+import '../core/open_folder.dart';
 import '../core/recording/session_import.dart';
 import '../state/providers.dart';
 import '../ui/l10n_helpers.dart';
 import '../ui/widgets.dart';
 
-class HistoryScreen extends ConsumerWidget {
+class HistoryScreen extends ConsumerStatefulWidget {
   const HistoryScreen({super.key});
+  @override
+  ConsumerState<HistoryScreen> createState() => _HistoryScreenState();
+}
+
+class _HistoryScreenState extends ConsumerState<HistoryScreen> {
+  String _query = '';
+  HistoryFilter _filter = HistoryFilter.all;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l = context.l10n;
     final reports = ref.watch(reportsProvider);
+    final index = ref.watch(historySearchIndexProvider).value ?? const <String, String>{};
     final user = ref.watch(authProvider).value;
     final interrupted = ref.watch(interruptedSessionsProvider).value ?? 0;
     return Scaffold(
       appBar: AppBar(title: Text(l.historyTitle), actions: [
+        if (canOpenFolders)
+          IconButton(
+            key: const Key('open-sessions-folder'),
+            tooltip: l.openSessionsFolder,
+            icon: const Icon(Icons.folder_open_outlined),
+            onPressed: () async {
+              final dir = ref.read(localStoreProvider).sessionsRoot();
+              await dir.create(recursive: true);
+              await openFolder(dir.path);
+            },
+          ),
         IconButton(
           key: const Key('compare-sessions'),
           tooltip: l.compareTitle,
@@ -68,7 +89,39 @@ class HistoryScreen extends ConsumerWidget {
                 ),
               ),
             if (list.isEmpty) Padding(padding: const EdgeInsets.all(24), child: Center(child: Text(l.noSessions))),
-            for (final r in list)
+            if (list.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+                child: TextField(
+                  key: const Key('history-search'),
+                  decoration: InputDecoration(prefixIcon: const Icon(Icons.search), hintText: l.historySearchHint, isDense: true),
+                  onChanged: (v) => setState(() => _query = v),
+                ),
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: Row(children: [
+                  for (final (f, label) in [
+                    (HistoryFilter.all, l.filterAll),
+                    (HistoryFilter.live, l.filterLive),
+                    (HistoryFilter.demo, l.filterDemo),
+                    (HistoryFilter.interrupted, l.filterInterrupted),
+                    (HistoryFilter.imported, l.filterImported),
+                  ])
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(end: 6),
+                      child: ChoiceChip(
+                        key: Key('filter-${f.name}'),
+                        label: Text(label),
+                        selected: _filter == f,
+                        onSelected: (_) => setState(() => _filter = f),
+                      ),
+                    ),
+                ]),
+              ),
+            ],
+            for (final r in list.where((r) => matchesHistory(r, index[r.id] ?? searchTextFor(r, null), query: _query, filter: _filter)))
               Dismissible(
                 key: ValueKey(r.id),
                 direction: DismissDirection.endToStart,

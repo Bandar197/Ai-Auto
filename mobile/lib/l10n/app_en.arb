@@ -734,5 +734,32 @@
         "type": "String"
       }
     }
+  },
+  "exportXlsx": "Export Excel (XLSX)",
+  "devConsoleTitle": "Developer diagnostics",
+  "devConsoleSubtitle": "Live adapter traffic (TX/RX) and read-only commands",
+  "devConsoleIntro": "Every command and reply on the adapter link, live. You may send only read-only commands: adapter info (ATI, AT@1, ATRV, ATDP, ATDPN, ATCS, ATKW, ATIGN, ATPPS) and OBD read services 01, 02, 03, 06, 07, 09, 0A. Clearing, writing and adapter-changing commands are refused.",
+  "devConsoleHint": "e.g. 0100 or ATRV",
+  "devConsoleSend": "Send",
+  "devConsoleBlocked": "Refused: only read-only commands are allowed here.",
+  "devConsoleExport": "Export log",
+  "devConsoleClear": "Clear view",
+  "devConsoleNotConnected": "Connect to an adapter to see live traffic.",
+  "saveSessionFolder": "Save session folder",
+  "sessionFolderSaved": "Saved: {path}",
+  "openFolder": "Open folder",
+  "historySearchHint": "Search code, VIN, module, make, date…",
+  "filterAll": "All",
+  "filterLive": "Live",
+  "filterDemo": "Demo",
+  "filterInterrupted": "Interrupted",
+  "filterImported": "Imported",
+  "openSessionsFolder": "Open sessions folder",
+  "@sessionFolderSaved": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
   }
 }

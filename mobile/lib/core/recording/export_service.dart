@@ -5,6 +5,7 @@ import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
 
 import '../../obd/obd.dart';
+import 'xlsx_writer.dart';
 
 /// recording.v2 — a backward-compatible superset of v1 (shared/schemas/recording.v2.schema.json).
 const String recordingV2Format = 'automind.recording.v2';
@@ -81,6 +82,60 @@ class ExportService {
     return csv(rows);
   }
 
+  /// Masked VIN for shared files: first 6 + last 4 kept.
+  static String? maskedVin(String? vin) =>
+      vin != null && vin.length >= 10 ? '${vin.substring(0, 6)}${'*' * (vin.length - 10)}${vin.substring(vin.length - 4)}' : vin;
+
+  /// Multi-sheet Excel workbook of the session: Summary, DTCs, Modules, Live data, TX-RX.
+  /// DEMO sessions say so in the summary; the VIN (and VIN replies) are masked when [maskVin].
+  static Uint8List sessionXlsx(Recording r, {bool maskVin = false, String? Function(String code)? describe, String? sessionState}) {
+    final vin = r.vehicle['vin'] as String?;
+    final units = {for (final s in r.signals) if (s.unit != null) s.key: s.unit!};
+    return buildXlsx([
+      XlsxSheet('Summary', [
+        ['field', 'value'],
+        ['label', r.dataMode == 'demo' ? 'DEMO / SIMULATED' : 'LIVE'],
+        ['recording_id', r.recordingId],
+        ['created_at_utc', r.createdAt.toUtc().toIso8601String()],
+        ['data_mode', r.dataMode],
+        ['session_state', sessionState ?? ''],
+        ['source', '${r.source['kind'] ?? ''}'],
+        ['protocol', '${r.source['protocol_name'] ?? ''}'],
+        ['adapter_firmware', '${r.source['adapter_firmware'] ?? r.adapterCapabilities?.firmware ?? ''}'],
+        ['vin', (maskVin ? maskedVin(vin) : vin) ?? ''],
+        ['make', '${r.vehicle['make'] ?? ''}'],
+        ['model', '${r.vehicle['model'] ?? ''}'],
+        ['model_year', '${r.vehicle['model_year'] ?? ''}'],
+        ['duration_ms', r.durationMs],
+        ['obd_codes', r.dtcs.length],
+        ['modules_tried', r.moduleScans.length],
+        ['modules_read_ok', r.moduleScans.where((m) => m.outcome == 'read_codes' || m.outcome == 'read_no_codes').length],
+        ['samples', r.samples.length],
+        ['tx_rx_frames', r.txRxFrames.length],
+      ]),
+      XlsxSheet('DTCs', [
+        ['code', 'status', 'ecu', 'source', 'description'],
+        for (final d in r.dtcs) [d.code, d.status.apiValue, d.ecu ?? '', 'obd', describe?.call(d.code) ?? ''],
+        for (final m in r.moduleScans)
+          for (final c in m.codes) [c.code, c.status.apiValue, m.address ?? '', 'module:${m.key}', describe?.call(c.code) ?? ''],
+      ]),
+      XlsxSheet('Modules', [
+        ['key', 'name_en', 'name_ar', 'category', 'address', 'outcome', 'nrc', 'codes', 'active_codes'],
+        for (final m in r.moduleScans)
+          [m.key, m.nameEn, m.nameAr, m.category, m.address ?? '', m.outcome, m.nrc, m.codes.map((c) => c.code).join(' '), m.activeCodes.join(' ')],
+      ]),
+      XlsxSheet('Live data', [
+        ['t_ms', 'pid', 'ecu', 'signal', 'value', 'unit', 'raw'],
+        for (final s in r.samples)
+          for (final e in s.values.entries) [s.tMs, s.pid, s.ecu ?? '', e.key, e.value, units[e.key] ?? '', s.raw ?? ''],
+      ]),
+      XlsxSheet('TX-RX', [
+        ['t_ms', 'dir', 'data', 'duration_ms', 'timeout'],
+        for (final f in trafficFor(r, maskVin: maskVin)) [f['t_ms'], f['dir'], f['data'], f['duration_ms'], f['timeout']],
+      ]),
+    ]);
+  }
+
   /// raw.log — adapter traffic exactly as recorded (TX/RX frames when available, else the
   /// raw bytes kept with each sample).
   /// TX/RX frames to export: explicit evidence first, else those captured in [r];
@@ -118,8 +173,7 @@ class ExportService {
     j['format'] = recordingV2Format;
     if (maskVin) {
       final v = Map<String, dynamic>.from(j['vehicle'] as Map? ?? const {});
-      final vin = v['vin'] as String?;
-      if (vin != null && vin.length >= 10) v['vin'] = '${vin.substring(0, 6)}${'*' * (vin.length - 10)}${vin.substring(vin.length - 4)}';
+      v['vin'] = maskedVin(v['vin'] as String?);
       j['vehicle'] = v;
     }
     // Explicit evidence wins; otherwise the capabilities probed during capture.
@@ -150,11 +204,32 @@ class ExportService {
     String? Function(String code)? describe,
     DateTime? generatedAt,
   }) {
+    final files = evidenceFiles(r,
+        maskVin: maskVin, evidence: evidence, reportPdf: reportPdf, reportHtml: reportHtml, describe: describe, generatedAt: generatedAt);
+    final archive = Archive();
+    for (final e in files.entries) {
+      archive.addFile(ArchiveFile.bytes(e.key, e.value));
+    }
+    return ZipEncoder().encodeBytes(archive);
+  }
+
+  /// The evidence files (manifest.json first, each data file with its SHA-256) — the
+  /// content of the ZIP, also written as a plain session folder.
+  static Map<String, List<int>> evidenceFiles(
+    Recording r, {
+    bool maskVin = false,
+    SessionEvidence evidence = const SessionEvidence(),
+    List<int>? reportPdf,
+    String? reportHtml,
+    String? Function(String code)? describe,
+    DateTime? generatedAt,
+  }) {
     final files = <String, List<int>>{
       'dtcs.csv': utf8.encode(dtcsCsv(r, describe: describe)),
       'live_data.csv': utf8.encode(liveDataCsv(r)),
       'raw.log': utf8.encode(rawLog(r, txRxFrames: evidence.txRxFrames, maskVin: maskVin)),
       'before_after.json': utf8.encode(const JsonEncoder.withIndent(' ').convert(evidence.beforeAfter ?? const {})),
+      'session.xlsx': sessionXlsx(r, maskVin: maskVin, describe: describe, sessionState: evidence.sessionState),
       'report.pdf': ?reportPdf,
       if (reportHtml != null) 'report.html': utf8.encode(reportHtml),
     };
@@ -177,12 +252,7 @@ class ExportService {
       },
     };
 
-    final archive = Archive();
-    archive.addFile(ArchiveFile.bytes('manifest.json', utf8.encode(const JsonEncoder.withIndent(' ').convert(manifest))));
-    for (final e in files.entries) {
-      archive.addFile(ArchiveFile.bytes(e.key, e.value));
-    }
-    return ZipEncoder().encodeBytes(archive);
+    return {'manifest.json': utf8.encode(const JsonEncoder.withIndent(' ').convert(manifest)), ...files};
   }
 
   /// Verify an evidence bundle: every file listed in the manifest is present and its

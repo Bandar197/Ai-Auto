@@ -1691,4 +1691,70 @@ class AppLocalizationsEn extends AppLocalizations {
   String monitorValues(String value, String min, String max, String uasid) {
     return 'value $value · limits $min … $max · UASID $uasid';
   }
+
+  @override
+  String get exportXlsx => 'Export Excel (XLSX)';
+
+  @override
+  String get devConsoleTitle => 'Developer diagnostics';
+
+  @override
+  String get devConsoleSubtitle =>
+      'Live adapter traffic (TX/RX) and read-only commands';
+
+  @override
+  String get devConsoleIntro =>
+      'Every command and reply on the adapter link, live. You may send only read-only commands: adapter info (ATI, AT@1, ATRV, ATDP, ATDPN, ATCS, ATKW, ATIGN, ATPPS) and OBD read services 01, 02, 03, 06, 07, 09, 0A. Clearing, writing and adapter-changing commands are refused.';
+
+  @override
+  String get devConsoleHint => 'e.g. 0100 or ATRV';
+
+  @override
+  String get devConsoleSend => 'Send';
+
+  @override
+  String get devConsoleBlocked =>
+      'Refused: only read-only commands are allowed here.';
+
+  @override
+  String get devConsoleExport => 'Export log';
+
+  @override
+  String get devConsoleClear => 'Clear view';
+
+  @override
+  String get devConsoleNotConnected =>
+      'Connect to an adapter to see live traffic.';
+
+  @override
+  String get saveSessionFolder => 'Save session folder';
+
+  @override
+  String sessionFolderSaved(String path) {
+    return 'Saved: $path';
+  }
+
+  @override
+  String get openFolder => 'Open folder';
+
+  @override
+  String get historySearchHint => 'Search code, VIN, module, make, date…';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterLive => 'Live';
+
+  @override
+  String get filterDemo => 'Demo';
+
+  @override
+  String get filterInterrupted => 'Interrupted';
+
+  @override
+  String get filterImported => 'Imported';
+
+  @override
+  String get openSessionsFolder => 'Open sessions folder';
 }

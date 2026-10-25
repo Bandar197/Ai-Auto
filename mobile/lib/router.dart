@@ -7,6 +7,7 @@ import 'features/explain_screen.dart';
 import 'features/controllers_catalog_screen.dart';
 import 'features/adapter_screen.dart';
 import 'features/compare_screen.dart';
+import 'features/dev_console_screen.dart';
 import 'features/ecu_map_screen.dart';
 import 'features/indicators_screen.dart';
 import 'features/monitor_tests_screen.dart';
@@ -64,6 +65,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/indicators', builder: (_, _) => const IndicatorsScreen()),
       GoRoute(path: '/ecu-map', builder: (_, _) => const EcuMapScreen()),
       GoRoute(path: '/monitor-tests', builder: (_, _) => const MonitorTestsScreen()),
+      GoRoute(path: '/dev-console', builder: (_, _) => const DevConsoleScreen()),
       GoRoute(
         path: '/compare',
         builder: (_, s) => CompareScreen(beforeId: s.uri.queryParameters['a'], afterId: s.uri.queryParameters['b']),
