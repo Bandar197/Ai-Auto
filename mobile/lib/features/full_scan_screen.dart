@@ -86,6 +86,27 @@ class FullScanScreen extends ConsumerWidget {
                     },
                   ),
           ),
+        // Clear fault codes — only offered when codes were actually found, on a live link.
+        if (scan.done && !scan.uploading && scan.totalCodes > 0 && conn.mode != null && conn.mode != DataMode.replay)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              OutlinedButton.icon(
+                icon: const Icon(Icons.delete_sweep_outlined),
+                label: Text(l.clearDtcsTitle),
+                onPressed: () async {
+                  final notifier = ref.read(fullScanProvider.notifier);
+                  if (ref.read(fullScanProvider).reportId == null) await notifier.finalizeToReport();
+                  final id = ref.read(fullScanProvider).reportId;
+                  if (id != null && context.mounted) context.push('/clear-dtcs?report=$id');
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(l.clearWillReturnNote, style: Theme.of(context).textTheme.bodySmall),
+              ),
+            ]),
+          ),
         if (scan.done)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),

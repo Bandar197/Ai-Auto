@@ -128,6 +128,24 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get delete;
 
+  /// No description provided for @deleteScanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this scan?'**
+  String get deleteScanTitle;
+
+  /// No description provided for @deleteScanBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes the saved scan and its recording from this phone. Reports already uploaded stay on the server.'**
+  String get deleteScanBody;
+
+  /// No description provided for @deleteScanDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan deleted.'**
+  String get deleteScanDone;
+
   /// No description provided for @edit.
   ///
   /// In en, this message translates to:

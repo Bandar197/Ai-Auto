@@ -25,6 +25,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get delete => 'حذف';
 
   @override
+  String get deleteScanTitle => 'حذف هذا الفحص؟';
+
+  @override
+  String get deleteScanBody =>
+      'يزيل الفحص المحفوظ وتسجيله من هذا الهاتف. التقارير المرفوعة تبقى على الخادم.';
+
+  @override
+  String get deleteScanDone => 'تم حذف الفحص.';
+
+  @override
   String get edit => 'تعديل';
 
   @override

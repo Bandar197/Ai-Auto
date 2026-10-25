@@ -29,24 +29,52 @@ class HistoryScreen extends ConsumerWidget {
           data: (list) => ListView(children: [
             if (list.isEmpty) Padding(padding: const EdgeInsets.all(24), child: Center(child: Text(l.noSessions))),
             for (final r in list)
-              ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: healthColor(r.healthScore).withValues(alpha: 0.2),
-                  child: Text(r.healthScore?.toString() ?? '—'),
+              Dismissible(
+                key: ValueKey(r.id),
+                direction: DismissDirection.endToStart,
+                background: Container(
+                  alignment: AlignmentDirectional.centerEnd,
+                  color: Colors.red.shade700,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: const Icon(Icons.delete_outline, color: Colors.white),
                 ),
-                title: Row(children: [
-                  Flexible(child: Text(DateFormat.yMMMd(context.lang).add_Hm().format(r.createdAt.toLocal()))),
-                  const SizedBox(width: 6),
-                  if (r.dataMode != 'live')
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                      decoration: BoxDecoration(color: r.isReplay ? replayColor : demoColor, borderRadius: BorderRadius.circular(4)),
-                      child: Text(modeText(l, r.dataMode).toUpperCase(), style: const TextStyle(color: Colors.white, fontSize: 11)),
-                    ),
-                ]),
-                subtitle: Text('${l.dtcCount(r.dtcs.map((d) => d['code']).toSet().length)} · ${r.uploadState == 'uploaded' ? l.synced : l.localOnly}'),
-                trailing: Icon(r.uploadState == 'uploaded' ? Icons.cloud_done_outlined : Icons.cloud_off_outlined),
-                onTap: () => context.push('/report/${r.id}'),
+                confirmDismiss: (_) async => await showDialog<bool>(
+                      context: context,
+                      builder: (c) => AlertDialog(
+                        title: Text(l.deleteScanTitle),
+                        content: Text(l.deleteScanBody),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.pop(c, false), child: Text(l.cancel)),
+                          FilledButton(onPressed: () => Navigator.pop(c, true), child: Text(l.delete)),
+                        ],
+                      ),
+                    ) ??
+                    false,
+                onDismissed: (_) async {
+                  await ref.read(reportsProvider.notifier).delete(r.id);
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.deleteScanDone)));
+                  }
+                },
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: healthColor(r.healthScore).withValues(alpha: 0.2),
+                    child: Text(r.healthScore?.toString() ?? '—'),
+                  ),
+                  title: Row(children: [
+                    Flexible(child: Text(DateFormat.yMMMd(context.lang).add_Hm().format(r.createdAt.toLocal()))),
+                    const SizedBox(width: 6),
+                    if (r.dataMode != 'live')
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                        decoration: BoxDecoration(color: r.isReplay ? replayColor : demoColor, borderRadius: BorderRadius.circular(4)),
+                        child: Text(modeText(l, r.dataMode).toUpperCase(), style: const TextStyle(color: Colors.white, fontSize: 11)),
+                      ),
+                  ]),
+                  subtitle: Text('${l.dtcCount(r.dtcs.map((d) => d['code']).toSet().length)} · ${r.uploadState == 'uploaded' ? l.synced : l.localOnly}'),
+                  trailing: Icon(r.uploadState == 'uploaded' ? Icons.cloud_done_outlined : Icons.cloud_off_outlined),
+                  onTap: () => context.push('/report/${r.id}'),
+                ),
               ),
             if (user != null) _ServerSessions(localIds: {for (final r in list) ?r.serverSessionId}),
           ]),

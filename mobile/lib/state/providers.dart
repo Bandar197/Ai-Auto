@@ -90,6 +90,13 @@ class ReportsNotifier extends AsyncNotifier<List<ScanReport>> {
   Future<List<ScanReport>> build() => ref.read(localStoreProvider).listReports();
 
   Future<void> refresh() async => state = AsyncData(await ref.read(localStoreProvider).listReports());
+
+  /// Delete a saved scan (report + its recording) and refresh the list.
+  Future<void> delete(String id) async {
+    await ref.read(localStoreProvider).deleteReport(id);
+    await refresh();
+    await ref.read(pendingUploadsProvider.notifier).refresh();
+  }
 }
 
 final reportsProvider = AsyncNotifierProvider<ReportsNotifier, List<ScanReport>>(ReportsNotifier.new);

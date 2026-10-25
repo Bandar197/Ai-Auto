@@ -63,6 +63,20 @@ class LocalStore {
     return ScanReport.fromJson(jsonDecode(await f.readAsString()) as Map<String, dynamic>);
   }
 
+  /// Delete a saved scan: its report, its recording file, and any queue entry.
+  Future<void> deleteReport(String id) async {
+    final report = await loadReport(id);
+    final f = File('${_reports.path}/$id.json');
+    if (await f.exists()) await f.delete();
+    final recId = report?.recordingId;
+    if (recId != null) {
+      final rf = recordingFile(recId);
+      if (await rf.exists()) await rf.delete();
+    }
+    final queue = await readQueue();
+    if (queue.contains(id)) await writeQueue(queue.where((x) => x != id).toList());
+  }
+
   Future<List<ScanReport>> listReports() async {
     await _ensure();
     final out = <ScanReport>[];

@@ -25,6 +25,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delete => 'Delete';
 
   @override
+  String get deleteScanTitle => 'Delete this scan?';
+
+  @override
+  String get deleteScanBody =>
+      'This removes the saved scan and its recording from this phone. Reports already uploaded stay on the server.';
+
+  @override
+  String get deleteScanDone => 'Scan deleted.';
+
+  @override
   String get edit => 'Edit';
 
   @override
