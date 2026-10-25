@@ -29,6 +29,7 @@ from automind.diagnosis.models import (
     DiagnosticInput,
     FreezeFrame,
     InputDTC,
+    InputModuleScan,
     Sample,
     UserMeasurement,
     VehicleInfo,
@@ -270,6 +271,17 @@ async def ingest_recording_into_session(conn: AsyncConnection, session: Mapping[
     ).first()
     if not has_tel:
         await store_telemetry(conn, recording_telemetry_rows(rec, session["id"], session["started_at"]))
+    # Non-powertrain module reads have no dedicated table; carry their honest outcomes
+    # in the session summary so the live /complete path reports them (migration-free).
+    if rec.module_scans:
+        summary = dict(session["summary"] or {})
+        if "module_scans" not in summary:
+            summary["module_scans"] = [m.model_dump(mode="json") for m in rec.module_scans]
+            await conn.execute(
+                update(t.diagnostic_sessions)
+                .where(t.diagnostic_sessions.c.id == session["id"])
+                .values(summary=summary)
+            )
 
 
 # ----------------------------------------------------------------------------- diagnostic input
@@ -300,6 +312,17 @@ def session_measurements(session: Mapping[str, Any]) -> list[UserMeasurement]:
         try:
             out.append(UserMeasurement(**{k: m.get(k) for k in ("key", "value", "unit", "note")}))
         except Exception:  # noqa: BLE001,S112 - skip malformed legacy rows
+            continue
+    return out
+
+
+def session_module_scans(session: Mapping[str, Any]) -> list[InputModuleScan]:
+    """Module reads stored in the session summary (by recording ingestion)."""
+    out = []
+    for m in (session["summary"] or {}).get("module_scans", []):
+        try:
+            out.append(InputModuleScan.model_validate(m))
+        except Exception:  # noqa: BLE001,S112 - skip malformed rows, never fail the diagnosis
             continue
     return out
 
@@ -361,6 +384,7 @@ async def build_input_from_db(conn: AsyncConnection, session: Mapping[str, Any],
         measurements=session_measurements(session),
         mil_on=mil_on if mil_on is not None else session["mil_on"],
         duration_ms=duration,
+        module_scans=session_module_scans(session),
     )
 
 

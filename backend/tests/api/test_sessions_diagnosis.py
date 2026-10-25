@@ -236,7 +236,15 @@ async def test_report_json_and_html(client):
     h = u["headers"]
     v = await _vehicle(client, h, vin=VALID_VIN)
     s = (await client.post("/sessions", headers=h, json={"data_mode": "live", "vehicle_id": v["id"]})).json()
-    await client.post(f"/sessions/{s['id']}/recording", headers=h, json=make_recording("live", dtcs=["P0106"]))
+    rec = make_recording("live", dtcs=["P0106"])
+    # Honest module reads travel with the recording and reach the completed report.
+    rec["module_scans"] = [
+        {"key": "srs", "name_en": "Airbag (SRS)", "name_ar": "الإيرباق", "category": "airbag",
+         "address": "7D0", "outcome": "no_response", "codes": []},
+        {"key": "abs", "name_en": "ABS", "name_ar": "ABS", "category": "abs",
+         "address": "7D1", "outcome": "read_no_codes", "codes": []},
+    ]
+    await client.post(f"/sessions/{s['id']}/recording", headers=h, json=rec)
     assert_envelope(await client.get(f"/sessions/{s['id']}/report", headers=h), 404, "not_found")
     await client.post(f"/sessions/{s['id']}/complete", headers=h, json={})
     r = await client.get(f"/sessions/{s['id']}/report?format=json&lang=en", headers=h)
@@ -245,9 +253,13 @@ async def test_report_json_and_html(client):
     assert rep["data_mode"] == "live" and rep["meta"]["data_mode"] == "live"
     assert rep["meta"]["vehicle"]["vin_masked"] == "2C3CDZ*******1234"
     assert any(d["code"] == "P0106" for d in rep["diagnosis"]["dtcs"])
+    ms = {m["key"]: m for m in rep["diagnosis"]["module_scans"]}
+    assert ms["srs"]["outcome"] == "no_response" and ms["srs"]["read_ok"] is False
+    assert ms["abs"]["outcome"] == "read_no_codes" and ms["abs"]["read_ok"] is True
     r = await client.get(f"/sessions/{s['id']}/report?format=html&lang=ar", headers=h)
     assert r.status_code == 200 and r.headers["content-type"].startswith("text/html")
     assert "P0106" in r.text
+    assert "تعذّر التحقق" in r.text  # airbag no_response shown honestly, not as healthy
     assert VALID_VIN not in r.text
     # PDF: a real PDF when the optional renderer is installed, else a clean 501 (never a 500).
     r = await client.get(f"/sessions/{s['id']}/report?format=pdf&lang=ar", headers=h)

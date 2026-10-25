@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/systems.dart';
+import '../obd/obd.dart';
 import '../state/connection_controller.dart';
 import '../state/full_scan_controller.dart';
 import '../ui/l10n_helpers.dart';
@@ -68,6 +69,22 @@ class FullScanScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
             child: Text(l.fullScanCoverageNote, style: Theme.of(context).textTheme.bodySmall),
+          ),
+        if (scan.done && conn.mode != DataMode.replay)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: scan.uploading
+                ? const Center(child: Padding(padding: EdgeInsets.all(8), child: CircularProgressIndicator()))
+                : FilledButton.tonalIcon(
+                    icon: const Icon(Icons.description_outlined),
+                    label: Text(scan.reportId != null ? l.viewReport : l.fullScanSaveReport),
+                    onPressed: () async {
+                      final notifier = ref.read(fullScanProvider.notifier);
+                      if (scan.reportId == null) await notifier.finalizeToReport();
+                      final id = ref.read(fullScanProvider).reportId;
+                      if (id != null && context.mounted) context.push('/report/$id');
+                    },
+                  ),
           ),
         if (scan.done)
           Padding(

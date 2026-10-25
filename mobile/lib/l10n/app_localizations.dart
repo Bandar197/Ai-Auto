@@ -1664,6 +1664,12 @@ abstract class AppLocalizations {
   /// **'Engine, emissions, transmission, electrical and network come from the standard scan. Airbag, ABS and body are read per module and depend on your car\'s addresses being supported; a security gateway can block some modules.'**
   String get fullScanCoverageNote;
 
+  /// No description provided for @fullScanSaveReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Save & view report'**
+  String get fullScanSaveReport;
+
   /// No description provided for @clearRequiresServer.
   ///
   /// In en, this message translates to:

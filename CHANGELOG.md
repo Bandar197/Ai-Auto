@@ -35,6 +35,11 @@ compatibility within Phase 1 (no breaking API/schema renames).
   flagged for a specialist. PDF via WeasyPrint (optional `automind[pdf]` extra); the HTML
   report also prints to PDF from any browser, and the API returns a clean `501 pdf_unavailable`
   when the renderer isn't installed (never a 500).
+- **Full scan → report, end to end**: the in-app full scan now uploads its findings
+  (standard OBD codes + the honest SRS/ABS/body module outcomes) as a recording and opens
+  the session report. Module outcomes travel in the recording and, for a live session, through
+  the session summary — so the report reflects what was actually read, including an unverified
+  airbag, with no extra database migration.
 
 ### Clear & verify
 - Clear codes offered the moment they appear (scan result), with a "codes return if the

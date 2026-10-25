@@ -1,9 +1,48 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 
+import '../core/api/api_client.dart';
+import '../core/storage/scan_report.dart';
 import '../core/systems.dart';
 import '../obd/obd.dart';
 import 'connection_controller.dart';
 import 'providers.dart';
+
+/// Assemble an upload-ready recording from a full scan, carrying the honest
+/// module-scan outcomes (SRS/ABS/body) and the standard OBD codes. Pure so it
+/// can be unit-tested without the connection/upload providers.
+Recording buildFullScanRecording({
+  required String dataMode, // 'live' | 'demo' (a replay is never re-recorded)
+  required List<ModuleScan> moduleScans,
+  required List<Dtc> obdDtcs,
+  Map<String, dynamic>? vehicle,
+  String sourceKind = 'elm327_wifi',
+  String? protocolName,
+  String? scenarioKey,
+}) {
+  final now = DateTime.now().toUtc();
+  return Recording(
+    recordingId: const Uuid().v4(),
+    createdAt: now,
+    dataMode: dataMode,
+    source: {
+      'kind': sourceKind,
+      'protocol_name': ?protocolName,
+      'demo_scenario': ?scenarioKey,
+      'app': 'full_scan',
+    },
+    vehicle: {
+      'make': ?vehicle?['make'],
+      'model': ?vehicle?['model'],
+      'model_year': ?vehicle?['model_year'],
+    },
+    durationMs: 0,
+    signals: const [],
+    samples: const [],
+    dtcs: obdDtcs,
+    moduleScans: [for (final m in moduleScans) RecordingModuleScan.fromScan(m)],
+  );
+}
 
 /// One fault code found during a full scan, ready for display + "explain".
 class ScanCode {
@@ -46,6 +85,10 @@ class FullScanState {
     this.error,
     this.stage = '',
     this.groups = const {},
+    this.moduleScans = const [],
+    this.obdDtcs = const [],
+    this.uploading = false,
+    this.reportId,
   });
 
   final bool running;
@@ -54,15 +97,37 @@ class FullScanState {
   final String stage; // current stage label key (system id or '')
   final Map<String, SystemGroup> groups;
 
+  /// Raw results kept so the scan can be uploaded as a recording for a report.
+  final List<ModuleScan> moduleScans;
+  final List<Dtc> obdDtcs;
+
+  /// Report upload state (for the "view report" action).
+  final bool uploading;
+  final String? reportId;
+
   int get totalCodes => groups.values.fold(0, (n, g) => n + g.codes.length);
 
-  FullScanState copy({bool? running, bool? done, String? error, String? stage, Map<String, SystemGroup>? groups}) =>
+  FullScanState copy({
+    bool? running,
+    bool? done,
+    String? error,
+    String? stage,
+    Map<String, SystemGroup>? groups,
+    List<ModuleScan>? moduleScans,
+    List<Dtc>? obdDtcs,
+    bool? uploading,
+    String? reportId,
+  }) =>
       FullScanState(
         running: running ?? this.running,
         done: done ?? this.done,
         error: error ?? this.error,
         stage: stage ?? this.stage,
         groups: groups ?? this.groups,
+        moduleScans: moduleScans ?? this.moduleScans,
+        obdDtcs: obdDtcs ?? this.obdDtcs,
+        uploading: uploading ?? this.uploading,
+        reportId: reportId ?? this.reportId,
       );
 }
 
@@ -92,12 +157,14 @@ class FullScanController extends Notifier<FullScanState> {
     state = FullScanState(running: true, groups: groups, stage: 'engine');
 
     // --- Stage 1: standard OBD codes (engine / emissions / transmission / electrical / network) ---
+    final obdDtcs = <Dtc>[];
     try {
       var anyReadOk = false;
       for (final status in DtcStatus.values) {
         final res = await client.readDtcs(status);
         if (res.error == null) anyReadOk = true; // a successful, interpretable read happened
         for (final d in res.dtcs) {
+          if (!obdDtcs.any((x) => x.code == d.code && x.ecu == d.ecu)) obdDtcs.add(d);
           final entry = kb.lookup(d.code);
           final sysId = systemIdForDtc(d.code, subsystem: entry?.subsystem);
           _addCode(groups, sysId, ScanCode(
@@ -117,6 +184,8 @@ class FullScanController extends Notifier<FullScanState> {
       state = state.copy(error: e.toString());
     }
 
+    state = state.copy(obdDtcs: obdDtcs);
+
     // --- Stage 2: non-powertrain modules via UDS (SRS / ABS / body) — live only ---
     if (conn.mode != DataMode.replay) {
       state = state.copy(stage: 'modules');
@@ -129,6 +198,7 @@ class FullScanController extends Notifier<FullScanState> {
           candidates: candidates.isNotEmpty ? candidates : kDiscoveryCandidates,
           includeNoResponse: true, // so a module that didn't answer is shown honestly, not as "no faults"
         );
+        state = state.copy(moduleScans: found);
         for (final m in found) {
           final sysId = systemIdForModuleCategory(m.module.category);
           final g = groups[sysId] ?? SystemGroup(system: systemById(sysId));
@@ -150,6 +220,54 @@ class FullScanController extends Notifier<FullScanState> {
     }
 
     state = state.copy(running: false, done: true, stage: '');
+  }
+
+  /// Build a recording from the finished scan (including the honest module-scan
+  /// outcomes) and upload it as a session so the server report shows SRS/ABS/body
+  /// states. Sets [FullScanState.reportId] on success (queued offline when signed out).
+  Future<void> finalizeToReport() async {
+    if (state.uploading || !state.done || state.reportId != null) return;
+    final conn = ref.read(connectionProvider);
+    final mode = conn.mode;
+    if (mode == null || mode == DataMode.replay) return; // only a fresh live/demo scan is recordable
+    state = state.copy(uploading: true, error: null);
+
+    final rec = buildFullScanRecording(
+      dataMode: mode.apiValue,
+      moduleScans: state.moduleScans,
+      obdDtcs: state.obdDtcs,
+      vehicle: ref.read(selectedVehicleProvider),
+      sourceKind: conn.sourceKind,
+      scenarioKey: conn.scenarioKey,
+    );
+    final store = ref.read(localStoreProvider);
+    await store.saveRecording(rec);
+    final vehicleId = ref.read(settingsProvider).selectedVehicleId;
+    final report = ScanReport(
+      id: const Uuid().v4(),
+      createdAt: DateTime.now().toUtc(),
+      dataMode: mode.apiValue,
+      simulator: conn.isSimulator,
+      scenarioKey: conn.scenarioKey,
+      recordingId: rec.recordingId,
+      dtcs: [for (final d in rec.dtcs) d.toJson()],
+      vehicleId: vehicleId != null && !vehicleId.startsWith('local-') ? vehicleId : null,
+    );
+    await store.saveReport(report);
+
+    final queue = ref.read(uploadQueueProvider);
+    final user = ref.read(authProvider).value;
+    try {
+      if (user == null) {
+        await queue.enqueue(report.id); // offline: report viewable once signed in / online
+      } else {
+        await queue.uploadOne(report);
+      }
+      state = state.copy(uploading: false, reportId: report.id);
+    } on ApiException catch (e) {
+      // The report is saved locally; surface the upload error but still expose the id.
+      state = state.copy(uploading: false, reportId: report.id, error: '${e.code}: ${e.message}');
+    }
   }
 }
 

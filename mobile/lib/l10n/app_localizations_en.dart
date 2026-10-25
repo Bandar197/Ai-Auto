@@ -867,6 +867,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Engine, emissions, transmission, electrical and network come from the standard scan. Airbag, ABS and body are read per module and depend on your car\'s addresses being supported; a security gateway can block some modules.';
 
   @override
+  String get fullScanSaveReport => 'Save & view report';
+
+  @override
   String get clearRequiresServer =>
       'Clearing codes needs server approval. Connect to the internet and log in.';
 

@@ -872,6 +872,9 @@ class AppLocalizationsAr extends AppLocalizations {
       'المحرك والانبعاثات وناقل الحركة والكهرباء والشبكة تأتي من الفحص القياسي. الإيرباق وABS والهيكل تُقرأ لكل وحدة وتعتمد على دعم عناوين سيارتك؛ وقد تمنع بوابة أمنية بعض الوحدات.';
 
   @override
+  String get fullScanSaveReport => 'حفظ التقرير وعرضه';
+
+  @override
   String get clearRequiresServer =>
       'مسح الأكواد يحتاج موافقة الخادم. اتصل بالإنترنت وسجّل الدخول.';
 

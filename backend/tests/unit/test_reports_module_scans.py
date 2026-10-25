@@ -112,6 +112,19 @@ def test_recording_schema_accepts_module_scans():
     jsonschema.validate(json.loads(rec.to_json()), schema)
 
 
+def test_session_summary_carries_module_scans_into_the_live_input():
+    from automind.api.pipeline import session_module_scans
+
+    session = {"summary": {"module_scans": [
+        {"key": "srs", "name_en": "SRS", "name_ar": "SRS", "category": "airbag",
+         "address": "7D0", "outcome": "no_response", "codes": []},
+        {"key": "broken", "outcome": "nonsense"},  # malformed → skipped, never crashes the diagnosis
+    ]}}
+    out = session_module_scans(session)
+    assert len(out) == 1 and out[0].key == "srs" and out[0].outcome == "no_response"
+    assert session_module_scans({"summary": None}) == []
+
+
 def test_pdf_report_renders_a_real_pdf_or_reports_unavailable():
     r = _result_with_modules()
     try:
