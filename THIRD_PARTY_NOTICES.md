@@ -38,3 +38,8 @@ SOFTWARE.
 
 Not used. AndrOBD is GPL-3.0; no code or data was copied from it (copying would
 require releasing this app under the GPL).
+
+## pdf / bidi (Dart packages, on-device PDF reports)
+
+`pdf` (Apache-2.0, DavBfr) and `bidi` (MIT, Mahdi K. Fard) are used unmodified as pub
+dependencies to build the Arabic/English PDF report on the device.

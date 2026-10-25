@@ -537,5 +537,6 @@
   "filterDemo": "تجريبي",
   "filterInterrupted": "منقطعة",
   "filterImported": "مستوردة",
-  "openSessionsFolder": "فتح مجلد الجلسات"
+  "openSessionsFolder": "فتح مجلد الجلسات",
+  "exportPdf": "تصدير PDF"
 }

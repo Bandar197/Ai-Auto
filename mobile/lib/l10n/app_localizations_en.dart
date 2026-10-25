@@ -1757,4 +1757,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openSessionsFolder => 'Open sessions folder';
+
+  @override
+  String get exportPdf => 'Export PDF';
 }

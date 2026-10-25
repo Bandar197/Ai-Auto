@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
@@ -10,10 +12,13 @@ import '../core/clear/clear_audit.dart';
 import '../core/open_folder.dart';
 import '../core/kb/local_kb.dart';
 import '../core/recording/export_service.dart';
+import '../core/recording/report_pdf.dart';
 import '../core/storage/scan_report.dart';
+import '../obd/obd.dart';
 import '../state/clear_controller.dart';
 import '../state/connection_controller.dart';
 import '../state/providers.dart';
+import '../state/verification_controller.dart';
 import '../ui/l10n_helpers.dart';
 import '../ui/widgets.dart';
 
@@ -34,6 +39,13 @@ class ReportScreen extends ConsumerWidget {
               icon: const Icon(Icons.folder_zip_outlined),
               tooltip: l.exportEvidence,
               onPressed: () => _shareEvidence(context, ref, async.value!),
+            ),
+          if (async.value != null)
+            IconButton(
+              key: const Key('export-pdf'),
+              icon: const Icon(Icons.picture_as_pdf_outlined),
+              tooltip: l.exportPdf,
+              onPressed: () => _sharePdf(context, ref, async.value!),
             ),
           if (async.value != null)
             IconButton(
@@ -102,8 +114,10 @@ class ReportScreen extends ConsumerWidget {
     final kb = ref.read(appAssetsProvider).kb;
     // Every clear attempt on this scan (incl. refusals) from the on-device audit log.
     final audit = await ref.read(clearAuditProvider).read(reportId: r.id);
+    final pdf = await _pdf(ref, r, lang, rec);
     final zip = ExportService.evidenceZip(
       rec,
+      reportPdf: pdf,
       maskVin: !ref.read(settingsProvider).includeVin,
       describe: (code) => kb.lookupFor(code, make: effectiveMake(ref.read(selectedVehicleProvider), r.vin, ref.read(appAssetsProvider)))?.description(lang),
       evidence: SessionEvidence(
@@ -115,6 +129,33 @@ class ReportScreen extends ConsumerWidget {
     );
     final f = await store.writeExportBytes(ExportService.bundleFileName(rec), zip);
     await SharePlus.instance.share(ShareParams(files: [XFile(f.path, mimeType: 'application/zip')], subject: 'Evidence bundle'));
+  }
+
+  /// The on-device PDF (Arabic or English per the app language). Built locally — no server.
+  Future<Uint8List?> _pdf(WidgetRef ref, ScanReport r, String lang, Recording? rec) async {
+    final assets = ref.read(appAssetsProvider);
+    final make = effectiveMake(ref.read(selectedVehicleProvider), r.vin, assets);
+    final clears = (await ref.read(verificationProvider.future)).where((e) => e.reportId == r.id).toList();
+    return buildReportPdf(
+      report: r,
+      recording: rec,
+      lang: lang,
+      fontRegular: await rootBundle.load('assets/fonts/IBMPlexSansArabic-Regular.ttf'),
+      fontBold: await rootBundle.load('assets/fonts/IBMPlexSansArabic-Bold.ttf'),
+      describe: (code) => assets.kb.lookupFor(code, make: make)?.description(lang),
+      clear: clears.isEmpty ? null : clears.first,
+      maskVin: !ref.read(settingsProvider).includeVin,
+    );
+  }
+
+  Future<void> _sharePdf(BuildContext context, WidgetRef ref, ScanReport r) async {
+    final lang = context.lang;
+    final store = ref.read(localStoreProvider);
+    final rec = r.recordingId == null ? null : await store.loadRecording(r.recordingId!);
+    final bytes = await _pdf(ref, r, lang, rec);
+    if (bytes == null) return;
+    final f = await store.writeExportBytes('automind_report_${r.id}${r.isDemo ? '_DEMO' : ''}.pdf', bytes);
+    await SharePlus.instance.share(ShareParams(files: [XFile(f.path, mimeType: 'application/pdf')], subject: 'AutoMind report'));
   }
 
   /// Writes the full session (manifest, session.json, CSV, XLSX, raw.log …) as a plain
@@ -132,8 +173,10 @@ class ReportScreen extends ConsumerWidget {
     final kb = ref.read(appAssetsProvider).kb;
     final make = effectiveMake(ref.read(selectedVehicleProvider), r.vin, ref.read(appAssetsProvider));
     final audit = await ref.read(clearAuditProvider).read(reportId: r.id);
+    final pdf = await _pdf(ref, r, lang, rec);
     final files = ExportService.evidenceFiles(
       rec,
+      reportPdf: pdf,
       maskVin: !ref.read(settingsProvider).includeVin,
       describe: (code) => kb.lookupFor(code, make: make)?.description(lang),
       evidence: SessionEvidence(

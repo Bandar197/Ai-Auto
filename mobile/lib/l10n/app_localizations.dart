@@ -3199,6 +3199,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open sessions folder'**
   String get openSessionsFolder;
+
+  /// No description provided for @exportPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Export PDF'**
+  String get exportPdf;
 }
 
 class _AppLocalizationsDelegate

@@ -1751,4 +1751,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get openSessionsFolder => 'فتح مجلد الجلسات';
+
+  @override
+  String get exportPdf => 'تصدير PDF';
 }

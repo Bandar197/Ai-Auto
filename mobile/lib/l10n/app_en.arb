@@ -761,5 +761,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "exportPdf": "Export PDF"
 }
