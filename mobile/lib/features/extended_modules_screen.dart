@@ -69,12 +69,11 @@ class _ExtendedModulesScreenState extends ConsumerState<ExtendedModulesScreen> {
             onPressed: canRun ? () => ref.read(extendedScanProvider.notifier).run() : null,
           ),
         ),
-        // Deep discovery: finds modules (e.g. a Hyundai airbag unit) whose exact address
-        // is not yet known, by probing every common address. Slower but thorough.
+        // Every approved (registry) address for this car's make — never a blind sweep.
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: OutlinedButton.icon(
-            icon: const Icon(Icons.travel_explore),
+            icon: const Icon(Icons.fact_check_outlined),
             label: Text(l.deepScanCta),
             onPressed: canRun ? () => ref.read(extendedScanProvider.notifier).run(deep: true) : null,
           ),
@@ -98,6 +97,11 @@ class _ExtendedModulesScreenState extends ConsumerState<ExtendedModulesScreen> {
       title: '${m.module.name(lang)}  ·  $addr',
       icon: icon,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (!m.module.verified)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: _Tag(l.moduleAddrUnverified, Colors.blueGrey),
+          ),
         if (m.dtcs.isNotEmpty)
           for (final d in m.dtcs) _dtcRow(context, lang, kb, d)
         else if (m.readOk)

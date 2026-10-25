@@ -84,6 +84,7 @@ class ModuleRegistry {
             'abs' => ModuleCategory.abs,
             _ => ModuleCategory.other,
           },
+          verified: m['verified'] == true,
         ));
       }
       profiles.add(ModuleProfile(

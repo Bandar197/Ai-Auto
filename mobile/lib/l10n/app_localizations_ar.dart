@@ -875,11 +875,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get search => 'بحث';
 
   @override
-  String get deepScanCta => 'اكتشاف متقدم للوحدات';
+  String get deepScanCta => 'فحص كل العناوين المعتمدة لسيارتك';
 
   @override
   String get deepScanNote =>
-      'يجرّب كل العناوين الشائعة ليجد وحدات لم تُثبّت لسيارتك بعد (مثل وحدة الإيرباق). أبطأ لكنه شامل. إذا ظهرت وحدة فيها عطل، أرسل لنا عنوانها لنثبّته.';
+      'يقرأ (قراءة فقط) كل عناوين الوحدات المدرجة في قائمة التوافق لماركة سيارتك. لا يوجد تخمين أو مسح عشوائي للعناوين. العناوين الموسومة «غير مؤكد» لم تُثبت بعد على سيارة حقيقية.';
 
   @override
   String get fullScanFindMore =>
@@ -1209,4 +1209,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get capProtocolSwitching => 'تبديل البروتوكول';
+
+  @override
+  String get moduleAddrUnverified => 'عنوان غير مؤكد';
 }

@@ -63,6 +63,7 @@ class UdsModule {
     required this.responseId,
     this.idBits = 11,
     this.category = ModuleCategory.other,
+    this.verified = false,
   });
 
   final String key;
@@ -72,6 +73,10 @@ class UdsModule {
   final int responseId;
   final int idBits; // 11 or 29
   final ModuleCategory category;
+
+  /// The address was confirmed on a real car (registry `verified: true`). Unverified
+  /// addresses are only read, never trusted for a clear.
+  final bool verified;
 
   String name(String lang) => lang == 'ar' ? nameAr : nameEn;
 }
@@ -189,22 +194,6 @@ const List<UdsModule> kDiscoveryCandidates = [
   UdsModule(key: 'bcm_fca', nameEn: 'Body Control (FCA)', nameAr: 'وحدة الهيكل (كرايسلر)',
       requestId: 0x18DA40F1, responseId: 0x18DAF140, idBits: 29),
 ];
-
-/// Broad 11-bit discovery sweep: every request id 0x700–0x7EF, response = request+8
-/// (the common ISO 15765-4 convention). Finds modules on any make when the exact
-/// address is unknown — e.g. a Hyundai airbag module whose address is not yet verified.
-/// The category is unknown from the address alone; it is inferred from the codes read.
-List<UdsModule> deepSweep11() => [
-      for (var r = 0x700; r <= 0x7EF; r++)
-        UdsModule(
-          key: 'req_${r.toRadixString(16).toUpperCase()}',
-          nameEn: 'Module ${r.toRadixString(16).toUpperCase()}',
-          nameAr: 'وحدة ${r.toRadixString(16).toUpperCase()}',
-          requestId: r,
-          responseId: r + 8,
-          category: ModuleCategory.other,
-        ),
-    ];
 
 /// Honest per-module read outcome (never collapse no-answer into "no faults").
 enum ModuleOutcome {

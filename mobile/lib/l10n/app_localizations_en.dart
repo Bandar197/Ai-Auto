@@ -870,11 +870,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get search => 'Search';
 
   @override
-  String get deepScanCta => 'Deep module discovery';
+  String get deepScanCta => 'Scan all approved addresses for this car';
 
   @override
   String get deepScanNote =>
-      'Probes every common address to find modules not yet mapped for your car (e.g. the airbag unit). Slower but thorough. If a module with a fault shows up, send us its address so we can lock it in.';
+      'Reads (read-only) every module address in the app\'s compatibility list for your car\'s make. No blind address scanning. Addresses marked “unverified” have not yet been confirmed on a real car.';
 
   @override
   String get fullScanFindMore =>
@@ -1204,4 +1204,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get capProtocolSwitching => 'Protocol switching';
+
+  @override
+  String get moduleAddrUnverified => 'unverified address';
 }

@@ -161,26 +161,59 @@ _FCA_29BIT_TARGETS = {
     0x60: ("ipc_cluster", "other"),
 }
 
-# Broad 11-bit discovery band: most makers put diagnostic modules at request IDs 0x700-0x7EF with
-# the response at request+8 (the common ISO 15765-4 convention). Sweeping the band finds a car's
-# modules regardless of brand — more reliable than guessing per-make addresses — so Hyundai, Toyota,
-# Honda, Ford, GM and others are discovered this way; the responders are then confirmed on the car.
-_SWEEP_11BIT = [(f"req_{r:03X}", r, r + 8, 11, "other") for r in range(0x700, 0x7F0)]
-
-_UDS_PROFILES: dict[str, list[tuple[str, int, int, int, str]]] = {
+# Only approved addresses are probed: the standard OBD range, the documented FCA targets, and the
+# curated per-make registry (shared/obd/modules.json). There is deliberately no blind sweep of the
+# 0x700-0x7EF band (developer prompt rule 1.5: no aggressive ECU-address guessing).
+_STATIC_UDS_PROFILES: dict[str, list[tuple[str, int, int, int, str]]] = {
     # key -> list of (label, request_id, response_id, id_bits, category)
     "obd11": [(f"ecu_7E{i}", 0x7E0 + i, 0x7E8 + i, 11, "other") for i in range(8)],
     "fca": [(f"ecu_7E{i}", 0x7E0 + i, 0x7E8 + i, 11, "other") for i in range(8)]
     + [(label, 0x18DA0000 | (t << 8) | 0xF1, 0x18DAF100 | t, 29, cat) for t, (label, cat) in _FCA_29BIT_TARGETS.items()],
-    # Universal discovery for Hyundai/Kia, Toyota/Lexus, Honda, Ford, GM, etc.
-    "sweep11": _SWEEP_11BIT,
-    "hyundai": _SWEEP_11BIT,
-    "kia": _SWEEP_11BIT,
-    "toyota": _SWEEP_11BIT,
-    "honda": _SWEEP_11BIT,
-    "ford": _SWEEP_11BIT,
-    "gm": _SWEEP_11BIT,
 }
+
+
+def _registry_profiles() -> dict[str, list[tuple[str, int, int, int, str]]]:
+    """Per-make candidate lists from shared/obd/modules.json (make + aliases -> make modules + generic)."""
+    import json
+
+    from automind.shared_paths import shared_dir
+
+    try:
+        data = json.loads((shared_dir() / "obd" / "modules.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+    def mods(p: dict) -> list[tuple[str, int, int, int, str]]:
+        out = []
+        for m in p.get("modules", []):
+            try:
+                req, resp = int(str(m["request"]), 16), int(str(m["response"]), 16)
+            except (KeyError, ValueError):
+                continue
+            tag = "" if m.get("verified") else "?"  # '?' marks an address not yet confirmed on a car
+            out.append((f"{m.get('key', 'module')}{tag}", req, resp, 29 if m.get("id_bits") == 29 else 11,
+                        m.get("category", "other")))
+        return out
+
+    profiles = data.get("profiles", [])
+    generic = next((mods(p) for p in profiles if str(p.get("make", "")).lower() == "generic"), [])
+    out: dict[str, list[tuple[str, int, int, int, str]]] = {"generic": generic}
+    for p in profiles:
+        make = str(p.get("make", "")).lower()
+        if not make or make == "generic":
+            continue
+        cands, seen = [], set()
+        for c in mods(p) + generic:
+            if (c[1], c[2], c[3]) not in seen:
+                seen.add((c[1], c[2], c[3]))
+                cands.append(c)
+        for name in [make, *[str(a).lower() for a in p.get("aliases", [])]]:
+            out.setdefault(name, cands)
+    return out
+
+
+def uds_profiles() -> dict[str, list[tuple[str, int, int, int, str]]]:
+    return {**_registry_profiles(), **_STATIC_UDS_PROFILES}
 
 
 async def cmd_uds_scan(a: argparse.Namespace) -> None:
@@ -192,9 +225,10 @@ async def cmd_uds_scan(a: argparse.Namespace) -> None:
     """
     from automind.obd.uds import UdsClient, UdsError, UdsModule, _hex_to_bytes
 
-    candidates = _UDS_PROFILES.get(a.profile)
+    profiles = uds_profiles()
+    candidates = profiles.get(a.profile.lower())
     if candidates is None:
-        print(f"unknown profile {a.profile!r}; choices: {', '.join(_UDS_PROFILES)}")
+        print(f"unknown profile {a.profile!r}; choices: {', '.join(sorted(profiles))}")
         return
     c = await _connect(a)
     try:
@@ -746,7 +780,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--profile",
         default="fca",
-        help="candidate set: fca; sweep11/hyundai/kia/toyota/honda/ford/gm (broad 11-bit discovery); obd11",
+        help="approved candidate set: obd11, fca, generic, or a make/alias from shared/obd/modules.json "
+        "(e.g. hyundai, kia, toyota, ford, gm). No blind address sweep.",
     )
     p.set_defaults(fn=cmd_uds_scan)
 

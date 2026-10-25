@@ -1679,13 +1679,13 @@ abstract class AppLocalizations {
   /// No description provided for @deepScanCta.
   ///
   /// In en, this message translates to:
-  /// **'Deep module discovery'**
+  /// **'Scan all approved addresses for this car'**
   String get deepScanCta;
 
   /// No description provided for @deepScanNote.
   ///
   /// In en, this message translates to:
-  /// **'Probes every common address to find modules not yet mapped for your car (e.g. the airbag unit). Slower but thorough. If a module with a fault shows up, send us its address so we can lock it in.'**
+  /// **'Reads (read-only) every module address in the app\'s compatibility list for your car\'s make. No blind address scanning. Addresses marked “unverified” have not yet been confirmed on a real car.'**
   String get deepScanNote;
 
   /// No description provided for @fullScanFindMore.
@@ -2251,6 +2251,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Protocol switching'**
   String get capProtocolSwitching;
+
+  /// No description provided for @moduleAddrUnverified.
+  ///
+  /// In en, this message translates to:
+  /// **'unverified address'**
+  String get moduleAddrUnverified;
 }
 
 class _AppLocalizationsDelegate

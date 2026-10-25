@@ -44,4 +44,21 @@ void main() {
     expect(reg.candidatesFor('KIA'), isNotEmpty);
     expect(reg.candidatesFor('lexus'), isNotEmpty);
   });
+
+  test('only approved registry addresses — no blind 0x700–0x7EF band', () {
+    for (final make in ['hyundai', 'kia', 'toyota', 'ford', 'gm', 'chrysler', 'NoSuchMake']) {
+      final c = reg.candidatesFor(make);
+      expect(c.length, lessThan(16), reason: make);
+    }
+    final h = reg.candidatesFor('hyundai');
+    expect(h.any((m) => m.requestId == 0x7D4), isTrue);
+  });
+
+  test('verified flag is carried; shipped Hyundai SRS 7D4 is NOT verified', () {
+    final srs = reg.candidatesFor('hyundai').firstWhere((m) => m.requestId == 0x7D4);
+    expect(srs.verified, isFalse);
+    final r = ModuleRegistry.fromJsonString(
+        '{"profiles":[{"make":"x","modules":[{"key":"srs","request":"7D0","response":"7D8","verified":true}]}]}');
+    expect(r.candidatesFor('x').single.verified, isTrue);
+  });
 }

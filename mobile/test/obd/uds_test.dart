@@ -44,17 +44,6 @@ void main() {
     expect(() => parseReadDtcResponse(udsHexToBytes('62 02 FF')), throwsA(isA<UdsException>()));
   });
 
-  test('deep 11-bit sweep covers 0x700-0x7EF with response = request + 8', () {
-    final sweep = deepSweep11();
-    expect(sweep.length, 0x7EF - 0x700 + 1);
-    expect(sweep.first.requestId, 0x700);
-    expect(sweep.last.requestId, 0x7EF);
-    for (final m in sweep) {
-      expect(m.responseId, m.requestId + 8);
-      expect(m.idBits, 11);
-    }
-  });
-
   test('clear response', () {
     expect(parseClearResponse(udsHexToBytes('54')), isTrue);
     expect(parseClearResponse(const []), isFalse);

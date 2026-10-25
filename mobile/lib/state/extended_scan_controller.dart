@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../obd/obd.dart';
 import 'connection_controller.dart';
+import 'providers.dart';
 
 /// Read-only discovery scan of non-powertrain modules (SRS/ABS/BCM) over UDS.
 class ExtendedScanState {
@@ -19,7 +20,7 @@ class ExtendedScanState {
   final List<ModuleScan> results;
   final String? error; // 'not_connected' | 'replay' | other
   final bool done;
-  final bool deep; // a broad address sweep (slower, finds unverified modules)
+  final bool deep; // every approved address for this car's make (registry), not a blind sweep
   final int progress;
   final int total;
 }
@@ -28,8 +29,9 @@ class ExtendedScanController extends Notifier<ExtendedScanState> {
   @override
   ExtendedScanState build() => const ExtendedScanState();
 
-  /// [deep] = true probes every common 11-bit address (slower) to find modules whose
-  /// exact address is not yet known for this make — e.g. a Hyundai airbag module.
+  /// [deep] = true probes every APPROVED address for the selected car's make from the
+  /// curated registry (shared/obd/modules.json) plus the generic list. There is no blind
+  /// sweep of the 0x700–0x7EF band (developer prompt rule 1.5).
   Future<void> run({bool deep = false}) async {
     if (state.running) return;
     final conn = ref.read(connectionProvider);
@@ -42,16 +44,14 @@ class ExtendedScanController extends Notifier<ExtendedScanState> {
       state = ExtendedScanState(error: 'not_connected', done: true, deep: deep);
       return;
     }
-    final candidates = deep ? deepSweep11() : kDiscoveryCandidates;
+    final candidates = deep ? approvedCandidates() : kDiscoveryCandidates;
     state = ExtendedScanState(running: true, deep: deep, total: candidates.length);
     try {
       final results = await scanModules(
         client.elm,
         candidates: candidates,
-        perModuleTimeout: Duration(milliseconds: deep ? 450 : 700),
-        // Quick scan: show expected modules that didn't answer (honest, not "healthy").
-        // Deep sweep: only list responders, otherwise 240 "no answer" rows.
-        includeNoResponse: !deep,
+        // Show modules that didn't answer too (honest, never "healthy").
+        includeNoResponse: true,
         onProgress: (d, t) {
           if (state.running) state = ExtendedScanState(running: true, deep: deep, progress: d, total: t, results: state.results);
         },
@@ -60,6 +60,13 @@ class ExtendedScanController extends Notifier<ExtendedScanState> {
     } on Object catch (e) {
       state = ExtendedScanState(error: e.toString(), done: true, deep: deep);
     }
+  }
+
+  /// Approved addresses for the selected vehicle's make (registry make profile + generic).
+  List<UdsModule> approvedCandidates() {
+    final make = ref.read(selectedVehicleProvider)?['make']?.toString();
+    final list = ref.read(appAssetsProvider).modules.candidatesFor(make);
+    return list.isNotEmpty ? list : kDiscoveryCandidates;
   }
 }
 

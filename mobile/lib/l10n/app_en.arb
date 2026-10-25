@@ -340,8 +340,8 @@
   "unverifiedCatalogEntry": "Unverified catalog entry",
   "allMakes": "All makes",
   "search": "Search",
-  "deepScanCta": "Deep module discovery",
-  "deepScanNote": "Probes every common address to find modules not yet mapped for your car (e.g. the airbag unit). Slower but thorough. If a module with a fault shows up, send us its address so we can lock it in.",
+  "deepScanCta": "Scan all approved addresses for this car",
+  "deepScanNote": "Reads (read-only) every module address in the app's compatibility list for your car's make. No blind address scanning. Addresses marked “unverified” have not yet been confirmed on a real car.",
   "fullScanFindMore": "Expected a fault (e.g. airbag) that didn't show? Try deep discovery.",
   "systemUnverified": "Couldn't verify this system — its module did not respond. Not read as healthy.",
   "airbagUnverified": "Couldn't verify the airbag (SRS) system — specialist diagnosis needed. If the airbag light is on, it may be a real fault.",
@@ -500,5 +500,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "moduleAddrUnverified": "unverified address"
 }
