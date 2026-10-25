@@ -267,6 +267,8 @@
   "fullScanAllClear": "لا توجد أعطال في الأنظمة التي تم فحصها.",
   "fullScanSummary": "عدد الأعطال: {count}",
   "@fullScanSummary": { "placeholders": { "count": { "type": "int" } } },
+  "fullScanUnverifiedNote": "تعذّر التحقق من {count} نظاماً — لا تُعرض كسليمة.",
+  "@fullScanUnverifiedNote": { "placeholders": { "count": { "type": "int" } } },
   "fullScanCoverageNote": "المحرك والانبعاثات وناقل الحركة والكهرباء والشبكة تأتي من الفحص القياسي. الإيرباق وABS والهيكل تُقرأ لكل وحدة وتعتمد على دعم عناوين سيارتك؛ وقد تمنع بوابة أمنية بعض الوحدات.",
   "fullScanSaveReport": "حفظ التقرير وعرضه",
   "clearRequiresServer": "مسح الأكواد يحتاج موافقة الخادم. اتصل بالإنترنت وسجّل الدخول.",

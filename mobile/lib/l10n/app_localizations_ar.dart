@@ -878,6 +878,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String fullScanUnverifiedNote(int count) {
+    return 'تعذّر التحقق من $count نظاماً — لا تُعرض كسليمة.';
+  }
+
+  @override
   String get fullScanCoverageNote =>
       'المحرك والانبعاثات وناقل الحركة والكهرباء والشبكة تأتي من الفحص القياسي. الإيرباق وABS والهيكل تُقرأ لكل وحدة وتعتمد على دعم عناوين سيارتك؛ وقد تمنع بوابة أمنية بعض الوحدات.';
 

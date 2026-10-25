@@ -1676,6 +1676,12 @@ abstract class AppLocalizations {
   /// **'{count} fault code(s) found'**
   String fullScanSummary(int count);
 
+  /// No description provided for @fullScanUnverifiedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t verify {count} system(s) — not shown as healthy.'**
+  String fullScanUnverifiedNote(int count);
+
   /// No description provided for @fullScanCoverageNote.
   ///
   /// In en, this message translates to:

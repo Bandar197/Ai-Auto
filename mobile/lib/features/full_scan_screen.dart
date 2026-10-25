@@ -42,15 +42,23 @@ class FullScanScreen extends ConsumerWidget {
               color: (scan.totalCodes == 0 ? Colors.green : Colors.orange).withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Row(children: [
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Icon(scan.totalCodes == 0 ? Icons.check_circle : Icons.report_problem,
                   color: scan.totalCodes == 0 ? Colors.green : Colors.orange),
               const SizedBox(width: 10),
               Expanded(
-                child: Text(
-                  scan.totalCodes == 0 ? l.fullScanAllClear : l.fullScanSummary(scan.totalCodes),
-                  style: const TextStyle(fontWeight: FontWeight.w700),
-                ),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(
+                    scan.totalCodes == 0 ? l.fullScanAllClear : l.fullScanSummary(scan.totalCodes),
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  if (_unverifiedCount(scan) > 0)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(l.fullScanUnverifiedNote(_unverifiedCount(scan)),
+                          style: Theme.of(context).textTheme.bodySmall),
+                    ),
+                ]),
               ),
             ]),
           ),
@@ -135,6 +143,11 @@ class FullScanScreen extends ConsumerWidget {
       ]),
     );
   }
+
+  /// Systems that were checked but not genuinely read — honestly "couldn't verify",
+  /// never counted as healthy.
+  int _unverifiedCount(FullScanState scan) =>
+      scan.groups.values.where((g) => g.checked && !g.readOk).length;
 
   Widget _systemCard(BuildContext context, String lang, SystemGroup g) {
     final l = context.l10n;

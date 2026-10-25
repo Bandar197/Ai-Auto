@@ -873,6 +873,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String fullScanUnverifiedNote(int count) {
+    return 'Couldn\'t verify $count system(s) — not shown as healthy.';
+  }
+
+  @override
   String get fullScanCoverageNote =>
       'Engine, emissions, transmission, electrical and network come from the standard scan. Airbag, ABS and body are read per module and depend on your car\'s addresses being supported; a security gateway can block some modules.';
 
