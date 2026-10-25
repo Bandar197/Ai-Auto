@@ -121,8 +121,8 @@ class _ExtendedModulesScreenState extends ConsumerState<ExtendedModulesScreen> {
   }
 
   Widget _dtcRow(BuildContext context, String lang, LocalKb kb, UdsDtc d) {
-    final entry = kb.lookup(d.code);
-    final desc = entry?.description(lang) ?? '';
+    final make = effectiveMake(ref.read(selectedVehicleProvider), null, ref.read(appAssetsProvider));
+    final desc = describeCode(context.l10n, kb, d.code, lang, make: make);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

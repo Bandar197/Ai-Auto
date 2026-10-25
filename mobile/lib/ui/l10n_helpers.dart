@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../core/kb/local_kb.dart';
 import '../l10n/app_localizations.dart';
 import '../obd/obd.dart';
 
@@ -73,4 +74,15 @@ String pickLang(Map<String, dynamic>? m, String base, String lang) {
 String pickBi(dynamic v, String lang) {
   if (v is Map) return '${v[lang] ?? v['en'] ?? ''}';
   return v == null ? '' : '$v';
+}
+
+/// Description of [code] for the vehicle's [make]: the make's own entry, a generic
+/// one for generic codes, or an honest "manufacturer-specific / not in the database".
+String describeCode(AppLocalizations l, LocalKb kb, String code, String lang, {String? make}) {
+  final e = kb.lookupFor(code, make: make);
+  if (e != null) {
+    final d = e.description(lang) ?? l.kbUnknownCode;
+    return e.oemMake != null && !e.oemVerified ? '$d · ${l.kbOemUnverifiedTag}' : d;
+  }
+  return isManufacturerSpecific(code) ? l.kbOemUnknown(make == null ? '' : ' (${make.toUpperCase()})') : l.kbUnknownCode;
 }

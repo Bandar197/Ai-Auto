@@ -50,6 +50,7 @@ class ReportScreen extends ConsumerWidget {
             : ReportView(
                 report: r,
                 kb: ref.watch(appAssetsProvider).kb,
+                make: effectiveMake(ref.watch(selectedVehicleProvider), r.vin, ref.watch(appAssetsProvider)),
                 onAnalyze: r.diagnosis != null
                     ? null
                     : () async {
@@ -89,7 +90,7 @@ class ReportScreen extends ConsumerWidget {
     final zip = ExportService.evidenceZip(
       rec,
       maskVin: !ref.read(settingsProvider).includeVin,
-      describe: (code) => kb.lookup(code)?.description(lang),
+      describe: (code) => kb.lookupFor(code, make: effectiveMake(ref.read(selectedVehicleProvider), r.vin, ref.read(appAssetsProvider)))?.description(lang),
       evidence: SessionEvidence(
         sessionState: r.interrupted ? 'interrupted' : 'completed',
         auditEvents: audit,
@@ -113,10 +114,13 @@ class ReportScreen extends ConsumerWidget {
 
 /// Pure presentation of a report (server diagnosis or offline KB view).
 class ReportView extends StatelessWidget {
-  const ReportView({super.key, required this.report, required this.kb, this.onAnalyze, this.onClearDtcs});
+  const ReportView({super.key, required this.report, required this.kb, this.onAnalyze, this.onClearDtcs, this.make});
 
   final ScanReport report;
   final LocalKb kb;
+
+  /// Vehicle brand for manufacturer-specific code descriptions (null = unknown).
+  final String? make;
   final VoidCallback? onAnalyze;
   final VoidCallback? onClearDtcs;
 
@@ -304,12 +308,12 @@ class ReportView extends StatelessWidget {
     } else {
       for (final x in report.dtcs) {
         final code = x['code'] as String;
-        final e = kb.lookup(code);
+        final e = kb.lookupFor(code, make: make);
         rows.add(ListTile(
           contentPadding: EdgeInsets.zero,
           leading: Icon(Icons.circle, size: 14, color: severityColor(e?.severity)),
           title: Text('$code · ${x['status']}${x['ecu'] != null ? ' · ${x['ecu']}' : ''}', textDirection: TextDirection.ltr, textAlign: TextAlign.start),
-          subtitle: Text(e?.description(lang) ?? l.kbUnknownCode),
+          subtitle: Text(describeCode(l, kb, code, lang, make: make)),
         ));
       }
     }

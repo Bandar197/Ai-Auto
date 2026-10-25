@@ -25,6 +25,7 @@ Recording buildFullScanRecording({
   AdapterCapabilities? adapterCapabilities,
   List<TxRxFrame> txRxFrames = const [],
   DateTime? startedAt, // TX/RX t_ms are relative to this
+  String? vin,
 }) {
   final now = startedAt ?? DateTime.now().toUtc();
   return Recording(
@@ -41,6 +42,7 @@ Recording buildFullScanRecording({
       'make': ?vehicle?['make'],
       'model': ?vehicle?['model'],
       'model_year': ?vehicle?['model_year'],
+      'vin': ?vin,
     },
     durationMs: 0,
     signals: const [],
@@ -97,6 +99,8 @@ class FullScanState {
     this.obdDtcs = const [],
     this.uploading = false,
     this.reportId,
+    this.vin,
+    this.make,
   });
 
   final bool running;
@@ -113,6 +117,10 @@ class FullScanState {
   final bool uploading;
   final String? reportId;
 
+  /// VIN read at the start (09 02) and the brand used for descriptions/addresses.
+  final String? vin;
+  final String? make;
+
   int get totalCodes => groups.values.fold(0, (n, g) => n + g.codes.length);
 
   FullScanState copy({
@@ -125,6 +133,8 @@ class FullScanState {
     List<Dtc>? obdDtcs,
     bool? uploading,
     String? reportId,
+    String? vin,
+    String? make,
   }) =>
       FullScanState(
         running: running ?? this.running,
@@ -136,6 +146,8 @@ class FullScanState {
         obdDtcs: obdDtcs ?? this.obdDtcs,
         uploading: uploading ?? this.uploading,
         reportId: reportId ?? this.reportId,
+        vin: vin ?? this.vin,
+        make: make ?? this.make,
       );
 }
 
@@ -211,6 +223,13 @@ class FullScanController extends Notifier<FullScanState> {
     Map<String, SystemGroup> groups,
     void Function() snapshot,
   ) async {
+    // VIN (read-only 09 02) → brand, unless the user picked a vehicle.
+    String? vin;
+    try {
+      vin = (await client.readVin()).vin;
+    } on Object catch (_) {}
+    final make = effectiveMake(ref.read(selectedVehicleProvider), vin, ref.read(appAssetsProvider));
+    state = state.copy(vin: vin, make: make);
 
     // --- Stage 1: standard OBD codes (engine / emissions / transmission / electrical / network) ---
     final obdDtcs = <Dtc>[];
@@ -221,7 +240,7 @@ class FullScanController extends Notifier<FullScanState> {
         if (res.error == null) anyReadOk = true; // a successful, interpretable read happened
         for (final d in res.dtcs) {
           if (!obdDtcs.any((x) => x.code == d.code && x.ecu == d.ecu)) obdDtcs.add(d);
-          final entry = kb.lookup(d.code);
+          final entry = kb.lookupFor(d.code, make: make);
           final sysId = systemIdForDtc(d.code, subsystem: entry?.subsystem);
           _addCode(groups, sysId, ScanCode(
             code: d.code,
@@ -247,7 +266,6 @@ class FullScanController extends Notifier<FullScanState> {
     if (conn.mode != DataMode.replay) {
       state = state.copy(stage: 'modules');
       try {
-        final make = ref.read(selectedVehicleProvider)?['make']?.toString();
         final registry = ref.read(appAssetsProvider).modules;
         final candidates = registry.candidatesFor(make);
         final found = await scanModules(
@@ -262,10 +280,10 @@ class FullScanController extends Notifier<FullScanState> {
           final g = groups[sysId] ?? SystemGroup(system: systemById(sysId));
           groups[sysId] = g.copy(checked: true, refused: g.refused || m.refused, readOk: g.readOk || m.readOk);
           for (final d in m.dtcs) {
-            final entry = kb.lookup(d.code);
+            final entry = kb.lookupFor(d.code, make: make);
             _addCode(groups, sysId, ScanCode(
               code: d.code,
-              description: entry?.description(lang) ?? (lang == 'ar' ? d.code : d.code),
+              description: entry?.description(lang),
               active: d.active,
               confirmed: d.confirmed,
             ));
@@ -298,6 +316,7 @@ class FullScanController extends Notifier<FullScanState> {
         moduleScans: state.moduleScans,
         obdDtcs: state.obdDtcs,
         vehicle: ref.read(selectedVehicleProvider),
+        vin: state.vin,
         sourceKind: conn.sourceKind,
         scenarioKey: conn.scenarioKey,
         adapterCapabilities: ref.read(adapterCapabilitiesProvider).value,
@@ -314,6 +333,7 @@ class FullScanController extends Notifier<FullScanState> {
         simulator: conn.isSimulator,
         scenarioKey: conn.scenarioKey,
         recordingId: rec.recordingId,
+        vin: state.vin,
         dtcs: [for (final d in rec.dtcs) d.toJson()],
         vehicleId: vehicleId != null && !vehicleId.startsWith('local-') ? vehicleId : null,
       );

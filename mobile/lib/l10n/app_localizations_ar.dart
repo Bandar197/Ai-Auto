@@ -1453,4 +1453,141 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get res_blocked => 'لم يُرسل';
+
+  @override
+  String kbOemUnknown(String make) {
+    return 'كود خاص بالشركة المصنعة: معناه يختلف حسب الماركة$make وغير موجود في القاعدة المحلية. راجع معلومات الصيانة الخاصة بالشركة.';
+  }
+
+  @override
+  String detectedMake(String make) {
+    return 'الماركة (من رقم الهيكل): $make';
+  }
+
+  @override
+  String get indicatorsTitle => 'لمبات الطبلون';
+
+  @override
+  String get indicatorsSubtitle =>
+      'ما تُبلغ به كمبيوترات السيارة عن كل لمبة تحذير';
+
+  @override
+  String get indicatorsIntro =>
+      'ما تُبلغ به كمبيوترات السيارة عن كل لمبة تحذير. التطبيق يقرأ الحالات فقط — لا يشغّل ولا يطفئ لمبات الطبلون أبداً. اللمبة التي تراها في الطبلون هي المرجع النهائي.';
+
+  @override
+  String get indicatorsCheckNow => 'افحص الآن';
+
+  @override
+  String get indicatorsNoScan =>
+      'شغّل الفحص الكامل لقراءة وحدتي الإيرباق والـ ABS.';
+
+  @override
+  String get indicatorsClearCta => 'خيارات المسح';
+
+  @override
+  String get ind_engine => 'لمبة المحرك (Check Engine)';
+
+  @override
+  String get ind_airbag => 'الإيرباق (SRS)';
+
+  @override
+  String get ind_abs => 'الفرامل المانعة للانغلاق (ABS)';
+
+  @override
+  String get ind_battery => 'البطارية / الشحن';
+
+  @override
+  String get ind_coolant => 'حرارة المحرك';
+
+  @override
+  String get ind_oil => 'ضغط الزيت';
+
+  @override
+  String get ind_tpms => 'ضغط الإطارات (TPMS)';
+
+  @override
+  String get ind_esc => 'نظام الثبات (ESC)';
+
+  @override
+  String get ind_eps => 'الدركسون الكهربائي (EPS)';
+
+  @override
+  String get ind_seatbelt => 'حزام الأمان';
+
+  @override
+  String get indState_ok => 'سليم';
+
+  @override
+  String get indState_fault => 'عطل';
+
+  @override
+  String get indState_warning => 'يحتاج فحص';
+
+  @override
+  String get indState_unknown => 'غير معروف';
+
+  @override
+  String get indState_unsupported => 'غير مقروء';
+
+  @override
+  String get indState_checking => 'جارٍ الفحص…';
+
+  @override
+  String get indSource_read => 'مقروء من الكمبيوتر';
+
+  @override
+  String get indSource_inferred => 'مستنتج من أكواد الوحدة';
+
+  @override
+  String get indDetail_mil_on => 'كمبيوتر المحرك يُبلغ أن اللمبة مضاءة.';
+
+  @override
+  String get indDetail_mil_off => 'كمبيوتر المحرك يُبلغ أن اللمبة مطفأة.';
+
+  @override
+  String get indDetail_codes_stored =>
+      'الوحدة فيها أكواد مخزّنة — لمبتها عادةً مضاءة. (استنتاج: لمبة الطبلون نفسها لا يمكن قراءتها.)';
+
+  @override
+  String get indDetail_module_no_codes =>
+      'الوحدة استجابت بلا أكواد. اللمبة نفسها لا تُقرأ — بعد فتح السويتش يُفترض أن تنطفئ خلال ثوانٍ.';
+
+  @override
+  String get indDetail_module_not_read =>
+      'الوحدة لم تستجب، فالحالة غير معروفة — وليست «سليمة». هذا الجهاز لم يثبت دعمه لها.';
+
+  @override
+  String get indDetail_module_refused =>
+      'الوحدة رفضت الوصول، فالحالة غير معروفة.';
+
+  @override
+  String get indDetail_charging_low =>
+      'المحرك يعمل والجهد أقل من 13 فولت — قد يكون الشحن ضعيفاً.';
+
+  @override
+  String get indDetail_charging_ok => 'المحرك يعمل وجهد الشحن طبيعي.';
+
+  @override
+  String get indDetail_battery_low => 'المحرك متوقف والبطارية أقل من 12 فولت.';
+
+  @override
+  String get indDetail_battery_ok_engine_off =>
+      'المحرك متوقف: لمبة البطارية تكون مضاءة طبيعياً الآن — ليست عطلاً.';
+
+  @override
+  String get indDetail_coolant_high => 'حرارة الماء 110 درجة أو أكثر.';
+
+  @override
+  String get indDetail_coolant_ok => 'حرارة الماء طبيعية.';
+
+  @override
+  String get indDetail_no_data => 'لا توجد قراءة بعد — اتصل واضغط «افحص الآن».';
+
+  @override
+  String get indDetail_not_readable =>
+      'لا يمكن قراءتها عبر OBD العام في هذه السيارة (لا توجد وحدة مثبتة).';
+
+  @override
+  String get kbOemUnverifiedTag => 'بيانات مجتمعية غير موثّقة من الشركة';
 }

@@ -34,7 +34,8 @@ class HomeScreen extends ConsumerWidget {
     if (latest != null && latest.diagnosis == null) {
       for (final d in latest.dtcs) {
         final code = d['code'] as String;
-        alerts.add(('$code — ${kb.lookup(code)?.description(context.lang) ?? l.kbUnknownCode}', kb.lookup(code)?.severity));
+        final make = effectiveMake(ref.watch(selectedVehicleProvider), latest.vin, ref.watch(appAssetsProvider));
+        alerts.add(('$code — ${describeCode(l, kb, code, context.lang, make: make)}', kb.lookupFor(code, make: make)?.severity));
       }
     }
 
@@ -173,6 +174,20 @@ class HomeScreen extends ConsumerWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 6),
+            child: ListTile(
+              key: const Key('home-indicators'),
+              leading: CircleAvatar(
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                child: Icon(Icons.dashboard_outlined, color: Theme.of(context).colorScheme.onPrimaryContainer),
+              ),
+              title: Text(l.indicatorsTitle),
+              subtitle: Text(l.indicatorsSubtitle, maxLines: 2, overflow: TextOverflow.ellipsis),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/indicators'),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 0),
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: Theme.of(context).colorScheme.primaryContainer,

@@ -208,6 +208,14 @@ final selectedVehicleProvider = Provider<Map<String, dynamic>?>((ref) {
   return list.first;
 });
 
+/// Brand used for manufacturer-specific code descriptions and module addresses:
+/// the selected vehicle's make, else the VIN's WMI (null = unknown, never guessed).
+String? effectiveMake(Map<String, dynamic>? vehicle, String? vin, AppAssets assets) {
+  final m = vehicle?['make']?.toString().trim();
+  if (m != null && m.isNotEmpty) return m.toLowerCase();
+  return assets.wmi.makeFromVin(vin);
+}
+
 /// Maintenance records per vehicle (server when possible, local cache).
 final maintenanceProvider = FutureProvider.family<List<Map<String, dynamic>>, String>((ref, vehicleId) async {
   final store = ref.read(localStoreProvider);

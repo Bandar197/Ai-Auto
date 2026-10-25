@@ -611,5 +611,60 @@
         "type": "String"
       }
     }
-  }
+  },
+  "kbOemUnknown": "Manufacturer-specific code: its meaning depends on the make{make} and is not in the local database. Check the manufacturer's service information.",
+  "detectedMake": "Make (from VIN): {make}",
+  "@kbOemUnknown": {
+    "placeholders": {
+      "make": {
+        "type": "String"
+      }
+    }
+  },
+  "@detectedMake": {
+    "placeholders": {
+      "make": {
+        "type": "String"
+      }
+    }
+  },
+  "indicatorsTitle": "Warning lamps",
+  "indicatorsSubtitle": "What the car's computers report for each dashboard lamp",
+  "indicatorsIntro": "What the car's computers report for each warning lamp. The app only reads states — it never switches dashboard lamps on or off. The lamp you see on the dashboard is the final word.",
+  "indicatorsCheckNow": "Check now",
+  "indicatorsNoScan": "Run a full scan to read the airbag and ABS modules.",
+  "indicatorsClearCta": "Clear options",
+  "ind_engine": "Engine (Check Engine)",
+  "ind_airbag": "Airbag (SRS)",
+  "ind_abs": "ABS",
+  "ind_battery": "Battery / charging",
+  "ind_coolant": "Engine temperature",
+  "ind_oil": "Oil pressure",
+  "ind_tpms": "Tyre pressure (TPMS)",
+  "ind_esc": "Stability control (ESC)",
+  "ind_eps": "Power steering (EPS)",
+  "ind_seatbelt": "Seatbelt",
+  "indState_ok": "OK",
+  "indState_fault": "Fault",
+  "indState_warning": "Check",
+  "indState_unknown": "Unknown",
+  "indState_unsupported": "Not readable",
+  "indState_checking": "Checking…",
+  "indSource_read": "read from the computer",
+  "indSource_inferred": "inferred from module codes",
+  "indDetail_mil_on": "The engine computer reports the lamp ON.",
+  "indDetail_mil_off": "The engine computer reports the lamp OFF.",
+  "indDetail_codes_stored": "The module has stored codes — its lamp is normally ON. (Inferred: the dashboard lamp itself can't be read.)",
+  "indDetail_module_no_codes": "The module answered with no codes. The lamp itself can't be read — after ignition ON it should go out within a few seconds.",
+  "indDetail_module_not_read": "The module did not answer, so the state is unknown — not \"OK\". This adapter hasn't proven support for it.",
+  "indDetail_module_refused": "The module refused access, so the state is unknown.",
+  "indDetail_charging_low": "Engine running but voltage is below 13 V — charging may be weak.",
+  "indDetail_charging_ok": "Engine running, charging voltage normal.",
+  "indDetail_battery_low": "Engine off and battery below 12 V.",
+  "indDetail_battery_ok_engine_off": "Engine off: the battery lamp is normally ON now — not a fault.",
+  "indDetail_coolant_high": "Coolant at or above 110 °C.",
+  "indDetail_coolant_ok": "Coolant temperature normal.",
+  "indDetail_no_data": "No reading yet — connect and tap \"Check now\".",
+  "indDetail_not_readable": "Not readable through generic OBD on this car (no verified module).",
+  "kbOemUnverifiedTag": "community data, not verified by the manufacturer"
 }

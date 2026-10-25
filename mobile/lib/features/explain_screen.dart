@@ -58,7 +58,8 @@ class _ExplainScreenState extends ConsumerState<ExplainScreen> {
 
   /// Offline fallback built from the bundled KB + client-side search links.
   Map<String, dynamic> _offline(String lang) {
-    final kb = ref.read(appAssetsProvider).kb.lookup(widget.code);
+    final assets = ref.read(appAssetsProvider);
+    final kb = assets.kb.lookupFor(widget.code, make: effectiveMake(ref.read(selectedVehicleProvider), null, assets));
     final title = kb?.description(lang) ?? widget.code;
     return {
       'code': widget.code,

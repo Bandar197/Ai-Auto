@@ -119,6 +119,7 @@ void main() {
     await tester.pump();
     expect(find.byKey(const Key('offline-note')), findsOneWidget);
     expect(find.text('أداء حساس ضغط مجمع السحب'), findsOneWidget);
-    expect(find.text('الوصف غير موجود في قاعدة المعرفة.'), findsOneWidget); // unknown code never invented
+    // P1234 is manufacturer-specific and the make is unknown: never borrowed or invented.
+    expect(find.textContaining('كود خاص بالشركة المصنعة'), findsOneWidget);
   });
 }

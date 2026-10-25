@@ -12,8 +12,18 @@ class KbEntry {
     this.drivable,
     this.causesEn = const [],
     this.causesAr = const [],
+    this.oemMake,
+    this.oemSource,
+    this.oemVerified = false,
   });
   final String code;
+
+  /// Set when the description is manufacturer-specific (from `dtc_oem.json`).
+  final String? oemMake;
+  final String? oemSource;
+
+  /// Confirmed against manufacturer service information (false = community data).
+  final bool oemVerified;
   final String? descriptionEn;
   final String? descriptionAr;
   final String? severity;
@@ -27,12 +37,25 @@ class KbEntry {
   List<String> causes(String lang) => lang == 'ar' && causesAr.isNotEmpty ? causesAr : causesEn;
 }
 
+/// SAE J2012: true when the code's meaning is defined by each manufacturer
+/// (P1xxx, P3000–P33FF, B1/B2, C1/C2, U1/U2) — the same code means different things
+/// on different makes, so a generic description must never be shown for it.
+bool isManufacturerSpecific(String code) {
+  final c = code.toUpperCase();
+  if (!RegExp(r'^[PCBU][0-9A-F]{4}$').hasMatch(c)) return false;
+  final d1 = c[1];
+  if (c[0] == 'P') return d1 == '1' || (d1 == '3' && '0123'.contains(c[2]));
+  return d1 == '1' || d1 == '2';
+}
+
 /// Offline DTC lookup from `assets/shared/kb/dtc_definitions.json`. The file
 /// is maintained by the backend team; the loader accepts a list of objects,
 /// a `{code: {...}}` map, or either nested under `dtcs` / `codes` / `items`.
 /// Unknown codes return null — meanings are never invented.
 class LocalKb {
-  LocalKb(this.entries, {this.version});
+  LocalKb(this.entries, {this.version, Map<String, Map<String, KbEntry>>? oem, Map<String, String>? oemAliases})
+      : oem = oem ?? const {},
+        oemAliases = oemAliases ?? const {};
 
   factory LocalKb.empty() => LocalKb(const {});
 
@@ -78,7 +101,60 @@ class LocalKb {
   final Map<String, KbEntry> entries;
   final String? version;
 
+  /// make → code → manufacturer-specific entry (from `dtc_oem.json`).
+  final Map<String, Map<String, KbEntry>> oem;
+
+  /// alias → make (e.g. kia → hyundai when a profile lists it).
+  final Map<String, String> oemAliases;
+
   bool get isEmpty => entries.isEmpty;
 
+  /// Generic lookup (SAE-defined meanings only).
   KbEntry? lookup(String code) => entries[code.toUpperCase()];
+
+  /// Make-aware lookup: the make's own entry first; a generic entry only for a
+  /// generic code. A manufacturer-specific code with no entry for [make] → null.
+  KbEntry? lookupFor(String code, {String? make}) {
+    final c = code.toUpperCase();
+    final m = make?.toLowerCase();
+    if (m != null) {
+      final hit = oem[m]?[c] ?? oem[oemAliases[m]]?[c];
+      if (hit != null) return hit;
+    }
+    if (isManufacturerSpecific(c)) return null;
+    return entries[c];
+  }
+
+  /// A copy with the manufacturer overlay (`dtc_oem.json`) merged in.
+  LocalKb withOem(String source) {
+    final data = jsonDecode(source);
+    final out = <String, Map<String, KbEntry>>{};
+    final aliases = <String, String>{};
+    for (final p in (data is Map ? (data['profiles'] as List? ?? const []) : const [])) {
+      if (p is! Map) continue;
+      final make = '${p['make'] ?? ''}'.toLowerCase();
+      if (make.isEmpty) continue;
+      for (final a in (p['aliases'] as List? ?? const [])) {
+        aliases['$a'.toLowerCase()] = make;
+      }
+      final codes = (p['codes'] as Map?) ?? const {};
+      final m = out.putIfAbsent(make, () => {});
+      for (final e in codes.entries) {
+        final c = '${e.key}'.toUpperCase();
+        final v = e.value;
+        if (v is! Map || !RegExp(r'^[PCBU][0-9A-F]{4}$').hasMatch(c)) continue;
+        m[c] = KbEntry(
+          code: c,
+          descriptionEn: v['en']?.toString(),
+          descriptionAr: (v['ar']?.toString().isEmpty ?? true) ? null : v['ar'].toString(),
+          severity: v['severity']?.toString(),
+          system: v['system']?.toString(),
+          oemMake: make,
+          oemSource: (v['source'] ?? p['source'])?.toString(),
+          oemVerified: (v['verified'] ?? p['verified']) == true,
+        );
+      }
+    }
+    return LocalKb(entries, version: version, oem: out, oemAliases: aliases);
+  }
 }

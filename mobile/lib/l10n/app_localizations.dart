@@ -2665,6 +2665,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not sent'**
   String get res_blocked;
+
+  /// No description provided for @kbOemUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Manufacturer-specific code: its meaning depends on the make{make} and is not in the local database. Check the manufacturer\'s service information.'**
+  String kbOemUnknown(String make);
+
+  /// No description provided for @detectedMake.
+  ///
+  /// In en, this message translates to:
+  /// **'Make (from VIN): {make}'**
+  String detectedMake(String make);
+
+  /// No description provided for @indicatorsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning lamps'**
+  String get indicatorsTitle;
+
+  /// No description provided for @indicatorsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What the car\'s computers report for each dashboard lamp'**
+  String get indicatorsSubtitle;
+
+  /// No description provided for @indicatorsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'What the car\'s computers report for each warning lamp. The app only reads states — it never switches dashboard lamps on or off. The lamp you see on the dashboard is the final word.'**
+  String get indicatorsIntro;
+
+  /// No description provided for @indicatorsCheckNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Check now'**
+  String get indicatorsCheckNow;
+
+  /// No description provided for @indicatorsNoScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Run a full scan to read the airbag and ABS modules.'**
+  String get indicatorsNoScan;
+
+  /// No description provided for @indicatorsClearCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear options'**
+  String get indicatorsClearCta;
+
+  /// No description provided for @ind_engine.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine (Check Engine)'**
+  String get ind_engine;
+
+  /// No description provided for @ind_airbag.
+  ///
+  /// In en, this message translates to:
+  /// **'Airbag (SRS)'**
+  String get ind_airbag;
+
+  /// No description provided for @ind_abs.
+  ///
+  /// In en, this message translates to:
+  /// **'ABS'**
+  String get ind_abs;
+
+  /// No description provided for @ind_battery.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery / charging'**
+  String get ind_battery;
+
+  /// No description provided for @ind_coolant.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine temperature'**
+  String get ind_coolant;
+
+  /// No description provided for @ind_oil.
+  ///
+  /// In en, this message translates to:
+  /// **'Oil pressure'**
+  String get ind_oil;
+
+  /// No description provided for @ind_tpms.
+  ///
+  /// In en, this message translates to:
+  /// **'Tyre pressure (TPMS)'**
+  String get ind_tpms;
+
+  /// No description provided for @ind_esc.
+  ///
+  /// In en, this message translates to:
+  /// **'Stability control (ESC)'**
+  String get ind_esc;
+
+  /// No description provided for @ind_eps.
+  ///
+  /// In en, this message translates to:
+  /// **'Power steering (EPS)'**
+  String get ind_eps;
+
+  /// No description provided for @ind_seatbelt.
+  ///
+  /// In en, this message translates to:
+  /// **'Seatbelt'**
+  String get ind_seatbelt;
+
+  /// No description provided for @indState_ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get indState_ok;
+
+  /// No description provided for @indState_fault.
+  ///
+  /// In en, this message translates to:
+  /// **'Fault'**
+  String get indState_fault;
+
+  /// No description provided for @indState_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'Check'**
+  String get indState_warning;
+
+  /// No description provided for @indState_unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get indState_unknown;
+
+  /// No description provided for @indState_unsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Not readable'**
+  String get indState_unsupported;
+
+  /// No description provided for @indState_checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking…'**
+  String get indState_checking;
+
+  /// No description provided for @indSource_read.
+  ///
+  /// In en, this message translates to:
+  /// **'read from the computer'**
+  String get indSource_read;
+
+  /// No description provided for @indSource_inferred.
+  ///
+  /// In en, this message translates to:
+  /// **'inferred from module codes'**
+  String get indSource_inferred;
+
+  /// No description provided for @indDetail_mil_on.
+  ///
+  /// In en, this message translates to:
+  /// **'The engine computer reports the lamp ON.'**
+  String get indDetail_mil_on;
+
+  /// No description provided for @indDetail_mil_off.
+  ///
+  /// In en, this message translates to:
+  /// **'The engine computer reports the lamp OFF.'**
+  String get indDetail_mil_off;
+
+  /// No description provided for @indDetail_codes_stored.
+  ///
+  /// In en, this message translates to:
+  /// **'The module has stored codes — its lamp is normally ON. (Inferred: the dashboard lamp itself can\'t be read.)'**
+  String get indDetail_codes_stored;
+
+  /// No description provided for @indDetail_module_no_codes.
+  ///
+  /// In en, this message translates to:
+  /// **'The module answered with no codes. The lamp itself can\'t be read — after ignition ON it should go out within a few seconds.'**
+  String get indDetail_module_no_codes;
+
+  /// No description provided for @indDetail_module_not_read.
+  ///
+  /// In en, this message translates to:
+  /// **'The module did not answer, so the state is unknown — not \"OK\". This adapter hasn\'t proven support for it.'**
+  String get indDetail_module_not_read;
+
+  /// No description provided for @indDetail_module_refused.
+  ///
+  /// In en, this message translates to:
+  /// **'The module refused access, so the state is unknown.'**
+  String get indDetail_module_refused;
+
+  /// No description provided for @indDetail_charging_low.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine running but voltage is below 13 V — charging may be weak.'**
+  String get indDetail_charging_low;
+
+  /// No description provided for @indDetail_charging_ok.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine running, charging voltage normal.'**
+  String get indDetail_charging_ok;
+
+  /// No description provided for @indDetail_battery_low.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine off and battery below 12 V.'**
+  String get indDetail_battery_low;
+
+  /// No description provided for @indDetail_battery_ok_engine_off.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine off: the battery lamp is normally ON now — not a fault.'**
+  String get indDetail_battery_ok_engine_off;
+
+  /// No description provided for @indDetail_coolant_high.
+  ///
+  /// In en, this message translates to:
+  /// **'Coolant at or above 110 °C.'**
+  String get indDetail_coolant_high;
+
+  /// No description provided for @indDetail_coolant_ok.
+  ///
+  /// In en, this message translates to:
+  /// **'Coolant temperature normal.'**
+  String get indDetail_coolant_ok;
+
+  /// No description provided for @indDetail_no_data.
+  ///
+  /// In en, this message translates to:
+  /// **'No reading yet — connect and tap \"Check now\".'**
+  String get indDetail_no_data;
+
+  /// No description provided for @indDetail_not_readable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not readable through generic OBD on this car (no verified module).'**
+  String get indDetail_not_readable;
+
+  /// No description provided for @kbOemUnverifiedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'community data, not verified by the manufacturer'**
+  String get kbOemUnverifiedTag;
 }
 
 class _AppLocalizationsDelegate

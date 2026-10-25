@@ -7,6 +7,7 @@ import 'features/explain_screen.dart';
 import 'features/controllers_catalog_screen.dart';
 import 'features/adapter_screen.dart';
 import 'features/compare_screen.dart';
+import 'features/indicators_screen.dart';
 import 'features/knowledge_screen.dart';
 import 'features/extended_modules_screen.dart';
 import 'features/full_scan_screen.dart';
@@ -58,6 +59,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/controllers', builder: (_, _) => const ControllersCatalogScreen()),
       GoRoute(path: '/knowledge', builder: (_, _) => const KnowledgeScreen()),
       GoRoute(path: '/adapter', builder: (_, _) => const AdapterScreen()),
+      GoRoute(path: '/indicators', builder: (_, _) => const IndicatorsScreen()),
       GoRoute(
         path: '/compare',
         builder: (_, s) => CompareScreen(beforeId: s.uri.queryParameters['a'], afterId: s.uri.queryParameters['b']),

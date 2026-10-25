@@ -1454,4 +1454,144 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get res_blocked => 'Not sent';
+
+  @override
+  String kbOemUnknown(String make) {
+    return 'Manufacturer-specific code: its meaning depends on the make$make and is not in the local database. Check the manufacturer\'s service information.';
+  }
+
+  @override
+  String detectedMake(String make) {
+    return 'Make (from VIN): $make';
+  }
+
+  @override
+  String get indicatorsTitle => 'Warning lamps';
+
+  @override
+  String get indicatorsSubtitle =>
+      'What the car\'s computers report for each dashboard lamp';
+
+  @override
+  String get indicatorsIntro =>
+      'What the car\'s computers report for each warning lamp. The app only reads states — it never switches dashboard lamps on or off. The lamp you see on the dashboard is the final word.';
+
+  @override
+  String get indicatorsCheckNow => 'Check now';
+
+  @override
+  String get indicatorsNoScan =>
+      'Run a full scan to read the airbag and ABS modules.';
+
+  @override
+  String get indicatorsClearCta => 'Clear options';
+
+  @override
+  String get ind_engine => 'Engine (Check Engine)';
+
+  @override
+  String get ind_airbag => 'Airbag (SRS)';
+
+  @override
+  String get ind_abs => 'ABS';
+
+  @override
+  String get ind_battery => 'Battery / charging';
+
+  @override
+  String get ind_coolant => 'Engine temperature';
+
+  @override
+  String get ind_oil => 'Oil pressure';
+
+  @override
+  String get ind_tpms => 'Tyre pressure (TPMS)';
+
+  @override
+  String get ind_esc => 'Stability control (ESC)';
+
+  @override
+  String get ind_eps => 'Power steering (EPS)';
+
+  @override
+  String get ind_seatbelt => 'Seatbelt';
+
+  @override
+  String get indState_ok => 'OK';
+
+  @override
+  String get indState_fault => 'Fault';
+
+  @override
+  String get indState_warning => 'Check';
+
+  @override
+  String get indState_unknown => 'Unknown';
+
+  @override
+  String get indState_unsupported => 'Not readable';
+
+  @override
+  String get indState_checking => 'Checking…';
+
+  @override
+  String get indSource_read => 'read from the computer';
+
+  @override
+  String get indSource_inferred => 'inferred from module codes';
+
+  @override
+  String get indDetail_mil_on => 'The engine computer reports the lamp ON.';
+
+  @override
+  String get indDetail_mil_off => 'The engine computer reports the lamp OFF.';
+
+  @override
+  String get indDetail_codes_stored =>
+      'The module has stored codes — its lamp is normally ON. (Inferred: the dashboard lamp itself can\'t be read.)';
+
+  @override
+  String get indDetail_module_no_codes =>
+      'The module answered with no codes. The lamp itself can\'t be read — after ignition ON it should go out within a few seconds.';
+
+  @override
+  String get indDetail_module_not_read =>
+      'The module did not answer, so the state is unknown — not \"OK\". This adapter hasn\'t proven support for it.';
+
+  @override
+  String get indDetail_module_refused =>
+      'The module refused access, so the state is unknown.';
+
+  @override
+  String get indDetail_charging_low =>
+      'Engine running but voltage is below 13 V — charging may be weak.';
+
+  @override
+  String get indDetail_charging_ok =>
+      'Engine running, charging voltage normal.';
+
+  @override
+  String get indDetail_battery_low => 'Engine off and battery below 12 V.';
+
+  @override
+  String get indDetail_battery_ok_engine_off =>
+      'Engine off: the battery lamp is normally ON now — not a fault.';
+
+  @override
+  String get indDetail_coolant_high => 'Coolant at or above 110 °C.';
+
+  @override
+  String get indDetail_coolant_ok => 'Coolant temperature normal.';
+
+  @override
+  String get indDetail_no_data =>
+      'No reading yet — connect and tap \"Check now\".';
+
+  @override
+  String get indDetail_not_readable =>
+      'Not readable through generic OBD on this car (no verified module).';
+
+  @override
+  String get kbOemUnverifiedTag =>
+      'community data, not verified by the manufacturer';
 }

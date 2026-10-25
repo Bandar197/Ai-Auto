@@ -98,7 +98,7 @@ class _ClearDtcsScreenState extends ConsumerState<ClearDtcsScreen> {
       adapter: ref.read(adapterCapabilitiesProvider).value,
       registry: assets.modules.candidatesFor(make),
       serverProcedures: _serverProcedures,
-      describeEn: (c) => assets.kb.lookup(c)?.description('en'),
+      describeEn: (c) => assets.kb.lookupFor(c, make: effectiveMake(ref.read(selectedVehicleProvider), _report?.vin, assets))?.description('en'),
     );
   }
 

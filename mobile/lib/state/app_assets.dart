@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import '../core/controller_catalog.dart';
 import '../core/kb/local_kb.dart';
 import '../core/module_registry.dart';
+import '../core/vehicle_make.dart';
 import '../obd/obd.dart';
 
 /// Bundled shared contracts (copied by tools/sync_shared.sh).
@@ -15,14 +16,19 @@ class AppAssets {
     required this.kb,
     ModuleRegistry? modules,
     ControllerCatalog? controllers,
+    WmiTable? wmi,
   })  : modules = modules ?? ModuleRegistry.empty(),
-        controllers = controllers ?? ControllerCatalog.empty();
+        controllers = controllers ?? ControllerCatalog.empty(),
+        wmi = wmi ?? WmiTable.empty();
 
   final PidTable table;
   final List<Scenario> scenarios;
   final LocalKb kb;
   final ModuleRegistry modules;
   final ControllerCatalog controllers;
+
+  /// VIN → brand (WMI).
+  final WmiTable wmi;
 
   Scenario? scenario(String key) {
     for (final s in scenarios) {
@@ -46,6 +52,15 @@ class AppAssets {
     } on Object catch (_) {
       kb = LocalKb.empty(); // KB not shipped yet: handled gracefully
     }
+    try {
+      kb = kb.withOem(await bundle.loadString('assets/shared/kb/dtc_oem.json'));
+    } on Object catch (_) {}
+    WmiTable wmi;
+    try {
+      wmi = WmiTable.fromJsonString(await bundle.loadString('assets/shared/obd/wmi.json'));
+    } on Object catch (_) {
+      wmi = WmiTable.empty();
+    }
     ModuleRegistry modules;
     try {
       modules = ModuleRegistry.fromJsonString(await bundle.loadString('assets/shared/obd/modules.json'));
@@ -58,6 +73,6 @@ class AppAssets {
     } on Object catch (_) {
       controllers = ControllerCatalog.empty();
     }
-    return AppAssets(table: table, scenarios: scenarios, kb: kb, modules: modules, controllers: controllers);
+    return AppAssets(table: table, scenarios: scenarios, kb: kb, modules: modules, controllers: controllers, wmi: wmi);
   }
 }

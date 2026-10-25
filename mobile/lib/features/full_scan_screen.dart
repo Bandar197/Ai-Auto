@@ -6,6 +6,7 @@ import '../core/systems.dart';
 import '../obd/obd.dart';
 import '../state/connection_controller.dart';
 import '../state/full_scan_controller.dart';
+import '../state/providers.dart';
 import '../ui/l10n_helpers.dart';
 import '../ui/widgets.dart';
 
@@ -72,7 +73,12 @@ class FullScanScreen extends ConsumerWidget {
             ]),
           ),
         if (scan.error == 'not_connected') Padding(padding: const EdgeInsets.all(16), child: Text(l.notConnected)),
-        for (final g in sections) _systemCard(context, lang, g),
+        if (scan.make != null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+            child: Text(l.detectedMake(scan.make!.toUpperCase()), style: Theme.of(context).textTheme.bodySmall),
+          ),
+        for (final g in sections) _systemCard(context, ref, lang, g),
         if (scan.done)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
@@ -149,7 +155,7 @@ class FullScanScreen extends ConsumerWidget {
   int _unverifiedCount(FullScanState scan) =>
       scan.groups.values.where((g) => g.checked && !g.readOk).length;
 
-  Widget _systemCard(BuildContext context, String lang, SystemGroup g) {
+  Widget _systemCard(BuildContext context, WidgetRef ref, String lang, SystemGroup g) {
     final l = context.l10n;
     final airbag = g.system.id == 'airbag';
     return SectionCard(
@@ -157,7 +163,7 @@ class FullScanScreen extends ConsumerWidget {
       icon: g.system.icon,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         if (g.codes.isNotEmpty)
-          for (final c in g.codes) _codeRow(context, c)
+          for (final c in g.codes) _codeRow(context, ref, c)
         // "No faults" is shown ONLY when a real, interpretable read succeeded.
         else if (g.readOk)
           Text(l.extendedNoFaults, style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w600))
@@ -171,7 +177,7 @@ class FullScanScreen extends ConsumerWidget {
     );
   }
 
-  Widget _codeRow(BuildContext context, ScanCode c) {
+  Widget _codeRow(BuildContext context, WidgetRef ref, ScanCode c) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -189,7 +195,12 @@ class FullScanScreen extends ConsumerWidget {
             onPressed: () => context.push('/explain/${c.code}'),
           ),
         ]),
-        if ((c.description ?? '').isNotEmpty) Text(c.description!, style: Theme.of(context).textTheme.bodySmall),
+        Text(
+          (c.description ?? '').isNotEmpty
+              ? c.description!
+              : describeCode(context.l10n, ref.read(appAssetsProvider).kb, c.code, context.lang, make: ref.read(fullScanProvider).make),
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
       ]),
     );
   }
