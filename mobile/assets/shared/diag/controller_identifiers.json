@@ -1,0 +1,2765 @@
+{
+ "$comment": "Controller identifiers extracted (static string analysis of MotorData libMDCore.so arm64-v8a) as UNVERIFIED STATIC IDENTIFIERS. These are text names of module groups per manufacturer — NOT CAN addresses, NOT a list of a specific vehicle's modules, NOT proof of ELM327 support. Never treat an entry as a readable ECU without a verified profile (see shared/obd/modules.json). category is a heuristic label for grouping only.",
+ "version": "2026.10",
+ "source": {
+  "source_type": "static_identifier",
+  "source_reference": "MotorData libMDCore.so (arm64-v8a) string scan — 459 identifiers",
+  "verification_status": "unverified"
+ },
+ "identifiers": [
+  {
+   "id": "bmw_abs_controller",
+   "make": "bmw",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_air_bag_controller",
+   "make": "bmw",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_air_suspension_controller",
+   "make": "bmw",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_audio_controller",
+   "make": "bmw",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_body_controller",
+   "make": "bmw",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_car_comm_controller",
+   "make": "bmw",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_car_controller",
+   "make": "bmw",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_climate_controller",
+   "make": "bmw",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_combination_meter_controller",
+   "make": "bmw",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_cruise_controller",
+   "make": "bmw",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_difference_lock_controller",
+   "make": "bmw",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_display_controller",
+   "make": "bmw",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_electric_parking_brake_controller",
+   "make": "bmw",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_ems_controller",
+   "make": "bmw",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_engine_controller",
+   "make": "bmw",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_entry_start_controller",
+   "make": "bmw",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_footwell_controller",
+   "make": "bmw",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_four_wheel_drive_controller",
+   "make": "bmw",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_fuel_pump_controller",
+   "make": "bmw",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_gateway_controller",
+   "make": "bmw",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_information_controller",
+   "make": "bmw",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_ipdm_controller",
+   "make": "bmw",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_parking_monitor_controller",
+   "make": "bmw",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_power_steering_controller",
+   "make": "bmw",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_radio_controller",
+   "make": "bmw",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_rear_heater_controller",
+   "make": "bmw",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_stability_system_controller",
+   "make": "bmw",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_suspension_controller",
+   "make": "bmw",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_telematic_controller",
+   "make": "bmw",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_tire_pressure_monitor_controller",
+   "make": "bmw",
+   "category": "tpms",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_transmission_controller",
+   "make": "bmw",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "bmw_vgrs_controller",
+   "make": "bmw",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_abs_controller",
+   "make": "chevrolet",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_active_safety_controller",
+   "make": "chevrolet",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_amplifier_controller",
+   "make": "chevrolet",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_bcm_controller",
+   "make": "chevrolet",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_brake_system_controller",
+   "make": "chevrolet",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_chassis_controller",
+   "make": "chevrolet",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_cim_controller",
+   "make": "chevrolet",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_engine_controller",
+   "make": "chevrolet",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_eps_controller",
+   "make": "chevrolet",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_headlamp_controller",
+   "make": "chevrolet",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_human_machine_interface_controller",
+   "make": "chevrolet",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_multifunction_controller",
+   "make": "chevrolet",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_parking_brake_controller",
+   "make": "chevrolet",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_pedestrian_alert_sound_controller",
+   "make": "chevrolet",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_radio_controller",
+   "make": "chevrolet",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_rear_differential_clutch_controller",
+   "make": "chevrolet",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_suspension_controller",
+   "make": "chevrolet",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_tcm_controller",
+   "make": "chevrolet",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_telematics_communication_interface_controller",
+   "make": "chevrolet",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "chevrolet_transfer_controller",
+   "make": "chevrolet",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_abs_controller",
+   "make": "daihatsu",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_body_controller",
+   "make": "daihatsu",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_central_gateway_controller",
+   "make": "daihatsu",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_climate_controller",
+   "make": "daihatsu",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_combination_sw_controller",
+   "make": "daihatsu",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_eco_idle_controller",
+   "make": "daihatsu",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_engine_controller",
+   "make": "daihatsu",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_eps_controller",
+   "make": "daihatsu",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_front_sonar_controller",
+   "make": "daihatsu",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_kfs_controller",
+   "make": "daihatsu",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_meter_controller",
+   "make": "daihatsu",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_monitor_camera_controller",
+   "make": "daihatsu",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_psd_lh_controller",
+   "make": "daihatsu",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_psd_rh_controller",
+   "make": "daihatsu",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_sonar_controller",
+   "make": "daihatsu",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_srs_controller",
+   "make": "daihatsu",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_steering_angle_controller",
+   "make": "daihatsu",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_stereo_camera_controller",
+   "make": "daihatsu",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "daihatsu_transmission_controller",
+   "make": "daihatsu",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_4wd_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_abs_controller",
+   "make": "ford",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_accm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_acm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_ahcm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_apim_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_bcm_controller",
+   "make": "ford",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_bcmii_controller",
+   "make": "ford",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_becm_b_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_becm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_c_cm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_dcdc_controller",
+   "make": "ford",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_ddm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_dsm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_dsp_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_engine_controller",
+   "make": "ford",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_fcdim_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_fcim_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_gem_controller",
+   "make": "ford",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_gfm_2_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_gfm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_gpsm_controller",
+   "make": "ford",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_gwm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_hcm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_hswm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_hud_controller",
+   "make": "ford",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_hvac_controller",
+   "make": "ford",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_icm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_ipm_a_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_occupant_controller",
+   "make": "ford",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_pam_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_pdm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_prb_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_pscm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_racm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_rcm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_retm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_rfa_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_rhvac_controller",
+   "make": "ford",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_rtgm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_rtm_tpms_controller",
+   "make": "ford",
+   "category": "tpms",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_sasm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_sccm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_scm_e_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_scm_g_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_scm_h_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_sdars_gps_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_sobdm_c_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_sod_l_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_sod_r_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_tbm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_tccm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_tcm_controller",
+   "make": "ford",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_tcu_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_trcm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_trm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_vdm_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "ford_wacw_controller",
+   "make": "ford",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "audio_controller",
+   "make": "generic_or_unspecified",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "battery_controller",
+   "make": "generic_or_unspecified",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "brake_controller",
+   "make": "generic_or_unspecified",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "climate_controller",
+   "make": "generic_or_unspecified",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "communication_controller",
+   "make": "generic_or_unspecified",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "convenience_controller",
+   "make": "generic_or_unspecified",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "display_controller",
+   "make": "generic_or_unspecified",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "engine_controller",
+   "make": "generic_or_unspecified",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hybrid_controller",
+   "make": "generic_or_unspecified",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "light_controller",
+   "make": "generic_or_unspecified",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "restraints_controller",
+   "make": "generic_or_unspecified",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "security_controller",
+   "make": "generic_or_unspecified",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "steering_controller",
+   "make": "generic_or_unspecified",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suspension_controller",
+   "make": "generic_or_unspecified",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "transmission_controller",
+   "make": "generic_or_unspecified",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "unknown_controller",
+   "make": "generic_or_unspecified",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "honda_abs_controller",
+   "make": "honda",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "honda_active_damper_system_controller",
+   "make": "honda",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "honda_awd_controller",
+   "make": "honda",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "honda_engine_controller",
+   "make": "honda",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "honda_eps_controller",
+   "make": "honda",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "honda_fcv_controller",
+   "make": "honda",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "honda_hybrid_controller",
+   "make": "honda",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "honda_srs_controller",
+   "make": "honda",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "honda_transmission_controller",
+   "make": "honda",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_4wd_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_aaf_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_ahb_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_ahs_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_air_condition_controller",
+   "make": "hyundai",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_apsm_controller",
+   "make": "hyundai",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_ars_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_assistant_door_controller",
+   "make": "hyundai",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_avm_controller",
+   "make": "hyundai",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_battery_controller",
+   "make": "hyundai",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_bcm_controller",
+   "make": "hyundai",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_blind_spot_detection_controller",
+   "make": "hyundai",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_bms_controller",
+   "make": "hyundai",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_bpcu_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_brake_controller",
+   "make": "hyundai",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_ccm_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_cgw_controller",
+   "make": "hyundai",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_cubis_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_driver_door_controller",
+   "make": "hyundai",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_ecs_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_electric_parking_controller",
+   "make": "hyundai",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_electronic_stabilizer_controller",
+   "make": "hyundai",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_engine_controller",
+   "make": "hyundai",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_fcu_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_fpd_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_hscu_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_hud_controller",
+   "make": "hyundai",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_hybrid_controller",
+   "make": "hyundai",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_instrument_panel_controller",
+   "make": "hyundai",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_lane_keeping_controller",
+   "make": "hyundai",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_mcu_controller",
+   "make": "hyundai",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_motor_driven_controller",
+   "make": "hyundai",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_multi_function_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_obc_controller",
+   "make": "hyundai",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_ods_controller",
+   "make": "hyundai",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_pgs_controller",
+   "make": "hyundai",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_power_seat_controller",
+   "make": "hyundai",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_psb_l_controller",
+   "make": "hyundai",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_psb_r_controller",
+   "make": "hyundai",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_psm_l_controller",
+   "make": "hyundai",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_psm_r_controller",
+   "make": "hyundai",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_restraints_controller",
+   "make": "hyundai",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_rwpc_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_sjb_controller",
+   "make": "hyundai",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_smart_cruise_controller",
+   "make": "hyundai",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_smart_key_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_smart_parking_controller",
+   "make": "hyundai",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_steering_column_controller",
+   "make": "hyundai",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_steering_wheel_controller",
+   "make": "hyundai",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_svm_controller",
+   "make": "hyundai",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_tire_pressure_monitor_controller",
+   "make": "hyundai",
+   "category": "tpms",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_transmission_controller",
+   "make": "hyundai",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_vcu_ldc_hcu_controller",
+   "make": "hyundai",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_vess_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "hyundai_wpc_controller",
+   "make": "hyundai",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "lada_bcm_controller",
+   "make": "lada",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "lada_eps_controller",
+   "make": "lada",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "lada_transmission_controller",
+   "make": "lada",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_abs_controller",
+   "make": "mazda",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_afs_alm_controller",
+   "make": "mazda",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_am_controller",
+   "make": "mazda",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_bcm_controller",
+   "make": "mazda",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_cmu_controller",
+   "make": "mazda",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_dcm_controller",
+   "make": "mazda",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_dsm_controller",
+   "make": "mazda",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_engine_controller",
+   "make": "mazda",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_epb_controller",
+   "make": "mazda",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_fsc_controller",
+   "make": "mazda",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_hud_controller",
+   "make": "mazda",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_ic_controller",
+   "make": "mazda",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_plg_controller",
+   "make": "mazda",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_power_steering_controller",
+   "make": "mazda",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_rcm_controller",
+   "make": "mazda",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_ssu_controller",
+   "make": "mazda",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mazda_transmission_controller",
+   "make": "mazda",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_4wd_controller",
+   "make": "mitsubishi",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_4ws_controller",
+   "make": "mitsubishi",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_abs_controller",
+   "make": "mitsubishi",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_acc_fcm_controller",
+   "make": "mitsubishi",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_air_conditioner_controller",
+   "make": "mitsubishi",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_assistant_battery_controller",
+   "make": "mitsubishi",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_auto_stop_controller",
+   "make": "mitsubishi",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_ayc_acd_controller",
+   "make": "mitsubishi",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_bmu_controller",
+   "make": "mitsubishi",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_body_etacs_controller",
+   "make": "mitsubishi",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_can_lin_sws_controller",
+   "make": "mitsubishi",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_combination_meter_controller",
+   "make": "mitsubishi",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_comp_htr_controller",
+   "make": "mitsubishi",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_compressor_controller",
+   "make": "mitsubishi",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_corner_back_controller",
+   "make": "mitsubishi",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_cruise_controller",
+   "make": "mitsubishi",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_dc_dc_converter_controller",
+   "make": "mitsubishi",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_display_controller",
+   "make": "mitsubishi",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_e_call_controller",
+   "make": "mitsubishi",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_engine_controller",
+   "make": "mitsubishi",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_ev_controller",
+   "make": "mitsubishi",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_ev_miev_remo__controller",
+   "make": "mitsubishi",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_f_mcu_controller",
+   "make": "mitsubishi",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_four_wheel_drive_controller",
+   "make": "mitsubishi",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_gateway_controller",
+   "make": "mitsubishi",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_gcu_controller",
+   "make": "mitsubishi",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_kos_oss_immo_controller",
+   "make": "mitsubishi",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_lane_keep_controller",
+   "make": "mitsubishi",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_obc_controller",
+   "make": "mitsubishi",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_p_lock_controller",
+   "make": "mitsubishi",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_phev_controller",
+   "make": "mitsubishi",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_r_mcu_controller",
+   "make": "mitsubishi",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_rain_sensor_controller",
+   "make": "mitsubishi",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_rht_topstack_controller",
+   "make": "mitsubishi",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_security_controller",
+   "make": "mitsubishi",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_shift_level_controller",
+   "make": "mitsubishi",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_srs_controller",
+   "make": "mitsubishi",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_steering_angle_controller",
+   "make": "mitsubishi",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "mitsubishi_transmission_controller",
+   "make": "mitsubishi",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_abs_controller",
+   "make": "nissan",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_air_bag_controller",
+   "make": "nissan",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_all_mode_awd_4wd_controller",
+   "make": "nissan",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_auto_side_door_controller",
+   "make": "nissan",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_avm_controller",
+   "make": "nissan",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_bcm_controller",
+   "make": "nissan",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_brake_controller",
+   "make": "nissan",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_can_gateway_2_controller",
+   "make": "nissan",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_can_gateway_controller",
+   "make": "nissan",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_chassis_control_controller",
+   "make": "nissan",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_difference_lock_controller",
+   "make": "nissan",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_e_4wd_controller",
+   "make": "nissan",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_ehs_pkb_controller",
+   "make": "nissan",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_engine_controller",
+   "make": "nissan",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_eps_dast3_controller",
+   "make": "nissan",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_ev_motor_controller",
+   "make": "nissan",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_hv_battery_2_controller",
+   "make": "nissan",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_hv_battery_controller",
+   "make": "nissan",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_hvac_controller",
+   "make": "nissan",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_icc_adas_controller",
+   "make": "nissan",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_intelligent_key_controller",
+   "make": "nissan",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_inverter_controller",
+   "make": "nissan",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_ipdm_e_r_controller",
+   "make": "nissan",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_laser_radar_controller",
+   "make": "nissan",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_ldw_controller",
+   "make": "nissan",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_meter_m_a_controller",
+   "make": "nissan",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_motor_control_controller",
+   "make": "nissan",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_multi_av_controller",
+   "make": "nissan",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_pdm_controller",
+   "make": "nissan",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_shift_controller",
+   "make": "nissan",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_side_radar_left_controller",
+   "make": "nissan",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_side_radar_right_controller",
+   "make": "nissan",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_sonar_controller",
+   "make": "nissan",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_telematics_controller",
+   "make": "nissan",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_tpms_controller",
+   "make": "nissan",
+   "category": "tpms",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_transmission_controller",
+   "make": "nissan",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "nissan_vsp_controller",
+   "make": "nissan",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_4wd_controller",
+   "make": "renault",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_4ws_controller",
+   "make": "renault",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_aau_controller",
+   "make": "renault",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_abs_controller",
+   "make": "renault",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_active_suspension_vada_controller",
+   "make": "renault",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_airbags_srs_controller",
+   "make": "renault",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_automatic_transmission_controller",
+   "make": "renault",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_aux_multimedia_module_cbox_controller",
+   "make": "renault",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_battery_charger_block_bcb_controller",
+   "make": "renault",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_blind_spot_warning_bsw_controller",
+   "make": "renault",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_charger_controller_controller",
+   "make": "renault",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_climate_controller",
+   "make": "renault",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_combination_meter_controller",
+   "make": "renault",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_controller_controller",
+   "make": "renault",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_data_communication_module_controller",
+   "make": "renault",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_discharge_lamp_controller",
+   "make": "renault",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_door_driver_controller",
+   "make": "renault",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_door_left_controller",
+   "make": "renault",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_door_passenger_controller",
+   "make": "renault",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_door_right_controller",
+   "make": "renault",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_electrical_vehicle_control_evc_controller",
+   "make": "renault",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_front_camera_controller",
+   "make": "renault",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_hfck_controller",
+   "make": "renault",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_injection_controller",
+   "make": "renault",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_junction_and_protection_unit_upc_controller",
+   "make": "renault",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_lithium_battery_controller_lbc_controller",
+   "make": "renault",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_lpg_system_controller",
+   "make": "renault",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_multifunctional_control_unit_ucbic_bfr_controller",
+   "make": "renault",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_multimedia_miu_controller",
+   "make": "renault",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_parking_brake_controller",
+   "make": "renault",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_phone_controller",
+   "make": "renault",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_power_back_door_controller",
+   "make": "renault",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_power_electronic_box_peb_controller",
+   "make": "renault",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_power_seat_memory_controller",
+   "make": "renault",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_power_steering_controller",
+   "make": "renault",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_radio_controller",
+   "make": "renault",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_rdlm_controller",
+   "make": "renault",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_tachometer_controller",
+   "make": "renault",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_tyre_pressure_monitor_controller",
+   "make": "renault",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "renault_vehicle_stability_system_controller",
+   "make": "renault",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "subaru_abs_controller",
+   "make": "subaru",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "subaru_air_bag_controller",
+   "make": "subaru",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "subaru_auto_start_stop_controller",
+   "make": "subaru",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "subaru_body_controller",
+   "make": "subaru",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "subaru_climate_controller",
+   "make": "subaru",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "subaru_combination_meter_controller",
+   "make": "subaru",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "subaru_engine_controller",
+   "make": "subaru",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "subaru_engine_kline_controller",
+   "make": "subaru",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "subaru_impact_sensor_controller",
+   "make": "subaru",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "subaru_integ_unit_mode_controller",
+   "make": "subaru",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "subaru_multi_function_controller",
+   "make": "subaru",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "subaru_power_steering_controller",
+   "make": "subaru",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "subaru_tire_pressure_monitor_controller",
+   "make": "subaru",
+   "category": "tpms",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "subaru_transmission_controller",
+   "make": "subaru",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_4wd_controller",
+   "make": "suzuki",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_abs_controller",
+   "make": "suzuki",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_ac_controller",
+   "make": "suzuki",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_auto_side_door_l_controller",
+   "make": "suzuki",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_auto_side_door_r_controller",
+   "make": "suzuki",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_bcm_controller",
+   "make": "suzuki",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_cng_controller",
+   "make": "suzuki",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_combination_meter_controller",
+   "make": "suzuki",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_engine_controller",
+   "make": "suzuki",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_entry_start_controller",
+   "make": "suzuki",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_front_camera_controller",
+   "make": "suzuki",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_gateway_controller",
+   "make": "suzuki",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_hv_battery_controller",
+   "make": "suzuki",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_hybrid_controller",
+   "make": "suzuki",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_immobilizer_controller",
+   "make": "suzuki",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_intelligent_key_controller",
+   "make": "suzuki",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_ipdm_e_r_controller",
+   "make": "suzuki",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_light_controller",
+   "make": "suzuki",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_power_steering_controller",
+   "make": "suzuki",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_srs_controller",
+   "make": "suzuki",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_tpms_controller",
+   "make": "suzuki",
+   "category": "tpms",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "suzuki_transmission_controller",
+   "make": "suzuki",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_accessory_gateway_controller",
+   "make": "toyota",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_afc_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_air_suspension_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_ars_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_back_door_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_battery_controller",
+   "make": "toyota",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_body_1_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_body_2_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_body_3_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_body_4_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_body_5_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_brake_controller",
+   "make": "toyota",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_central_gateway_controller",
+   "make": "toyota",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_clerance_conar_controller",
+   "make": "toyota",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_climate_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_combination_meter_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_combination_sw_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_cruise_controller",
+   "make": "toyota",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_driver_door_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_driver_door_motor_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_driver_seat_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_driver_seat_switch_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_ecb_gateway_controller",
+   "make": "toyota",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_ecm_gateway_controller",
+   "make": "toyota",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_ect_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_electric_parking_brake_controller",
+   "make": "toyota",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_emps_ehps_pps_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_ems_controller",
+   "make": "toyota",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_engine_controller",
+   "make": "toyota",
+   "category": "engine",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_entry_start_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_four_wheel_drive_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_free_tronic_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_front_stabilizer_controller",
+   "make": "toyota",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_gateway_controller",
+   "make": "toyota",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_head_up_display_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_hybrid_controller",
+   "make": "toyota",
+   "category": "hybrid_ev",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_lka_lda_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_lka_lda_sub_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_master_switch_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_mirror_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_mirror_l_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_navigation_system_controller",
+   "make": "toyota",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_night_view_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_occupant_detection_controller",
+   "make": "toyota",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_parking_monitor_controller",
+   "make": "toyota",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_passenger_door_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_passenger_door_motor_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_passenger_seat_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_pm1_gateway_controller",
+   "make": "toyota",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_pm2_gateway_controller",
+   "make": "toyota",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_power_source_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_pre_collision_2_controller",
+   "make": "toyota",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_pre_collision_controller",
+   "make": "toyota",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_pre_crash_controller",
+   "make": "toyota",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_radar_cruise_controller",
+   "make": "toyota",
+   "category": "adas",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_rain_sensor_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_rear_left_door_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_rear_left_door_motor_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_rear_right_door_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_rear_right_door_motor_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_rear_right_seat_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_rear_seat_switch_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_rear_stabilizer_controller",
+   "make": "toyota",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_restraints_controller",
+   "make": "toyota",
+   "category": "airbag",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_security_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_sequential_mt_controller",
+   "make": "toyota",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_slide_roof_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_stabilezer_controller",
+   "make": "toyota",
+   "category": "abs",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_starting_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_steering_pad_switch_controller",
+   "make": "toyota",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_suspension_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_theft_deterrent_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_tilt_telescopic_controller",
+   "make": "toyota",
+   "category": "other",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_tire_pressure_monitor_controller",
+   "make": "toyota",
+   "category": "tpms",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_transmission_controller",
+   "make": "toyota",
+   "category": "transmission",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_vgrs_controller",
+   "make": "toyota",
+   "category": "steering",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_wil_gateway_controller",
+   "make": "toyota",
+   "category": "network",
+   "verification_status": "unverified"
+  },
+  {
+   "id": "toyota_wiper_controller",
+   "make": "toyota",
+   "category": "body",
+   "verification_status": "unverified"
+  }
+ ]
+}

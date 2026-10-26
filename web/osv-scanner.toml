@@ -1,0 +1,11 @@
+# osv-scanner exceptions for web/package-lock.json. Every entry needs a reason and an
+# expiry date: when it passes the security workflow fails again and the entry must be
+# re-reviewed (bump the dependency if a fix exists, or renew with a fresh justification).
+
+[[IgnoredVulns]]
+id = "GHSA-vfj7-8cjw-p6xm" # CVE-2026-93687, braces <= 3.0.3 stack-exhaustion DoS
+ignoreUntil = 2027-01-31
+reason = """No fixed braces release exists (3.0.3 is the latest). It is a dev-only dependency
+(eslint-config-next -> @next/eslint-plugin-next -> fast-glob -> micromatch -> braces) used by the
+linter on glob patterns from this repository; it is not shipped in the production bundle and
+`npm audit --omit=dev` is clean. Re-check when braces or eslint-config-next publish a fix."""

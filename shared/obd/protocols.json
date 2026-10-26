@@ -1,0 +1,38 @@
+{
+  "$comment": "ELM327 protocol numbers (ATSPn / ATDPN). 'A' prefix in ATDPN output means the protocol was found by automatic search.",
+  "protocols": [
+    {"code": "0", "name": "Automatic", "family": "auto"},
+    {"code": "1", "name": "SAE J1850 PWM (41.6 kbaud)", "family": "j1850", "header_bytes": 3, "checksum": true},
+    {"code": "2", "name": "SAE J1850 VPW (10.4 kbaud)", "family": "j1850", "header_bytes": 3, "checksum": true},
+    {"code": "3", "name": "ISO 9141-2 (5 baud init, 10.4 kbaud)", "family": "iso9141", "header_bytes": 3, "checksum": true},
+    {"code": "4", "name": "ISO 14230-4 KWP (5 baud init, 10.4 kbaud)", "family": "kwp", "header_bytes": 3, "checksum": true},
+    {"code": "5", "name": "ISO 14230-4 KWP (fast init, 10.4 kbaud)", "family": "kwp", "header_bytes": 3, "checksum": true},
+    {"code": "6", "name": "ISO 15765-4 CAN (11 bit ID, 500 kbaud)", "family": "can", "id_bits": 11},
+    {"code": "7", "name": "ISO 15765-4 CAN (29 bit ID, 500 kbaud)", "family": "can", "id_bits": 29},
+    {"code": "8", "name": "ISO 15765-4 CAN (11 bit ID, 250 kbaud)", "family": "can", "id_bits": 11},
+    {"code": "9", "name": "ISO 15765-4 CAN (29 bit ID, 250 kbaud)", "family": "can", "id_bits": 29},
+    {"code": "A", "name": "SAE J1939 CAN (29 bit ID, 250 kbaud)", "family": "j1939", "id_bits": 29, "obd2": false},
+    {"code": "B", "name": "User1 CAN (11 bit ID, 125 kbaud)", "family": "can", "id_bits": 11, "obd2": false},
+    {"code": "C", "name": "User2 CAN (11 bit ID, 50 kbaud)", "family": "can", "id_bits": 11, "obd2": false}
+  ],
+  "ecu_names": {
+    "7E8": "ECM (engine)", "7E9": "TCM (transmission)", "7EA": "ECU #3", "7EB": "ECU #4",
+    "7EC": "ECU #5", "7ED": "ECU #6", "7EE": "ECU #7", "7EF": "ECU #8",
+    "18DAF110": "ECM (engine)", "18DAF118": "TCM (transmission)",
+    "10": "ECM (engine)", "18": "TCM (transmission)"
+  },
+  "elm_errors": {
+    "NO DATA": "ecu_no_data",
+    "UNABLE TO CONNECT": "ecu_unable_to_connect",
+    "BUS INIT: ...ERROR": "bus_init_error",
+    "BUS ERROR": "bus_error",
+    "CAN ERROR": "can_error",
+    "BUFFER FULL": "buffer_full",
+    "DATA ERROR": "data_error",
+    "FB ERROR": "feedback_error",
+    "LV RESET": "low_voltage_reset",
+    "STOPPED": "stopped",
+    "ACT ALERT": "activity_alert",
+    "?": "unknown_command"
+  }
+}

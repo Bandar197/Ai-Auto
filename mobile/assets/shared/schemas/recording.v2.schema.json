@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://automind.ai/schemas/recording.v2.json",
+  "title": "AutoMind session recording v2",
+  "description": "Backward-compatible superset of recording.v1. Every v1 field keeps its meaning; v2 adds the full diagnostic-recorder evidence: clear operations, adapter capabilities, per-ECU coverage, raw TX/RX frames, warnings, before/after verification, file hashes and an audit trail. Readers must accept v1 files unchanged. data_mode is never relabelled (demo stays demo).",
+  "type": "object",
+  "required": ["format", "recording_id", "created_at", "data_mode", "source", "duration_ms", "signals", "samples"],
+  "properties": {
+    "format": { "enum": ["automind.recording.v1", "automind.recording.v2"] },
+    "recording_id": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "data_mode": { "enum": ["live", "demo"], "description": "live = real vehicle; demo = simulator. Never relabelled." },
+    "source": { "type": "object", "required": ["kind"] },
+    "vehicle": { "type": "object" },
+    "duration_ms": { "type": "integer", "minimum": 0 },
+    "signals": { "type": "array" },
+    "samples": { "type": "array" },
+    "dtcs": { "type": "array" },
+    "freeze_frames": { "type": "array" },
+    "events": { "type": "array" },
+    "readiness": { "type": ["object", "null"] },
+    "module_scans": { "type": "array" },
+
+    "adapter_capabilities": {
+      "type": ["object", "null"],
+      "description": "What the connected adapter PROVED it can do (probe results), never what its name claims.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "connection": { "enum": ["ble", "spp", "serial", "wifi", "simulator", "unknown"] },
+        "firmware": { "type": ["string", "null"] },
+        "voltage": { "type": ["number", "null"] },
+        "protocol": { "type": ["string", "null"] },
+        "capabilities": {
+          "type": "object",
+          "description": "true = probe passed, false = probe failed, null = not tested. A failed capability must not be used.",
+          "properties": {
+            "headers": { "type": ["boolean", "null"] },
+            "filters": { "type": ["boolean", "null"] },
+            "can_formatting": { "type": ["boolean", "null"] },
+            "iso_tp": { "type": ["boolean", "null"] },
+            "multi_frame": { "type": ["boolean", "null"] },
+            "flow_control": { "type": ["boolean", "null"] },
+            "protocol_switching": { "type": ["boolean", "null"] }
+          }
+        },
+        "evidence": {
+          "type": "object",
+          "description": "How each capability was established: behavioral = the adapter's behaviour changed as expected; accepted_only = the command returned OK but its effect was not observable; not_tested.",
+          "additionalProperties": { "enum": ["behavioral", "accepted_only", "not_tested"] }
+        },
+        "notes": { "type": "object", "additionalProperties": { "type": "string" } },
+        "probed_at": { "type": ["string", "null"], "format": "date-time" },
+        "probe": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["cmd", "response", "ok"],
+            "properties": {
+              "cmd": { "type": "string" },
+              "response": { "type": "string" },
+              "ok": { "type": "boolean", "description": "'?' / NO DATA / UNABLE TO CONNECT are never ok." }
+            }
+          }
+        }
+      }
+    },
+
+    "ecu_coverage": {
+      "type": "array",
+      "description": "One entry per ECU attempted. A module is never 'passed' before a successful read.",
+      "items": {
+        "type": "object",
+        "required": ["key", "state"],
+        "properties": {
+          "key": { "type": "string" },
+          "name_en": { "type": ["string", "null"] },
+          "name_ar": { "type": ["string", "null"] },
+          "request_id": { "type": ["string", "null"] },
+          "response_id": { "type": ["string", "null"] },
+          "id_bits": { "enum": [11, 29, null] },
+          "state": {
+            "enum": ["discovered", "reachable", "dtc_read_supported", "clear_supported", "not_supported",
+                     "timed_out", "gateway_blocked", "refused", "passed", "faults_present"]
+          },
+          "dtc_count": { "type": ["integer", "null"], "minimum": 0 },
+          "reason": { "type": ["string", "null"] },
+          "source": { "type": ["string", "null"], "description": "Compatibility source of the address (e.g. modules.json verified=false)." },
+          "verified_at": { "type": ["string", "null"] }
+        }
+      }
+    },
+
+    "tx_rx_frames": {
+      "type": "array",
+      "description": "Raw adapter traffic kept exactly as sent/received, with millisecond timing.",
+      "items": {
+        "type": "object",
+        "required": ["t_ms", "dir", "data"],
+        "properties": {
+          "t_ms": { "type": "integer", "minimum": 0 },
+          "dir": { "enum": ["tx", "rx"] },
+          "data": { "type": "string" },
+          "can_id": { "type": ["string", "null"] },
+          "duration_ms": { "type": ["integer", "null"], "minimum": 0 },
+          "retry": { "type": ["integer", "null"], "minimum": 0 },
+          "timeout": { "type": ["boolean", "null"] }
+        }
+      }
+    },
+
+    "clear_operations": {
+      "type": "array",
+      "description": "Every clear request: who/when/which module/command/response/result. The pre-clear snapshot is never deleted.",
+      "items": {
+        "type": "object",
+        "required": ["id", "requested_at", "service", "result"],
+        "properties": {
+          "id": { "type": "string" },
+          "requested_at": { "type": "string" },
+          "operator": { "type": ["string", "null"] },
+          "target_modules": { "type": "array", "items": { "type": "string" } },
+          "service": { "type": "string", "description": "e.g. '04' (OBD-II) or '14' (UDS ClearDiagnosticInformation)." },
+          "request_frames": { "type": "array", "items": { "type": "string" } },
+          "response_frames": { "type": "array", "items": { "type": "string" } },
+          "nrc": { "type": ["string", "null"] },
+          "result": {
+            "enum": ["cleared", "still_active", "returned", "read_failed", "verification_pending",
+                     "refused", "not_supported", "comm_failed", "blocked"]
+          },
+          "context": {
+            "enum": ["allowed", "unsupported_by_hardware", "unsupported_by_vehicle", "requires_oem_authorization",
+                     "active_fault_not_clearable", "crash_data_specialist", "comm_failed", "cleared_and_verified", null]
+          },
+          "before_snapshot_id": { "type": ["string", "null"] },
+          "after_snapshot_id": { "type": ["string", "null"] }
+        }
+      }
+    },
+
+    "verification": {
+      "type": ["object", "null"],
+      "description": "Before/after comparison. 'code cleared' is distinct from 'lamp actually off'.",
+      "properties": {
+        "status": { "enum": ["cleared", "still_active", "returned", "read_failed", "verification_pending", null] },
+        "per_code": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["code", "outcome"],
+            "properties": {
+              "code": { "type": "string" },
+              "module": { "type": ["string", "null"] },
+              "outcome": { "enum": ["cleared", "still_active", "returned", "read_failed", "verification_pending"] }
+            }
+          }
+        },
+        "lamp_off_confirmed_by": { "enum": ["module_status", "user", null] }
+      }
+    },
+
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code"],
+        "properties": {
+          "code": { "type": "string" },
+          "en": { "type": ["string", "null"] },
+          "ar": { "type": ["string", "null"] }
+        }
+      }
+    },
+
+    "file_hashes": {
+      "type": "object",
+      "description": "SHA-256 (hex) of each file in an evidence bundle.",
+      "additionalProperties": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+    },
+
+    "audit_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["t", "type"],
+        "properties": {
+          "t": { "type": "string" },
+          "type": { "type": "string" },
+          "detail": { "type": ["string", "null"] },
+          "actor": { "type": ["string", "null"] }
+        }
+      }
+    },
+
+    "session_state": {
+      "enum": ["active", "completed", "interrupted", null],
+      "description": "A session recovered after a crash/disconnect is marked interrupted, never silently completed."
+    }
+  }
+}

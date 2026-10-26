@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Light is the default; dark follows `prefers-color-scheme`.
+ * Chart series colours come from a CVD-validated categorical palette.
+ */
+:root {
+  color-scheme: light;
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f0f2f5;
+  --line: #d9dde3;
+  --fg: #111418;
+  --muted: #4f5662;
+  --accent: #1c5cab;
+  --accent-fg: #ffffff;
+  --accent-soft: #e3eefb;
+  --focus: #1c5cab;
+  --danger: #b42318;
+  --danger-soft: #fdecea;
+  --warning: #8a5a00;
+  --warning-soft: #fff4d6;
+  --success: #106b10;
+  --success-soft: #e5f5e5;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --grid: #e3e6ea;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #111214;
+    --surface: #1a1b1e;
+    --surface-2: #23252a;
+    --line: #34373d;
+    --fg: #f0efec;
+    --muted: #b4b6bd;
+    --accent: #6da7ec;
+    --accent-fg: #0b1320;
+    --accent-soft: #1b2a3f;
+    --focus: #86b6ef;
+    --danger: #ff8a80;
+    --danger-soft: #3a1d1b;
+    --warning: #f5c35b;
+    --warning-soft: #3a2f14;
+    --success: #6fd36f;
+    --success-soft: #16301a;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --grid: #2c2f35;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --font-sans: var(--font-plex-arabic), ui-sans-serif, system-ui, sans-serif;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Visible keyboard focus everywhere. */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Tabular figures keep KPI and table numbers aligned. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,131 @@
+"""Diagnostic report rendering (HTML + JSON; PDF planned via HTML print)."""
+
+from __future__ import annotations
+
+from datetime import UTC, datetime
+from functools import lru_cache
+from typing import Any, Literal
+
+from jinja2 import Environment, PackageLoader, select_autoescape
+from pydantic import BaseModel, Field
+
+from automind.diagnosis.models import DiagnosisResult
+
+REPORT_FORMAT = "automind.report.v1"
+
+
+class ReportRendererUnavailable(RuntimeError):
+    """Raised when a PDF renderer (WeasyPrint + its native libs) is not installed."""
+
+
+class ReportMeta(BaseModel):
+    session_id: str | None = None
+    data_mode: Literal["live", "demo", "replay"] = "live"
+    vehicle: dict[str, Any] = Field(default_factory=dict)  # make, model, model_year, vin_masked
+    started_at: datetime | None = None
+    protocol_name: str | None = None
+    adapter_firmware: str | None = None
+    source_recording_id: str | None = None
+    demo_scenario: str | None = None
+
+
+@lru_cache(maxsize=1)
+def _env() -> Environment:
+    return Environment(loader=PackageLoader("automind.reports", "templates"),
+                       autoescape=select_autoescape(["html", "j2"]), trim_blocks=True, lstrip_blocks=True)
+
+
+def render_report_json(result: DiagnosisResult, meta: ReportMeta) -> dict[str, Any]:
+    if meta.data_mode != result.data_mode:
+        raise ValueError("report meta data_mode does not match the diagnosis result")
+    return {
+        "format": REPORT_FORMAT,
+        "generated_at": datetime.now(UTC).isoformat(),
+        "meta": meta.model_dump(mode="json"),
+        "diagnosis": result.model_dump(mode="json"),
+    }
+
+
+def render_report_html(result: DiagnosisResult, meta: ReportMeta, lang: Literal["ar", "en"] = "ar") -> str:
+    if meta.data_mode != result.data_mode:
+        raise ValueError("report meta data_mode does not match the diagnosis result")
+    if lang not in ("ar", "en"):
+        raise ValueError("lang must be 'ar' or 'en'")
+    tpl = _env().get_template("report.html.j2")
+    return tpl.render(r=result, m=meta, lang=lang, t=_T[lang], generated=datetime.now(UTC))
+
+
+def render_report_pdf(result: DiagnosisResult, meta: ReportMeta, lang: Literal["ar", "en"] = "ar") -> bytes:
+    """Render the report to PDF (via the HTML view).
+
+    Uses WeasyPrint, which needs its native libraries (pango/cairo/harfbuzz). It is an
+    optional dependency (``pip install 'automind[pdf]'``); when it isn't importable this
+    raises :class:`ReportRendererUnavailable` so callers can fall back to HTML — the same
+    HTML also prints to PDF from any browser.
+    """
+    html = render_report_html(result, meta, lang)
+    try:
+        from weasyprint import HTML  # noqa: PLC0415 - optional, imported on demand
+    except Exception as exc:  # ImportError, or an OSError if native libs are missing
+        raise ReportRendererUnavailable(
+            "PDF rendering needs WeasyPrint and its native libraries; "
+            "install 'automind[pdf]' or print the HTML report to PDF from a browser."
+        ) from exc
+    try:
+        return HTML(string=html).write_pdf()
+    except Exception as exc:  # a render-time failure must not become a 500 — HTML print still works
+        raise ReportRendererUnavailable(
+            "PDF rendering failed; open the HTML report and print it to PDF instead."
+        ) from exc
+
+
+_T: dict[str, dict[str, str]] = {
+    "en": {
+        "title": "AutoMind AI — Vehicle diagnostic report", "dir": "ltr", "health": "Vehicle health",
+        "summary": "Summary", "tech": "Technician summary", "dtcs": "Trouble codes", "findings": "Findings",
+        "causes": "Probable causes (ranked by evidence)", "evidence": "Evidence", "measured": "Measured",
+        "inferred": "Inference / reference", "tests": "Tests to confirm", "actions": "Recommended actions",
+        "parts": "Parts that may be needed — only after confirmation", "missing": "Missing data",
+        "systems": "System status", "quality": "Data quality", "disclaimers": "Important",
+        "modules": "Module scan (airbag / ABS / body)",
+        "m_address": "address", "m_read_codes": "Read — stored codes",
+        "m_no_codes": "Read — no stored codes",
+        "m_refused": "Module present but refused the read (e.g. a security gateway)",
+        "m_no_response": "No response — could not verify (the module address may be unverified or wrong)",
+        "m_airbag_unverified": "Couldn't verify the airbag (SRS). If the warning light is on it may be a real "
+        "fault — have a specialist read it with the correct module address.",
+        "vehicle": "Vehicle", "session": "Session", "protocol": "Protocol", "adapter": "Adapter",
+        "mode": "Data source", "generated": "Generated", "confidence": "confidence", "likelihood": "likelihood",
+        "expected": "expected", "no_findings": "No issues were found in the captured data.",
+        "no_dtcs": "No trouble codes reported.", "unknown_code": "Not in knowledge base — no description invented",
+        "demo_banner": "DEMO DATA — generated by the AutoMind simulator, not a real vehicle",
+        "replay_banner": "REPLAY — re-analysis of a previously recorded session",
+        "live": "Live vehicle", "demo": "Demo (simulator)", "replay": "Replay", "ai": "AI explanation",
+        "signals": "Signals", "samples": "Samples", "duration": "Duration (s)", "conditions": "Operating conditions",
+        "status": {"stored": "stored", "pending": "pending", "permanent": "permanent"}.__repr__(),
+    },
+    "ar": {
+        "title": "أوتومايند — تقرير فحص السيارة", "dir": "rtl", "health": "صحة السيارة",
+        "summary": "الملخص", "tech": "ملخص للفني", "dtcs": "أكواد الأعطال", "findings": "النتائج",
+        "causes": "الأسباب المحتملة (مرتبة حسب الأدلة)", "evidence": "الأدلة", "measured": "قراءة فعلية",
+        "inferred": "استنتاج / مرجع", "tests": "اختبارات التأكيد", "actions": "الإجراءات المقترحة",
+        "parts": "قطع قد تلزم — بعد التأكيد فقط", "missing": "بيانات ناقصة",
+        "systems": "حالة الأنظمة", "quality": "جودة البيانات", "disclaimers": "تنبيه مهم",
+        "modules": "فحص الوحدات (الإيرباق / ABS / الهيكل)",
+        "m_address": "العنوان", "m_read_codes": "تمت القراءة — توجد أكواد مخزّنة",
+        "m_no_codes": "تمت القراءة — لا توجد أكواد مخزّنة",
+        "m_refused": "الوحدة موجودة لكنها رفضت القراءة (بوابة أمنية مثلاً)",
+        "m_no_response": "لا استجابة — تعذّر التحقق (قد يكون عنوان الوحدة غير مؤكد أو خاطئ)",
+        "m_airbag_unverified": "تعذّر التحقق من الإيرباق (SRS). إذا كانت لمبة التحذير مضاءة فقد يكون عطلاً "
+        "فعلياً — راجع متخصصاً لقراءته بعنوان الوحدة الصحيح.",
+        "vehicle": "السيارة", "session": "الجلسة", "protocol": "البروتوكول", "adapter": "الجهاز",
+        "mode": "مصدر البيانات", "generated": "تاريخ الإنشاء", "confidence": "الثقة", "likelihood": "الاحتمال",
+        "expected": "المتوقع", "no_findings": "لم تُكتشف مشاكل في البيانات المسجلة.",
+        "no_dtcs": "لا توجد أكواد أعطال.", "unknown_code": "غير موجود في قاعدة المعرفة — لم يُخترع وصف",
+        "demo_banner": "بيانات تجريبية — من محاكي أوتومايند وليست سيارة حقيقية",
+        "replay_banner": "إعادة تشغيل — إعادة تحليل جلسة مسجلة سابقا",
+        "live": "سيارة حقيقية", "demo": "تجريبي (محاكي)", "replay": "إعادة تشغيل", "ai": "شرح الذكاء الاصطناعي",
+        "signals": "الإشارات", "samples": "عدد القراءات", "duration": "المدة (ثانية)", "conditions": "ظروف التشغيل",
+        "status": "",
+    },
+}

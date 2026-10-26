@@ -1,0 +1,767 @@
+{
+  "@@locale": "en",
+  "appTitle": "Super Scanner",
+  "ok": "OK",
+  "cancel": "Cancel",
+  "save": "Save",
+  "delete": "Delete",
+  "deleteScanTitle": "Delete this scan?",
+  "deleteScanBody": "This removes the saved scan and its recording from this phone. Reports already uploaded stay on the server.",
+  "deleteScanDone": "Scan deleted.",
+  "knowledgeTitle": "Guide & tips",
+  "knowledgeSubtitle": "What the warning lights mean, how each system is read, and practical maintenance tips.",
+  "reportModulesTitle": "Module scan (airbag / ABS / body)",
+  "moduleReadCodes": "Stored codes",
+  "moduleNoCodes": "Read — no stored codes",
+  "moduleRefused": "Present but refused the read (security gateway)",
+  "moduleNoResponse": "No response — couldn't verify",
+  "moduleAirbagUnverified": "Couldn't verify the airbag (SRS). If the light is on it may be a real fault — see a specialist.",
+  "edit": "Edit",
+  "retry": "Retry",
+  "close": "Close",
+  "next": "Next",
+  "loading": "Loading…",
+  "errorGeneric": "Something went wrong: {error}",
+  "@errorGeneric": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "unknown": "Unknown",
+  "done": "Done",
+  "share": "Share",
+  "exportJson": "Export JSON",
+  "exportEvidence": "Export evidence bundle (ZIP)",
+  "exportEvidenceNoRecording": "No local recording for this scan — the evidence bundle needs the saved session.",
+  "exportCsv": "Export CSV",
+  "notAvailable": "Not available",
+  "modeLive": "Live",
+  "modeDemo": "Demo",
+  "modeReplay": "Replay",
+  "demoBanner": "DEMO — simulated data, not from a real vehicle",
+  "replayBanner": "REPLAY of a {mode} recording",
+  "@replayBanner": {
+    "placeholders": {
+      "mode": {}
+    }
+  },
+  "simulatorLabel": "Simulator",
+  "demoWatermark": "DEMO",
+  "replayWatermark": "REPLAY",
+  "onboardingTitle1": "Understand your car",
+  "onboardingBody1": "Plug an ELM327 OBD-II adapter into your car and read real fault codes and live sensor data.",
+  "onboardingTitle2": "Evidence, not guesses",
+  "onboardingBody2": "Every finding shows what was measured and what was inferred, with tests to confirm before buying parts.",
+  "onboardingTitle3": "Works offline",
+  "onboardingBody3": "Wi-Fi adapters may cut your internet. Scans are saved on the phone and uploaded later.",
+  "getStarted": "Get started",
+  "continueOffline": "Continue without an account",
+  "login": "Log in",
+  "register": "Create account",
+  "email": "Email",
+  "password": "Password",
+  "fullName": "Full name",
+  "acceptTerms": "I accept the Terms of Service (v{version})",
+  "@acceptTerms": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "acceptPrivacy": "I accept the Privacy Policy (v{version}) and the processing of my vehicle data",
+  "@acceptPrivacy": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "consentRequired": "Both consents are required to create an account.",
+  "passwordPolicy": "At least 10 characters, different from your email.",
+  "logout": "Log out",
+  "noAccount": "No account? Create one",
+  "haveAccount": "Already registered? Log in",
+  "mfaCode": "Authenticator code",
+  "invalidEmail": "Enter a valid email",
+  "homeTitle": "Home",
+  "vehicleNone": "No vehicle selected",
+  "addVehicle": "Add vehicle",
+  "adapterLabel": "Adapter",
+  "ecuLabel": "Car (ECU)",
+  "healthScore": "Vehicle health",
+  "healthUnknown": "No diagnosis yet",
+  "healthBand_good": "Good",
+  "healthBand_fair": "Fair",
+  "healthBand_attention": "Needs attention",
+  "healthBand_critical": "Critical",
+  "dtcCount": "{count, plural, =0{No fault codes} =1{1 fault code} other{{count} fault codes}}",
+  "@dtcCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importantAlerts": "Important alerts",
+  "noAlerts": "No important alerts",
+  "lastScan": "Last scan: {when}",
+  "@lastScan": {
+    "placeholders": {
+      "when": {}
+    }
+  },
+  "never": "never",
+  "startScan": "Start scan",
+  "liveData": "Live data",
+  "maintenanceHistory": "Maintenance",
+  "sessionsHistory": "Scan history",
+  "connect": "Connect",
+  "pendingUploads": "{count, plural, =1{1 scan waiting to upload} other{{count} scans waiting to upload}}",
+  "@pendingUploads": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "uploadNow": "Upload now",
+  "adapterDisconnected": "Not connected",
+  "adapterConnecting": "Connecting…",
+  "adapterConnected": "Connected",
+  "adapterError": "Error",
+  "ecuUnknown": "Not checked",
+  "ecuSearching": "Searching…",
+  "ecuConnected": "Responding",
+  "ecuNoResponse": "No response",
+  "ecuBusError": "Bus error",
+  "linkIdle": "Choose how to connect.",
+  "linkConnectingAdapter": "Phone → adapter: connecting…",
+  "linkAdapterUnreachable": "The phone cannot reach the adapter. Check that you joined the adapter's Wi-Fi (or Bluetooth is on) and the IP/port.",
+  "linkAdapterTimeout": "The adapter did not answer in time (phone → adapter link).",
+  "linkAdapterNotElm": "The device answered but is not an ELM327-compatible adapter.",
+  "linkInitializing": "Adapter found, initialising…",
+  "linkSearchingProtocol": "Adapter → car: searching for the OBD protocol (ignition must be ON)…",
+  "linkEcuConnected": "Adapter and car are talking.",
+  "linkEcuNoResponse": "The adapter works but the car did not answer. Turn the ignition ON (or start the engine) and check the adapter is fully seated.",
+  "linkEcuBusError": "The adapter reports a bus error on the car side. Try another protocol or check wiring.",
+  "linkLost": "Connection to the adapter was lost.",
+  "linkReconnecting": "Reconnecting…",
+  "linkReconnected": "Reconnected.",
+  "linkDisconnected": "Disconnected.",
+  "connectTitle": "Connect",
+  "transportWifi": "Wi-Fi",
+  "transportBle": "Bluetooth LE",
+  "wifiHost": "Adapter IP",
+  "wifiPort": "Port",
+  "protocol": "Protocol",
+  "protocolAuto": "Automatic",
+  "bleScan": "Scan for adapters",
+  "bleScanning": "Scanning…",
+  "bleNoDevices": "No Bluetooth adapters found yet.",
+  "bleNote": "Bluetooth LE adapters are found by scanning — no pairing in system settings needed.",
+  "transportClassic": "Bluetooth Classic",
+  "transportSerial": "Serial / COM (Bluetooth Classic or USB)",
+  "classicIosNote": "iPhone does not allow Bluetooth Classic (SPP) OBD adapters in normal apps (Apple requires MFi accessories). Use a Bluetooth LE or Wi-Fi adapter.",
+  "classicAndroidNote": "Pair the adapter first in Android Settings → Bluetooth (PIN usually 1234 or 0000), then choose it here.",
+  "classicDesktopNote": "Windows: pair the adapter in Settings → Bluetooth & devices (PIN usually 1234 or 0000). Windows then creates an outgoing COM port — choose it here. USB adapters also appear as COM ports.",
+  "classicNoDevices": "No paired adapters / COM ports found.",
+  "classicBluetoothOff": "Bluetooth is off or not available.",
+  "baudRate": "Baud rate",
+  "refresh": "Refresh",
+  "lastUsed": "Last used",
+  "wifiInternetNote": "When the phone joins the adapter's Wi-Fi it may lose internet. The scan is saved on the phone and uploaded automatically later.",
+  "demoScenarios": "Demo scenarios",
+  "demoExplain": "Demo uses a built-in simulator. Results are clearly labelled DEMO.",
+  "replayFromFile": "Open recording file",
+  "replayFromServer": "Recordings on the server",
+  "replayLocal": "Recordings on this phone",
+  "noRecordings": "No recordings yet.",
+  "connectButton": "Connect",
+  "disconnect": "Disconnect",
+  "simulateEngineOff": "Simulate engine off",
+  "scanTitle": "Scan",
+  "stepAdapter": "Connect to adapter",
+  "stepInit": "Initialise adapter",
+  "stepProtocol": "Detect protocol",
+  "stepEcu": "Find control units",
+  "stepSupported": "Read supported sensors",
+  "stepVin": "Read VIN",
+  "stepDtcs": "Read fault codes (03/07/0A)",
+  "stepFreeze": "Read freeze frame",
+  "stepCapture": "Capture live data",
+  "stepUpload": "Upload & diagnose",
+  "captureProgress": "{seconds} s left",
+  "@captureProgress": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "viewReport": "View report",
+  "scanFailed": "Scan stopped: {reason}",
+  "@scanFailed": {
+    "placeholders": {
+      "reason": {}
+    }
+  },
+  "cancelScan": "Stop",
+  "scanSkipped": "Skipped",
+  "scanQueued": "Saved — will upload when online",
+  "reportTitle": "Diagnosis report",
+  "summary": "Summary",
+  "technicianSummary": "For the technician",
+  "dtcsTitle": "Fault codes",
+  "noDtcs": "No fault codes reported.",
+  "findings": "Findings",
+  "severity_low": "Low",
+  "severity_medium": "Medium",
+  "severity_high": "High",
+  "severity_critical": "Critical",
+  "severity_info": "Info",
+  "confidence": "Confidence {value}%",
+  "@confidence": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "probableCauses": "Probable causes",
+  "likelihood": "{value}%",
+  "@likelihood": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "evidence": "Evidence",
+  "measured": "Measured",
+  "inferred": "Inferred",
+  "observed": "Observed",
+  "expected": "Expected",
+  "tests": "Recommended tests",
+  "actions": "Actions",
+  "partsToConfirm": "Parts (confirm first)",
+  "requiresConfirmation": "Requires confirmation",
+  "missingData": "Missing data",
+  "disclaimers": "Disclaimers",
+  "systemStatus": "Systems",
+  "dataQuality": "Data quality",
+  "offlineReportNote": "Offline: showing fault-code meanings from the built-in knowledge base only. Full analysis needs the server; this scan is queued for upload.",
+  "kbUnknownCode": "Description not in the knowledge base.",
+  "analyzeNow": "Analyse on server",
+  "freezeFrame": "Freeze frame",
+  "vinLabel": "VIN",
+  "howTo": "How",
+  "expectedResult": "Expected result",
+  "liveTitle": "Live data",
+  "chooseSignals": "Signals",
+  "record": "Record",
+  "stopRecording": "Stop",
+  "recordingSaved": "Recording saved",
+  "compareWith": "Compare with recording",
+  "clearCompare": "Remove comparison",
+  "sampleRate": "{rate} samples/s",
+  "@sampleRate": {
+    "placeholders": {
+      "rate": {}
+    }
+  },
+  "outOfRange": "Out of range",
+  "noSupportedSignals": "No supported signals reported by the car.",
+  "notConnected": "Not connected. Connect first.",
+  "historyTitle": "Scan history",
+  "noSessions": "No scans yet.",
+  "localOnly": "On phone only",
+  "synced": "Uploaded",
+  "vehiclesTitle": "Vehicles",
+  "make": "Make",
+  "model": "Model",
+  "year": "Year",
+  "plate": "Plate",
+  "nickname": "Nickname",
+  "odometer": "Odometer (km)",
+  "fuelTypeLabel": "Fuel type",
+  "engineLabel": "Engine",
+  "transmission": "Transmission",
+  "selectVehicle": "Use this vehicle",
+  "maintenanceTitle": "Maintenance log",
+  "addRecord": "Add record",
+  "serviceType": "Service",
+  "date": "Date",
+  "notes": "Notes",
+  "cost": "Cost (SAR)",
+  "noMaintenance": "No maintenance records.",
+  "settingsTitle": "Settings",
+  "language": "Language",
+  "arabic": "العربية",
+  "english": "English",
+  "backendUrl": "Backend URL",
+  "adapterSettings": "Adapter",
+  "commandTimeout": "Command timeout (ms)",
+  "searchTimeout": "Protocol search timeout (ms)",
+  "bleUuidOverride": "BLE UUID override (service / notify / write)",
+  "includeVin": "Include VIN in uploads",
+  "captureDuration": "Live capture during scan (s)",
+  "account": "Account",
+  "notLoggedIn": "Not logged in",
+  "clearDtcsTitle": "Clear fault codes",
+  "clearDtcsWarning": "Clearing codes turns off the check-engine light but does NOT fix the fault. All readiness monitors reset, so the car may fail an inspection until it completes a full drive cycle, and freeze-frame data is erased. Codes will return if the fault is still present.",
+  "clearDtcsChecklist": "Engine OFF, ignition ON, vehicle stopped.",
+  "clearDtcsConfirm": "I understand — clear codes",
+  "clearCodesCount": "Clear {count} code(s)",
+  "@clearCodesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "clearWillReturnNote": "Clearing turns the light off but does not fix the fault — codes return if the problem is real.",
+  "extendedModulesTitle": "Airbag / ABS modules",
+  "extendedModulesIntro": "Reads fault codes from modules a normal scan does not reach — airbag (SRS), ABS and body control — over manufacturer diagnostics. Read-only.",
+  "extendedScanCta": "Scan airbag / ABS modules",
+  "extendedNeedsLive": "Available in live mode only (needs a real car).",
+  "extendedNoModules": "No module answered. The addresses may need tuning for this car, or a security gateway is blocking access.",
+  "extendedRefused": "Present, but it refused the request (may be gateway-protected).",
+  "extendedNoFaults": "No faults",
+  "extendedDisclaimer": "Module addresses are discovery starting points, confirmed per vehicle. Codes read here are over manufacturer diagnostics and should be verified on the car.",
+  "extendedAirbagClearNote": "Clearing airbag codes is a separate, gated step: it is refused while a fault is active, and only after the repair is confirmed.",
+  "explainTitle": "Explain code",
+  "explainCta": "Explain this code",
+  "explainByAi": "AI explanation, grounded in the knowledge base.",
+  "explainFromKb": "From the knowledge base.",
+  "explainOffline": "Offline: shown from the built-in knowledge base.",
+  "whatToCheck": "What to check first",
+  "explainVideos": "Videos",
+  "linkOpenFailed": "Could not open the link.",
+  "otherOption": "Other…",
+  "controllersCatalogTitle": "Controller catalogue",
+  "controllersCatalogNote": "Reference list of control-module names per manufacturer. These are UNVERIFIED catalogue entries — not CAN addresses and not proof a module is readable on your car. Readable modules come from an actual scan.",
+  "unverifiedCatalogEntry": "Unverified catalog entry",
+  "allMakes": "All makes",
+  "search": "Search",
+  "deepScanCta": "Scan all approved addresses for this car",
+  "deepScanNote": "Reads (read-only) every module address in the app's compatibility list for your car's make. No blind address scanning. Addresses marked “unverified” have not yet been confirmed on a real car.",
+  "fullScanFindMore": "Expected a fault (e.g. airbag) that didn't show? Try deep discovery.",
+  "systemUnverified": "Couldn't verify this system — its module did not respond. Not read as healthy.",
+  "airbagUnverified": "Couldn't verify the airbag (SRS) system — specialist diagnosis needed. If the airbag light is on, it may be a real fault.",
+  "fullScanTitle": "Full scan by system",
+  "fullScanCta": "Start full scan",
+  "fullScanChecking": "Scanning…",
+  "fullScanAllClear": "No fault codes found in the systems scanned.",
+  "fullScanSummary": "{count} fault code(s) found",
+  "@fullScanSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fullScanUnverifiedNote": "Couldn't verify {count} system(s) — not shown as healthy.",
+  "@fullScanUnverifiedNote": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fullScanCoverageNote": "Engine, emissions, transmission, electrical and network come from the standard scan. Airbag, ABS and body are read per module and depend on your car's addresses being supported; a security gateway can block some modules.",
+  "fullScanSaveReport": "Save & view report",
+  "clearRequiresServer": "Clearing codes needs server approval. Connect to the internet and log in.",
+  "clearConditionsFailed": "Refused: {reason}",
+  "@clearConditionsFailed": {
+    "placeholders": {
+      "reason": {}
+    }
+  },
+  "clearSuccess": "Fault codes cleared.",
+  "clearFailed": "The car did not confirm the clear request.",
+  "clearRejected": "The server rejected the request: {reason}",
+  "@clearRejected": {
+    "placeholders": {
+      "reason": {}
+    }
+  },
+  "clearDemoNote": "Demo/simulator: no command reaches a real vehicle.",
+  "selectAll": "All",
+  "seconds": "s",
+  "verifyTitle": "Verify after clear",
+  "verifyOverall_problem_confirmed": "Real problem",
+  "verifyOverall_likely_resolved": "Most likely an old fault",
+  "verifyOverall_verifying": "Verification in progress",
+  "verifyOverall_nothing_cleared": "Nothing to verify",
+  "verifyChecks": "{count, plural, =0{No check since clearing yet} =1{1 check since clearing} other{{count} checks since clearing}}",
+  "@verifyChecks": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "verifyCheckNow": "Check now",
+  "verifyRunScan": "Full scan",
+  "verifyClose": "End verification",
+  "verifyClearedAt": "Cleared: {when}",
+  "@verifyClearedAt": {
+    "placeholders": {
+      "when": {}
+    }
+  },
+  "verifySourceServer": "Verdict from the AutoMind server",
+  "verifySourceLocal": "Offline verdict calculated on the phone (same rules as the server)",
+  "verifyNextStep": "Next step",
+  "verifyBeforeCodes": "Saved before clearing",
+  "verifyHomeCard": "Clear & verify",
+  "verifyNone": "No clear to verify yet.",
+  "verifyHowItWorks": "If a cleared code comes back, you have a real problem. If it stays away after the car re-runs its self-tests, it was most likely an old fault.",
+  "checkLabel": "Check #{n}",
+  "@checkLabel": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "noCodesInCheck": "No codes",
+  "viewVerification": "View verification",
+  "clearErases": "Clearing will erase",
+  "clearErasesFreeze": "The freeze frame (conditions when the fault happened). A copy stays in the saved scan.",
+  "clearErasesReadiness": "All readiness monitors restart from zero:",
+  "clearScanSaved": "The scan (codes + freeze frame) is saved on the server.",
+  "clearScanNotSaved": "The scan will be saved on the server first — clearing is only allowed after the codes are saved.",
+  "clearNoReport": "Run a scan first: the codes must be saved before clearing.",
+  "clearPhase_checking": "Checking engine off and speed 0…",
+  "clearPhase_uploading": "Saving the scan on the server…",
+  "clearPhase_requesting": "Requesting server approval…",
+  "clearPhase_clearing": "Clearing codes…",
+  "clearPhase_waiting": "Waiting a few seconds…",
+  "clearPhase_rechecking": "Re-checking the codes…",
+  "clearFailReplay": "Not available for replays.",
+  "clearFailUnreadable": "Engine speed / vehicle speed cannot be read, so it is not safe to clear.",
+  "clearFailEngine": "The engine is running ({rpm} rpm). Switch the engine off and keep the ignition on.",
+  "@clearFailEngine": {
+    "placeholders": {
+      "rpm": {}
+    }
+  },
+  "clearFailMoving": "The vehicle is moving ({speed} km/h).",
+  "@clearFailMoving": {
+    "placeholders": {
+      "speed": {}
+    }
+  },
+  "clearFailUpload": "Could not save the scan on the server: {reason}",
+  "@clearFailUpload": {
+    "placeholders": {
+      "reason": {}
+    }
+  },
+  "otherProcedures": "Other procedures",
+  "procedureUnavailable": "Unavailable",
+  "srsNote": "Airbag (SRS) stored codes are cleared only after the airbag module answered a read on this car, with your consent, and only when no fault is active now. Crash data is never cleared.",
+  "autoStartAfterClear": "Demo: start the engine automatically after clearing",
+  "monitorComplete": "complete",
+  "monitorIncomplete": "not complete",
+  "adapterCapsTitle": "Adapter capabilities",
+  "adapterCapsIntro": "Tests what this adapter really supports — by its behaviour, not its name. Only adapter (AT) commands and read-only requests are sent; nothing is written to the car.",
+  "adapterCapsRun": "Run test",
+  "adapterCapsRerun": "Test again",
+  "adapterCapsNotRun": "Not tested yet on this connection.",
+  "adapterCapsNeedConnection": "Connect to an adapter first.",
+  "adapterCapsReplay": "Not available in replay mode.",
+  "adapterCapsBusy": "Wait for the connection to finish.",
+  "adapterCapsIdleNote": "Stop live data and scans before testing.",
+  "adapterCapsNoVehicle": "No vehicle answered — header, filter and multi-frame tests need the ignition on.",
+  "adapterCapsSimulator": "Simulator: these results describe the simulator, not a real adapter.",
+  "adapterCapsPass": "Passed",
+  "adapterCapsFail": "Failed",
+  "adapterCapsUntested": "Not tested",
+  "adapterCapsBehavioral": "verified by behaviour",
+  "adapterCapsAcceptedOnly": "command accepted only",
+  "adapterCapsRawLog": "Test log (raw)",
+  "adapterCapsCopy": "Copy JSON",
+  "adapterCapsCopied": "Copied",
+  "adapterCapsName": "Device name",
+  "adapterCapsFirmware": "Firmware",
+  "adapterCapsVoltage": "Voltage",
+  "adapterCapsProtocol": "Protocol",
+  "adapterCapsConnection": "Connection",
+  "adapterCapsError": "Test failed: {error}",
+  "capHeaders": "CAN headers (ATH1)",
+  "capFilters": "Receive filter (ATCRA)",
+  "capCanFormatting": "CAN formatting (ATCAF1)",
+  "capIsoTp": "ISO-TP transport",
+  "capMultiFrame": "Multi-frame responses",
+  "capFlowControl": "Flow control (ATFCSM)",
+  "capProtocolSwitching": "Protocol switching",
+  "@adapterCapsError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "moduleAddrUnverified": "unverified address",
+  "interruptedBanner": "{count, plural, =1{1 session was cut short (app closed or link lost).} other{{count} sessions were cut short (app closed or link lost).}} Its data up to that moment was kept on this device.",
+  "recoverCta": "Recover",
+  "recoveredDone": "{count, plural, =1{1 session recovered} other{{count} sessions recovered}}",
+  "interruptedTag": "INTERRUPTED",
+  "interruptedReportNote": "This session was interrupted. It contains only the data captured before it stopped — missing systems were not checked, not \"healthy\".",
+  "@interruptedBanner": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@recoveredDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importSession": "Import session",
+  "importDone": "Session imported",
+  "importDuplicate": "This session is already in your history",
+  "importTampered": "Refused: the evidence bundle was modified (SHA-256 mismatch: {files})",
+  "importInvalid": "Not an AutoMind session file",
+  "importedTag": "IMPORTED",
+  "compareTitle": "Compare sessions",
+  "compareBefore": "Earlier session",
+  "compareAfter": "Later session",
+  "compareNeedTwo": "Save at least two sessions to compare.",
+  "compareNew": "New codes",
+  "compareResolved": "Gone — confirmed by a successful read",
+  "comparePersisting": "Still present",
+  "compareUnverified": "Not checked in the later session (module/OBD not read) — not counted as fixed",
+  "compareModules": "Module read changes",
+  "compareMixedModes": "One session is DEMO and the other LIVE — compare with care.",
+  "compareNoChanges": "No differences in fault codes.",
+  "compareNotRead": "not attempted",
+  "exportFolder": "Export folder",
+  "exportFolderDefault": "App folder (default)",
+  "exportFolderReset": "Use default",
+  "@importTampered": {
+    "placeholders": {
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "clearCanTitle": "Can be cleared",
+  "clearCannotTitle": "Cannot be cleared here",
+  "clearNoneClearable": "Nothing on this scan can be cleared right now.",
+  "clearPermanentNote": "Permanent codes ({codes}) are not erased by clearing — they go by themselves once the related self-test passes.",
+  "clearSelectedCta": "Clear selected ({count})",
+  "clearConsentTargets": "You are about to clear:",
+  "clearBatteryAdvice": "Battery: {volts} V — keep ≥ 12 V during clearing (connect a charger if lower).",
+  "clearIgnitionOn": "Ignition ON (car answering)",
+  "clearOfflineNote": "Offline: the engine clear is recorded in this device's audit log. Clearing other modules needs a server approval.",
+  "clearResultsTitle": "Result after re-reading",
+  "clearCodeVsLamp": "\"Code cleared\" means the module no longer reports it. It does not prove the warning lamp is off.",
+  "clearLampByCar": "The car reports the engine lamp (MIL) is OFF.",
+  "clearLampConfirmCta": "I can see the lamp is off",
+  "clearLampConfirmed": "You confirmed the lamp is off.",
+  "clearLampUnknown": "Lamp state not confirmed yet.",
+  "clearOpenVerification": "Follow up (verification)",
+  "clearSnapshotKept": "A permanent copy of everything before the clear was saved on this device.",
+  "ctx_allowed": "Allowed",
+  "ctx_unsupported_by_hardware": "Not supported by this adapter",
+  "ctx_unsupported_by_vehicle": "Not supported for this car",
+  "ctx_requires_oem_authorization": "Needs manufacturer / server authorization",
+  "ctx_active_fault_not_clearable": "Active fault — cannot be cleared",
+  "ctx_crash_data_specialist": "Crash data — specialist service required",
+  "ctx_comm_failed": "Communication failed",
+  "ctx_cleared_and_verified": "Cleared and verified",
+  "reason_not_connected": "Connect to the car first.",
+  "reason_replay": "A replay is not a car — nothing can be cleared.",
+  "reason_module_not_read": "The module did not answer, so its codes are unknown.",
+  "reason_module_refused": "The module refused access (e.g. security gateway).",
+  "reason_address_unverified": "Its address has not been confirmed on THIS car yet. Run a full scan with the ignition ON — if the module answers, clearing its stored codes becomes available.",
+  "reason_clear_not_documented": "No documented clear function for this module.",
+  "reason_adapter_no_headers": "This adapter failed the header test needed to address the module.",
+  "reason_active_fault": "The fault is active now — clearing would not help and could hide it. Repair first.",
+  "reason_crash_data": "Crash/deployment data is never cleared here — see an airbag specialist.",
+  "reason_safety_policy": "Safety system: clearing must be allowed for this car on the server first.",
+  "res_cleared": "Cleared",
+  "res_still_active": "Still present",
+  "res_read_failed": "Re-read failed",
+  "res_verification_pending": "Verification pending",
+  "res_refused": "Refused by the module",
+  "res_comm_failed": "No answer",
+  "res_blocked": "Not sent",
+  "@clearPermanentNote": {
+    "placeholders": {
+      "codes": {
+        "type": "String"
+      }
+    }
+  },
+  "@clearSelectedCta": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@clearBatteryAdvice": {
+    "placeholders": {
+      "volts": {
+        "type": "String"
+      }
+    }
+  },
+  "kbOemUnknown": "Manufacturer-specific code: its meaning depends on the make{make} and is not in the local database. Check the manufacturer's service information.",
+  "detectedMake": "Make (from VIN): {make}",
+  "@kbOemUnknown": {
+    "placeholders": {
+      "make": {
+        "type": "String"
+      }
+    }
+  },
+  "@detectedMake": {
+    "placeholders": {
+      "make": {
+        "type": "String"
+      }
+    }
+  },
+  "indicatorsTitle": "Warning lamps",
+  "indicatorsSubtitle": "What the car's computers report for each dashboard lamp",
+  "indicatorsIntro": "What the car's computers report for each warning lamp. The app only reads states — it never switches dashboard lamps on or off. The lamp you see on the dashboard is the final word.",
+  "indicatorsCheckNow": "Check now",
+  "indicatorsNoScan": "Run a full scan to read the airbag and ABS modules.",
+  "indicatorsClearCta": "Clear options",
+  "ind_engine": "Engine (Check Engine)",
+  "ind_airbag": "Airbag (SRS)",
+  "ind_abs": "ABS",
+  "ind_battery": "Battery / charging",
+  "ind_coolant": "Engine temperature",
+  "ind_oil": "Oil pressure",
+  "ind_tpms": "Tyre pressure (TPMS)",
+  "ind_esc": "Stability control (ESC)",
+  "ind_eps": "Power steering (EPS)",
+  "ind_seatbelt": "Seatbelt",
+  "indState_ok": "OK",
+  "indState_fault": "Fault",
+  "indState_warning": "Check",
+  "indState_unknown": "Unknown",
+  "indState_unsupported": "Not readable",
+  "indState_checking": "Checking…",
+  "indSource_read": "read from the computer",
+  "indSource_inferred": "inferred from module codes",
+  "indDetail_mil_on": "The engine computer reports the lamp ON.",
+  "indDetail_mil_off": "The engine computer reports the lamp OFF.",
+  "indDetail_codes_stored": "The module has stored codes — its lamp is normally ON. (Inferred: the dashboard lamp itself can't be read.)",
+  "indDetail_module_no_codes": "The module answered with no codes. The lamp itself can't be read — after ignition ON it should go out within a few seconds.",
+  "indDetail_module_not_read": "The module did not answer, so the state is unknown — not \"OK\". This adapter hasn't proven support for it.",
+  "indDetail_module_refused": "The module refused access, so the state is unknown.",
+  "indDetail_charging_low": "Engine running but voltage is below 13 V — charging may be weak.",
+  "indDetail_charging_ok": "Engine running, charging voltage normal.",
+  "indDetail_battery_low": "Engine off and battery below 12 V.",
+  "indDetail_battery_ok_engine_off": "Engine off: the battery lamp is normally ON now — not a fault.",
+  "indDetail_coolant_high": "Coolant at or above 110 °C.",
+  "indDetail_coolant_ok": "Coolant temperature normal.",
+  "indDetail_no_data": "No reading yet — connect and tap \"Check now\".",
+  "indDetail_not_readable": "Not readable through generic OBD on this car (no verified module).",
+  "kbOemUnverifiedTag": "community data, not verified by the manufacturer",
+  "kbArAiTag": "AI translation",
+  "ecuMapTitle": "Module map",
+  "ecuMapSubtitle": "Every module tried in the last scan and how it answered",
+  "ecuMapNoScan": "Run a full scan to build the module map.",
+  "ecu_discovered": "Discovered",
+  "ecu_reachable": "Reachable",
+  "ecu_dtc_read_supported": "Code read supported",
+  "ecu_clear_supported": "Clear supported",
+  "ecu_not_supported": "Not supported",
+  "ecu_timed_out": "No answer (timed out)",
+  "ecu_gateway_blocked": "Blocked by security gateway",
+  "ecu_refused": "Refused",
+  "ecu_passed": "Read OK — no codes",
+  "ecu_faults_present": "Faults present",
+  "ecuAddrVerified": "address verified on a car",
+  "ecuAddrUnverified": "address NOT verified",
+  "ecuSource": "Source: {source}",
+  "ecuNrc": "Refused with NRC {nrc}",
+  "@ecuSource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "@ecuNrc": {
+    "placeholders": {
+      "nrc": {
+        "type": "String"
+      }
+    }
+  },
+  "monitorTestsTitle": "Self-test results (Mode 06)",
+  "monitorTestsIntro": "Results of the engine computer's own monitor tests. A test passes when its value is within the limits the computer reports. Values are raw (unit code shown) — no units are guessed.",
+  "monitorTestsRead": "Read results",
+  "monitorTestsNotCan": "Mode 06 is only decoded on CAN cars; this car's protocol uses a different format.",
+  "monitorTestsNotSupported": "The car did not report any Mode 06 tests.",
+  "monitorTestsNeedConnection": "Connect to the car to read the results.",
+  "monitorTestsSummary": "{count} tests · {failed} failed",
+  "monitorPass": "PASS",
+  "monitorFail": "FAIL",
+  "monitorValues": "value {value} · limits {min} … {max} · UASID {uasid}",
+  "@monitorTestsSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
+    }
+  },
+  "@monitorValues": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      },
+      "uasid": {
+        "type": "String"
+      }
+    }
+  },
+  "exportXlsx": "Export Excel (XLSX)",
+  "devConsoleTitle": "Developer diagnostics",
+  "devConsoleSubtitle": "Live adapter traffic (TX/RX) and read-only commands",
+  "devConsoleIntro": "Every command and reply on the adapter link, live. You may send only read-only commands: adapter info (ATI, AT@1, ATRV, ATDP, ATDPN, ATCS, ATKW, ATIGN, ATPPS) and OBD read services 01, 02, 03, 06, 07, 09, 0A. Clearing, writing and adapter-changing commands are refused.",
+  "devConsoleHint": "e.g. 0100 or ATRV",
+  "devConsoleSend": "Send",
+  "devConsoleBlocked": "Refused: only read-only commands are allowed here.",
+  "devConsoleExport": "Export log",
+  "devConsoleClear": "Clear view",
+  "devConsoleNotConnected": "Connect to an adapter to see live traffic.",
+  "saveSessionFolder": "Save session folder",
+  "sessionFolderSaved": "Saved: {path}",
+  "openFolder": "Open folder",
+  "historySearchHint": "Search code, VIN, module, make, date…",
+  "filterAll": "All",
+  "filterLive": "Live",
+  "filterDemo": "Demo",
+  "filterInterrupted": "Interrupted",
+  "filterImported": "Imported",
+  "openSessionsFolder": "Open sessions folder",
+  "@sessionFolderSaved": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "exportPdf": "Export PDF",
+  "clearProvenNote": "Address confirmed by a successful read on this car. Only stored (not active) codes are cleared; the module is re-read before and after."
+}

@@ -1,0 +1,564 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../core/api/api_client.dart';
+import '../core/clear/clear_audit.dart';
+import '../core/open_folder.dart';
+import '../core/kb/local_kb.dart';
+import '../core/recording/export_service.dart';
+import '../core/recording/report_pdf.dart';
+import '../core/storage/scan_report.dart';
+import '../obd/obd.dart';
+import '../state/clear_controller.dart';
+import '../state/connection_controller.dart';
+import '../state/providers.dart';
+import '../state/verification_controller.dart';
+import '../ui/l10n_helpers.dart';
+import '../ui/widgets.dart';
+
+class ReportScreen extends ConsumerWidget {
+  const ReportScreen({super.key, required this.reportId});
+  final String reportId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final async = ref.watch(reportProvider(reportId));
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l.reportTitle),
+        actions: [
+          if (async.value != null)
+            IconButton(
+              icon: const Icon(Icons.folder_zip_outlined),
+              tooltip: l.exportEvidence,
+              onPressed: () => _shareEvidence(context, ref, async.value!),
+            ),
+          if (async.value != null)
+            IconButton(
+              key: const Key('export-pdf'),
+              icon: const Icon(Icons.picture_as_pdf_outlined),
+              tooltip: l.exportPdf,
+              onPressed: () => _sharePdf(context, ref, async.value!),
+            ),
+          if (async.value != null)
+            IconButton(
+              key: const Key('save-session-folder'),
+              icon: const Icon(Icons.save_outlined),
+              tooltip: l.saveSessionFolder,
+              onPressed: () => _saveFolder(context, ref, async.value!),
+            ),
+          if (async.value != null)
+            IconButton(
+              key: const Key('export-xlsx'),
+              icon: const Icon(Icons.table_view_outlined),
+              tooltip: l.exportXlsx,
+              onPressed: () => _shareXlsx(context, ref, async.value!),
+            ),
+          if (async.value != null)
+            IconButton(
+              icon: const Icon(Icons.ios_share),
+              tooltip: l.exportJson,
+              onPressed: () => _share(context, ref, async.value!),
+            ),
+        ],
+      ),
+      body: async.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text(l.errorGeneric('$e'))),
+        data: (r) => r == null
+            ? Center(child: Text(l.notAvailable))
+            : ReportView(
+                report: r,
+                kb: ref.watch(appAssetsProvider).kb,
+                make: effectiveMake(ref.watch(selectedVehicleProvider), r.vin, ref.watch(appAssetsProvider)),
+                onAnalyze: r.diagnosis != null
+                    ? null
+                    : () async {
+                        try {
+                          await ref.read(uploadQueueProvider).uploadOne(r);
+                          final pending = await ref.read(localStoreProvider).readQueue();
+                          await ref.read(localStoreProvider).writeQueue(pending.where((x) => x != r.id).toList());
+                          ref.invalidate(reportProvider(reportId));
+                          await ref.read(reportsProvider.notifier).refresh();
+                          await ref.read(pendingUploadsProvider.notifier).refresh();
+                        } on ApiException catch (e) {
+                          if (context.mounted) showSnack(context, e.isOffline ? l.scanQueued : e.message);
+                        }
+                      },
+                onClearDtcs: r.dataMode == 'replay' || r.dtcs.isEmpty || ref.watch(connectionProvider).client == null
+                    ? null
+                    : () => context.push('/clear-dtcs?report=${r.id}'),
+              ),
+      ),
+    );
+  }
+
+  /// Evidence ZIP (manifest + v2 session + CSVs + raw.log, each with SHA-256). The VIN
+  /// is masked unless the user opted to include it; the local recording is never altered.
+  Future<void> _shareEvidence(BuildContext context, WidgetRef ref, ScanReport r) async {
+    final l = context.l10n;
+    final lang = context.lang;
+    final store = ref.read(localStoreProvider);
+    final rec = r.recordingId == null ? null : await store.loadRecording(r.recordingId!);
+    if (rec == null) {
+      if (context.mounted) showSnack(context, l.exportEvidenceNoRecording);
+      return;
+    }
+    final kb = ref.read(appAssetsProvider).kb;
+    // Every clear attempt on this scan (incl. refusals) from the on-device audit log.
+    final audit = await ref.read(clearAuditProvider).read(reportId: r.id);
+    final pdf = await _pdf(ref, r, lang, rec);
+    final zip = ExportService.evidenceZip(
+      rec,
+      reportPdf: pdf,
+      maskVin: !ref.read(settingsProvider).includeVin,
+      describe: (code) => kb.lookupFor(code, make: effectiveMake(ref.read(selectedVehicleProvider), r.vin, ref.read(appAssetsProvider)))?.description(lang),
+      evidence: SessionEvidence(
+        sessionState: r.interrupted ? 'interrupted' : 'completed',
+        auditEvents: audit,
+        clearOperations: ClearAuditLog.operations(audit),
+        beforeAfter: r.diagnosis == null ? null : {'diagnosis': r.diagnosis},
+      ),
+    );
+    final f = await store.writeExportBytes(ExportService.bundleFileName(rec), zip);
+    await SharePlus.instance.share(ShareParams(files: [XFile(f.path, mimeType: 'application/zip')], subject: 'Evidence bundle'));
+  }
+
+  /// The on-device PDF (Arabic or English per the app language). Built locally — no server.
+  Future<Uint8List?> _pdf(WidgetRef ref, ScanReport r, String lang, Recording? rec) async {
+    final assets = ref.read(appAssetsProvider);
+    final make = effectiveMake(ref.read(selectedVehicleProvider), r.vin, assets);
+    final clears = (await ref.read(verificationProvider.future)).where((e) => e.reportId == r.id).toList();
+    return buildReportPdf(
+      report: r,
+      recording: rec,
+      lang: lang,
+      fontRegular: await rootBundle.load('assets/fonts/IBMPlexSansArabic-Regular.ttf'),
+      fontBold: await rootBundle.load('assets/fonts/IBMPlexSansArabic-Bold.ttf'),
+      describe: (code) => assets.kb.lookupFor(code, make: make)?.description(lang),
+      clear: clears.isEmpty ? null : clears.first,
+      maskVin: !ref.read(settingsProvider).includeVin,
+    );
+  }
+
+  Future<void> _sharePdf(BuildContext context, WidgetRef ref, ScanReport r) async {
+    final lang = context.lang;
+    final store = ref.read(localStoreProvider);
+    final rec = r.recordingId == null ? null : await store.loadRecording(r.recordingId!);
+    final bytes = await _pdf(ref, r, lang, rec);
+    if (bytes == null) return;
+    final f = await store.writeExportBytes('automind_report_${r.id}${r.isDemo ? '_DEMO' : ''}.pdf', bytes);
+    await SharePlus.instance.share(ShareParams(files: [XFile(f.path, mimeType: 'application/pdf')], subject: 'AutoMind report'));
+  }
+
+  /// Writes the full session (manifest, session.json, CSV, XLSX, raw.log …) as a plain
+  /// folder `Sessions/YYYY/MM/<id>` — `%LOCALAPPDATA%\AutoMind\Sessions` on Windows.
+  /// The local copy keeps the VIN unless masking is on, like the other exports.
+  Future<void> _saveFolder(BuildContext context, WidgetRef ref, ScanReport r) async {
+    final l = context.l10n;
+    final lang = context.lang;
+    final store = ref.read(localStoreProvider);
+    final rec = r.recordingId == null ? null : await store.loadRecording(r.recordingId!);
+    if (rec == null) {
+      if (context.mounted) showSnack(context, l.exportEvidenceNoRecording);
+      return;
+    }
+    final kb = ref.read(appAssetsProvider).kb;
+    final make = effectiveMake(ref.read(selectedVehicleProvider), r.vin, ref.read(appAssetsProvider));
+    final audit = await ref.read(clearAuditProvider).read(reportId: r.id);
+    final pdf = await _pdf(ref, r, lang, rec);
+    final files = ExportService.evidenceFiles(
+      rec,
+      reportPdf: pdf,
+      maskVin: !ref.read(settingsProvider).includeVin,
+      describe: (code) => kb.lookupFor(code, make: make)?.description(lang),
+      evidence: SessionEvidence(
+        sessionState: r.interrupted ? 'interrupted' : 'completed',
+        auditEvents: audit,
+        clearOperations: ClearAuditLog.operations(audit),
+        beforeAfter: r.diagnosis == null ? null : {'diagnosis': r.diagnosis},
+      ),
+    );
+    final dir = await store.saveSessionFolder(rec.recordingId, rec.createdAt, files);
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      duration: const Duration(seconds: 8),
+      content: Text(l.sessionFolderSaved(dir.path), textDirection: TextDirection.ltr),
+      action: canOpenFolders ? SnackBarAction(label: l.openFolder, onPressed: () => openFolder(dir.path)) : null,
+    ));
+  }
+
+  /// Excel workbook (Summary / DTCs / Modules / Live data / TX-RX); VIN masked unless allowed.
+  Future<void> _shareXlsx(BuildContext context, WidgetRef ref, ScanReport r) async {
+    final l = context.l10n;
+    final lang = context.lang;
+    final store = ref.read(localStoreProvider);
+    final rec = r.recordingId == null ? null : await store.loadRecording(r.recordingId!);
+    if (rec == null) {
+      if (context.mounted) showSnack(context, l.exportEvidenceNoRecording);
+      return;
+    }
+    final kb = ref.read(appAssetsProvider).kb;
+    final make = effectiveMake(ref.read(selectedVehicleProvider), r.vin, ref.read(appAssetsProvider));
+    final bytes = ExportService.sessionXlsx(
+      rec,
+      maskVin: !ref.read(settingsProvider).includeVin,
+      describe: (code) => kb.lookupFor(code, make: make)?.description(lang),
+      sessionState: r.interrupted ? 'interrupted' : 'completed',
+    );
+    final f = await store.writeExportBytes('automind_session_${rec.recordingId}${rec.dataMode == 'demo' ? '_DEMO' : ''}.xlsx', bytes);
+    await SharePlus.instance.share(ShareParams(
+      files: [XFile(f.path, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')],
+      subject: 'AutoMind session',
+    ));
+  }
+
+  Future<void> _share(BuildContext context, WidgetRef ref, ScanReport r) async {
+    final json = const JsonEncoder.withIndent(' ').convert({
+      'report': r.toJson(),
+      'labels': {'data_mode': r.dataMode, 'original_mode': r.originalMode, 'is_demo': r.isDemo},
+    });
+    final f = await ref.read(localStoreProvider).writeExport('automind_report_${r.id}${r.isDemo ? '_DEMO' : ''}.json', json);
+    await SharePlus.instance.share(ShareParams(files: [XFile(f.path, mimeType: 'application/json')], subject: 'AutoMind report'));
+  }
+}
+
+/// Pure presentation of a report (server diagnosis or offline KB view).
+class ReportView extends StatelessWidget {
+  const ReportView({super.key, required this.report, required this.kb, this.onAnalyze, this.onClearDtcs, this.make});
+
+  final ScanReport report;
+  final LocalKb kb;
+
+  /// Vehicle brand for manufacturer-specific code descriptions (null = unknown).
+  final String? make;
+  final VoidCallback? onAnalyze;
+  final VoidCallback? onClearDtcs;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final lang = context.lang;
+    final d = report.diagnosis;
+    final watermark = report.isReplay ? l.replayWatermark : (report.isDemo ? l.demoWatermark : null);
+    final findings = ((d?['findings'] as List?) ?? const []).cast<Map<String, dynamic>>();
+    final serverDtcs = ((d?['dtcs'] as List?) ?? const []).cast<Map<String, dynamic>>();
+
+    return Watermark(
+      text: watermark,
+      child: ListView(padding: const EdgeInsets.only(bottom: 32), children: [
+        ModeBanner(mode: report.dataMode, originalMode: report.originalMode, simulator: report.simulator),
+        if (report.isReplay && report.originalMode == 'demo') const ModeBanner(mode: 'demo'),
+        if (report.interrupted)
+          Container(
+            key: const Key('interrupted-note'),
+            margin: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: Colors.orange.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
+            child: Row(children: [
+              const Icon(Icons.warning_amber_rounded, color: Colors.orange),
+              const SizedBox(width: 8),
+              Expanded(child: Text(l.interruptedReportNote)),
+            ]),
+          ),
+        if (d == null)
+          Container(
+            key: const Key('offline-note'),
+            margin: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: Colors.amber.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(8)),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(l.offlineReportNote),
+              if (report.lastError != null) Text(report.lastError!, style: Theme.of(context).textTheme.bodySmall, textDirection: TextDirection.ltr),
+              if (onAnalyze != null) TextButton.icon(onPressed: onAnalyze, icon: const Icon(Icons.cloud_upload_outlined), label: Text(l.analyzeNow)),
+            ]),
+          ),
+        SectionCard(
+          title: l.summary,
+          icon: Icons.summarize_outlined,
+          child: Row(children: [
+            HealthGauge(score: report.healthScore, size: 80),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(healthBandText(l, report.healthBand), style: Theme.of(context).textTheme.titleMedium),
+                if (d != null) Text(pickBi(d['summary'], lang)),
+                if (report.vin != null) Text('${l.vinLabel}: ${report.vin}', textDirection: TextDirection.ltr),
+                if (report.protocolName != null) Text(report.protocolName!, style: Theme.of(context).textTheme.bodySmall),
+              ]),
+            ),
+          ]),
+        ),
+        if (d != null && d['technician_summary'] != null)
+          SectionCard(title: l.technicianSummary, icon: Icons.engineering_outlined, child: Text(pickBi(d['technician_summary'], lang))),
+        SectionCard(
+          title: l.dtcsTitle,
+          icon: Icons.error_outline,
+          trailing: onClearDtcs == null ? null : TextButton(onPressed: onClearDtcs, child: Text(l.clearDtcsTitle)),
+          child: _dtcs(context, serverDtcs),
+        ),
+        if (findings.isNotEmpty) ...[
+          Padding(padding: const EdgeInsets.fromLTRB(16, 12, 16, 0), child: Text(l.findings, style: Theme.of(context).textTheme.titleLarge)),
+          for (final f in findings) _FindingCard(f: f),
+        ],
+        if (d != null && (d['system_status'] as List?)?.isNotEmpty == true)
+          SectionCard(
+            title: l.systemStatus,
+            icon: Icons.dashboard_outlined,
+            child: Wrap(spacing: 6, runSpacing: 6, children: [
+              for (final s in (d['system_status'] as List).cast<Map<String, dynamic>>())
+                Tooltip(
+                  message: pickLang(s, 'note', lang),
+                  child: Chip(
+                    avatar: Icon(Icons.circle, size: 12, color: switch (s['status']) {
+                      'ok' => Colors.green,
+                      'warning' => Colors.orange,
+                      'fault' => Colors.red,
+                      _ => Colors.grey,
+                    }),
+                    label: Text('${s['system']}'),
+                  ),
+                ),
+            ]),
+          ),
+        if (d != null && (d['module_scans'] as List?)?.isNotEmpty == true)
+          SectionCard(
+            title: l.reportModulesTitle,
+            icon: Icons.memory_outlined,
+            child: Column(
+              children: [
+                for (final m in (d['module_scans'] as List).cast<Map<String, dynamic>>())
+                  _moduleRow(context, m),
+              ],
+            ),
+          ),
+        if (report.freezeFrames.isNotEmpty)
+          SectionCard(
+            title: '${l.freezeFrame} ${report.freezeFrames.first['dtc'] ?? ''}',
+            icon: Icons.ac_unit,
+            child: Column(children: [
+              for (final e in ((report.freezeFrames.first['values'] as Map?) ?? const {}).entries)
+                Row(children: [Expanded(child: Text('${e.key}')), Text('${e.value}', textDirection: TextDirection.ltr)]),
+            ]),
+          ),
+        if (d != null && d['data_quality'] is Map)
+          SectionCard(
+            title: l.dataQuality,
+            icon: Icons.analytics_outlined,
+            child: Text(
+              '${(d['data_quality'] as Map)['sample_count'] ?? ''} · ${(d['data_quality'] as Map)['duration_s'] ?? ''} ${l.seconds} · '
+              '${((d['data_quality'] as Map)['conditions_seen'] as List?)?.join(', ') ?? ''}',
+              textDirection: TextDirection.ltr,
+            ),
+          ),
+        if (d != null && (d['disclaimers'] as List?)?.isNotEmpty == true)
+          SectionCard(
+            title: l.disclaimers,
+            icon: Icons.info_outline,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              for (final x in d['disclaimers'] as List) Padding(padding: const EdgeInsets.only(bottom: 4), child: Text('• ${pickBi(x, lang)}')),
+            ]),
+          ),
+      ]),
+    );
+  }
+
+  /// One module-scan row, coloured by its honest outcome. A module that didn't
+  /// answer or refused is never shown as healthy; an unverified airbag is flagged.
+  Widget _moduleRow(BuildContext context, Map<String, dynamic> m) {
+    final l = context.l10n;
+    final lang = context.lang;
+    final outcome = m['outcome'] as String?;
+    final (IconData icon, Color color, String text) = switch (outcome) {
+      'read_codes' => (Icons.error_outline, Colors.red, l.moduleReadCodes),
+      'read_no_codes' => (Icons.check_circle_outline, Colors.green, l.moduleNoCodes),
+      'refused' => (Icons.lock_outline, Colors.orange, l.moduleRefused),
+      _ => (Icons.help_outline, Colors.grey, l.moduleNoResponse),
+    };
+    final codes = ((m['codes'] as List?) ?? const []).cast<Map<String, dynamic>>();
+    final isAirbagUnverified = outcome == 'no_response' && m['category'] == 'airbag';
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Icon(icon, color: color),
+        title: Text(pickLang(m, 'name', lang), style: const TextStyle(fontWeight: FontWeight.w600)),
+        subtitle: Text(text, style: TextStyle(color: color)),
+        trailing: m['address'] == null ? null : Text('${m['address']}', textDirection: TextDirection.ltr, style: Theme.of(context).textTheme.bodySmall),
+      ),
+      for (final c in codes)
+        Padding(
+          padding: const EdgeInsetsDirectional.only(start: 56, bottom: 6),
+          child: Text(
+            '${c['code']}${c['known'] == true ? ' · ${pickLang(c, 'description', lang)}' : ''}',
+            textDirection: TextDirection.ltr,
+            textAlign: TextAlign.start,
+          ),
+        ),
+      if (isAirbagUnverified)
+        Padding(
+          padding: const EdgeInsetsDirectional.only(start: 56, bottom: 8),
+          child: Text(l.moduleAirbagUnverified, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.red)),
+        ),
+    ]);
+  }
+
+  Widget _dtcs(BuildContext context, List<Map<String, dynamic>> serverDtcs) {
+    final l = context.l10n;
+    final lang = context.lang;
+    final rows = <Widget>[];
+    if (serverDtcs.isNotEmpty) {
+      for (final x in serverDtcs) {
+        final known = x['known'] != false;
+        rows.add(ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: Icon(Icons.circle, size: 14, color: severityColor(x['severity'] as String?)),
+          title: Text('${x['code']} · ${x['status'] ?? ''}', textDirection: TextDirection.ltr, textAlign: TextAlign.start),
+          subtitle: Text(known ? pickLang(x, 'description', lang) : l.kbUnknownCode),
+        ));
+      }
+    } else {
+      for (final x in report.dtcs) {
+        final code = x['code'] as String;
+        final e = kb.lookupFor(code, make: make);
+        rows.add(ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: Icon(Icons.circle, size: 14, color: severityColor(e?.severity)),
+          title: Text('$code · ${x['status']}${x['ecu'] != null ? ' · ${x['ecu']}' : ''}', textDirection: TextDirection.ltr, textAlign: TextAlign.start),
+          subtitle: Text(describeCode(l, kb, code, lang, make: make)),
+        ));
+      }
+    }
+    return rows.isEmpty ? Text(l.noDtcs) : Column(children: rows);
+  }
+}
+
+class _FindingCard extends StatelessWidget {
+  const _FindingCard({required this.f});
+  final Map<String, dynamic> f;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final lang = context.lang;
+    final causes = ((f['causes'] as List?) ?? const []).cast<Map<String, dynamic>>();
+    final evidence = ((f['evidence'] as List?) ?? const []).cast<Map<String, dynamic>>();
+    final tests = ((f['tests'] as List?) ?? const []).cast<Map<String, dynamic>>();
+    final actions = ((f['actions'] as List?) ?? const []).cast<Map<String, dynamic>>();
+    final parts = ((f['parts_candidates'] as List?) ?? const []).cast<Map<String, dynamic>>();
+    final missing = ((f['missing_data'] as List?) ?? const []).cast<Map<String, dynamic>>();
+    final conf = ((f['confidence'] as num? ?? 0) * 100).round();
+    final sev = f['severity'] as String?;
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: severityColor(sev), width: 1.5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ExpansionTile(
+        initiallyExpanded: true,
+        leading: Icon(Icons.report_problem_outlined, color: severityColor(sev)),
+        title: Text(pickLang(f, 'title', lang), style: const TextStyle(fontWeight: FontWeight.w700)),
+        subtitle: Text('${severityText(l, sev)} · ${l.confidence(conf)}${(f['related_dtcs'] as List?)?.isNotEmpty == true ? ' · ${(f['related_dtcs'] as List).join(', ')}' : ''}'),
+        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (causes.isNotEmpty) ...[
+            _h(context, l.probableCauses),
+            for (final c in causes)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(children: [
+                  Expanded(child: Text('${c['rank'] ?? ''}. ${pickLang(c, 'title', lang)}')),
+                  SizedBox(width: 80, child: LinearProgressIndicator(value: (c['likelihood'] as num? ?? 0).toDouble())),
+                  const SizedBox(width: 6),
+                  Text(l.likelihood(((c['likelihood'] as num? ?? 0) * 100).round())),
+                ]),
+              ),
+          ],
+          if (evidence.isNotEmpty) ...[
+            _h(context, l.evidence),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                key: const Key('evidence-table'),
+                headingRowHeight: 32,
+                dataRowMinHeight: 32,
+                columns: [
+                  DataColumn(label: Text(l.measured)),
+                  DataColumn(label: Text(l.observed)),
+                  DataColumn(label: Text(l.expected)),
+                  const DataColumn(label: Text('')),
+                ],
+                rows: [
+                  for (final e in evidence)
+                    DataRow(
+                      color: WidgetStatePropertyAll(
+                        e['is_measured'] == true ? Colors.blue.withValues(alpha: 0.06) : Colors.purple.withValues(alpha: 0.06),
+                      ),
+                      cells: [
+                        DataCell(Row(children: [
+                          Icon(e['is_measured'] == true ? Icons.straighten : Icons.psychology_alt_outlined, size: 16),
+                          const SizedBox(width: 4),
+                          Text(e['is_measured'] == true ? l.measured : l.inferred),
+                          const SizedBox(width: 6),
+                          Text('${e['signal'] ?? e['kind'] ?? ''}', textDirection: TextDirection.ltr),
+                        ])),
+                        DataCell(Text('${e['observed_value'] ?? ''} ${e['unit'] ?? ''}', textDirection: TextDirection.ltr)),
+                        DataCell(Text(
+                          e['expected_min'] == null && e['expected_max'] == null
+                              ? ''
+                              : '${e['expected_min'] ?? ''}–${e['expected_max'] ?? ''} ${e['expected_context'] ?? ''}',
+                          textDirection: TextDirection.ltr,
+                        )),
+                        DataCell(Text(pickLang(e, 'note', lang))),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+          ],
+          if (tests.isNotEmpty) ...[
+            _h(context, l.tests),
+            for (final t in tests)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.science_outlined),
+                title: Text(pickLang(t, 'title', lang)),
+                subtitle: Text('${l.howTo}: ${pickLang(t, 'how', lang)}\n${l.expectedResult}: ${pickLang(t, 'expected', lang)}'),
+              ),
+          ],
+          if (actions.isNotEmpty) ...[
+            _h(context, l.actions),
+            for (final a in actions) Text('• ${pickLang(a, 'title', lang)}'),
+          ],
+          if (parts.isNotEmpty) ...[
+            _h(context, l.partsToConfirm),
+            for (final p in parts)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.inventory_2_outlined),
+                title: Text(pickLang(p, 'name', lang)),
+                subtitle: Text([if (p['requires_confirmation'] == true) l.requiresConfirmation, pickLang(p, 'condition', lang)].where((x) => x.isNotEmpty).join(' — ')),
+              ),
+          ],
+          if (missing.isNotEmpty) ...[
+            _h(context, l.missingData),
+            for (final m in missing) Text('• ${m['signal'] ?? ''}: ${pickLang(m, 'description', lang)}'),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _h(BuildContext context, String t) => Padding(
+        padding: const EdgeInsets.only(top: 10, bottom: 4),
+        child: Text(t, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+      );
+}

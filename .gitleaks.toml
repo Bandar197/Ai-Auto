@@ -1,0 +1,20 @@
+# gitleaks configuration: the full default rule set plus a narrow exception for
+# verified false positives. Every exception must match a path AND a pattern AND a rule.
+title = "AutoMind AI gitleaks config"
+minVersion = "v8.25.0"
+
+[extend]
+useDefault = true
+
+# OBD-II PID and scenario identifiers such as "key": "o2_b1s1_voltage" in the shared knowledge
+# base (and its copy bundled into the mobile app) trip generic-api-key. They are snake_case names,
+# never credentials. Only that rule, only those files, only snake_case values are exempt.
+[[rules]]
+id = "generic-api-key"
+
+[[rules.allowlists]]
+description = "snake_case PID / scenario identifiers in the shared OBD knowledge base"
+condition = "AND"
+paths = ['''(^|/)shared/(obd|scenarios)/[^/]+\.json$''']
+regexTarget = "match"
+regexes = ['''key"\s*:\s*"[a-z][a-z0-9]*(_[a-z0-9]+)+"$''']

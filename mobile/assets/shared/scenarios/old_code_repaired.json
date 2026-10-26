@@ -1,0 +1,118 @@
+{
+ "format": "automind.scenario.v1",
+ "data_mode": "demo",
+ "vehicle": {
+  "vin": "AMDDEMX1234567890",
+  "make": "AutoMind Demo",
+  "model": "Demo V6",
+  "model_year": 2019,
+  "engine": "3.6L V6 (simulated)"
+ },
+ "protocol": "6",
+ "ecus": [
+  "7E8",
+  "7E9"
+ ],
+ "supported_pids": {
+  "01": [
+   "01",
+   "03",
+   "04",
+   "05",
+   "06",
+   "07",
+   "0B",
+   "0C",
+   "0D",
+   "0E",
+   "0F",
+   "10",
+   "11",
+   "13",
+   "14",
+   "15",
+   "1C",
+   "1F",
+   "21",
+   "2F",
+   "30",
+   "31",
+   "33",
+   "42",
+   "46",
+   "49",
+   "4C"
+  ],
+  "09": [
+   "02",
+   "04"
+  ]
+ },
+ "adapter_firmware": "ELM327 v1.5",
+ "battery_voltage_off": 12.6,
+ "charging_voltage": 14.2,
+ "initial_coolant_c": 88,
+ "ambient_c": 38,
+ "baro_kpa": 100,
+ "drive_cycle": [
+  {
+   "phase": "warm_idle",
+   "duration_s": 30,
+   "rpm": 750,
+   "speed": 0,
+   "throttle": 0
+  },
+  {
+   "phase": "rev_2500",
+   "duration_s": 15,
+   "rpm": 2500,
+   "speed": 0,
+   "throttle": 18
+  },
+  {
+   "phase": "idle",
+   "duration_s": 15,
+   "rpm": 750,
+   "speed": 0,
+   "throttle": 0
+  },
+  {
+   "phase": "cruise",
+   "duration_s": 30,
+   "rpm": 1900,
+   "speed": 80,
+   "throttle": 22
+  },
+  {
+   "phase": "idle",
+   "duration_s": 20,
+   "rpm": 750,
+   "speed": 0,
+   "throttle": 0
+  }
+ ],
+ "key": "old_code_repaired",
+ "name_en": "Old P0102 left after a MAF repair",
+ "name_ar": "كود P0102 قديم بعد إصلاح حساس MAF",
+ "description_en": "A MAF circuit code is stored from before the sensor connector was repaired. Live data is normal, so after clearing the code does not return once the self-tests run.",
+ "description_ar": "كود دائرة حساس MAF مخزن من قبل إصلاح فيش الحساس. البيانات الحية سليمة، لذلك بعد المسح لا يرجع الكود عند اكتمال الاختبارات الذاتية.",
+ "dtcs": [
+  {
+   "code": "P0102",
+   "status": "stored",
+   "ecu": "7E8"
+  }
+ ],
+ "faults": [],
+ "freeze_frame": {
+  "dtc": "P0102",
+  "values": {
+   "engine_rpm": 2100,
+   "vehicle_speed": 64,
+   "coolant_temp": 90,
+   "maf_gs": 0.4,
+   "engine_load": 12.2
+  }
+ },
+ "fault_active": false
+}

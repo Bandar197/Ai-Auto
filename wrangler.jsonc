@@ -1,0 +1,43 @@
+// Cloudflare deployment for the AutoMind API (Cloudflare Containers + Workers).
+// Lives at the repository ROOT so the container build context is the repo root —
+// backend/Dockerfile needs ../shared, which only the root context provides.
+//
+// Deploy:  npm install   &&   npx wrangler deploy        (run from the repo root)
+// Secrets: set them with `npx wrangler secret put <NAME>` (never commit them).
+// Full steps + Supabase wiring: docs/DEPLOY_CLOUDFLARE.md
+//
+// Containers need the Workers Paid plan. Verify the schema against the current docs
+// (https://developers.cloudflare.com/containers/) — the fields below follow the 2025 launch.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "automind-api",
+  "main": "infra/cloudflare/worker/index.js",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+
+  "containers": [
+    {
+      "class_name": "ApiContainer",
+      // Dockerfile path; build context is this config's directory (the repo root).
+      "image": "./backend/Dockerfile",
+      "instances": 1,
+      "max_instances": 3
+    }
+  ],
+
+  "durable_objects": {
+    "bindings": [{ "class_name": "ApiContainer", "name": "API_CONTAINER" }]
+  },
+
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["ApiContainer"] }
+  ],
+
+  // Non-secret runtime config. Secrets (DB URL, keys) are set via `wrangler secret put`
+  // and are injected into the container as environment variables at runtime.
+  "vars": {
+    "AUTOMIND_ENVIRONMENT": "prod",
+    "FORWARDED_ALLOW_IPS": "*"
+  }
+}

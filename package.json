@@ -1,0 +1,17 @@
+{
+  "name": "automind-cloudflare-deploy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cloudflare Workers + Containers deployment for the AutoMind API. Not the app code — see backend/ (API), web/ (admin), mobile/ (app). Config: wrangler.jsonc. Guide: docs/DEPLOY_CLOUDFLARE.md",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail"
+  },
+  "dependencies": {
+    "@cloudflare/containers": "^0.0.33"
+  },
+  "devDependencies": {
+    "wrangler": "^4.42.0"
+  }
+}
