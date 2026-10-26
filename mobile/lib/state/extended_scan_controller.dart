@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../obd/obd.dart';
+import '../core/clear/proven_modules.dart';
 import 'connection_controller.dart';
 import 'providers.dart';
 
@@ -57,6 +58,13 @@ class ExtendedScanController extends Notifier<ExtendedScanState> {
         },
       );
       state = ExtendedScanState(results: results, done: true, deep: deep, total: candidates.length, progress: candidates.length);
+      try {
+        await ProvenModulesStore(ref.read(localStoreProvider)).recordFromScan(
+          provenVehicleKey(vehicleId: ref.read(settingsProvider).selectedVehicleId),
+          results,
+          mode: conn.mode ?? DataMode.demo,
+        );
+      } on Object catch (_) {}
     } on Object catch (e) {
       state = ExtendedScanState(error: e.toString(), done: true, deep: deep);
     }

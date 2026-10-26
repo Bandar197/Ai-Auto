@@ -2039,7 +2039,7 @@ abstract class AppLocalizations {
   /// No description provided for @srsNote.
   ///
   /// In en, this message translates to:
-  /// **'Airbag (SRS) codes are cleared only on a verified module with a documented clear function and server approval for this car — never otherwise. Crash data is never cleared.'**
+  /// **'Airbag (SRS) stored codes are cleared only after the airbag module answered a read on this car, with your consent, and only when no fault is active now. Crash data is never cleared.'**
   String get srsNote;
 
   /// No description provided for @autoStartAfterClear.
@@ -2591,7 +2591,7 @@ abstract class AppLocalizations {
   /// No description provided for @reason_address_unverified.
   ///
   /// In en, this message translates to:
-  /// **'Its address has not been verified on a real car yet.'**
+  /// **'Its address has not been confirmed on THIS car yet. Run a full scan with the ignition ON — if the module answers, clearing its stored codes becomes available.'**
   String get reason_address_unverified;
 
   /// No description provided for @reason_clear_not_documented.
@@ -3205,6 +3205,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Export PDF'**
   String get exportPdf;
+
+  /// No description provided for @clearProvenNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Address confirmed by a successful read on this car. Only stored (not active) codes are cleared; the module is re-read before and after.'**
+  String get clearProvenNote;
 }
 
 class _AppLocalizationsDelegate

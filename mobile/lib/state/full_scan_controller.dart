@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../core/api/api_client.dart';
+import '../core/clear/proven_modules.dart';
 import '../core/kb/local_kb.dart';
 import '../core/recording/session_journal.dart';
 import '../core/storage/scan_report.dart';
@@ -275,6 +276,14 @@ class FullScanController extends Notifier<FullScanState> {
         );
         state = state.copy(moduleScans: found);
         snapshot();
+        // A module that answered a read on this car proves its address for this car.
+        try {
+          await ProvenModulesStore(ref.read(localStoreProvider)).recordFromScan(
+            provenVehicleKey(vin: vin, vehicleId: ref.read(settingsProvider).selectedVehicleId),
+            found,
+            mode: conn.mode ?? DataMode.demo,
+          );
+        } on Object catch (_) {}
         for (final m in found) {
           final sysId = systemIdForModuleCategory(m.module.category);
           final g = groups[sysId] ?? SystemGroup(system: systemById(sysId));

@@ -315,42 +315,72 @@ class ClearController extends Notifier<ClearPhase> {
       await log('verification', {'targets': ['engine'], 'result': engineResult, 'per_code': codes});
     }
 
-    // ---------------- Modules: UDS 0x14 (server allowlist only) ----------------
+    // ---------------- Modules: UDS 0x14 ----------------
+    // A module whose address was proven by a read on THIS car is cleared with the user's
+    // consent + the on-device audit (no server). Any other module needs the server allowlist.
     for (final t in modules) {
-      if (!online) {
-        await log('clear_blocked', {'targets': [t.key], 'context': 'requires_oem_authorization', 'reason': 'needs_server_allowlist'});
-        results.add(TargetResult(key: t.key, service: '14', result: 'blocked'));
-        continue;
-      }
-      state = ClearPhase.requesting;
       ModuleClearApproval approval;
-      try {
-        final op = await api.requestOperation({
-          'procedure_key': kSafetyClearProcedure[t.category] ?? kModuleClearProcedure,
-          'vehicle_id': ?serverVehicle,
-          'session_id': report.serverSessionId,
-          'data_mode': client.dataMode.apiValue,
-          'consent_text': consentText,
-          'confirmed': true,
-          'modules': [t.key],
-          'conditions': {'engine_running': false, 'vehicle_speed_kmh': speed},
-        });
-        approval = ModuleClearApproval(
-          operationId: op['id'] as String,
-          status: op['status'] as String,
-          commands: [for (final c in (op['commands'] as List? ?? const [])) '$c'],
-        );
-      } on ApiException catch (e) {
-        await log('approval', {'targets': [t.key], 'source': 'server', 'approved': false, 'detail': e.message});
-        results.add(TargetResult(key: t.key, service: '14', result: 'blocked'));
-        continue;
+      if (t.proven) {
+        approval = ModuleClearApproval(operationId: 'local-$opId', status: 'approved', commands: ['14:${t.key}']);
+        await log('approval', {'targets': [t.key], 'source': 'local_proven', 'approved': true});
+      } else {
+        if (!online) {
+          await log('clear_blocked', {'targets': [t.key], 'context': 'requires_oem_authorization', 'reason': 'needs_server_allowlist'});
+          results.add(TargetResult(key: t.key, service: '14', result: 'blocked'));
+          continue;
+        }
+        state = ClearPhase.requesting;
+        try {
+          final op = await api.requestOperation({
+            'procedure_key': kSafetyClearProcedure[t.category] ?? kModuleClearProcedure,
+            'vehicle_id': ?serverVehicle,
+            'session_id': report.serverSessionId,
+            'data_mode': client.dataMode.apiValue,
+            'consent_text': consentText,
+            'confirmed': true,
+            'modules': [t.key],
+            'conditions': {'engine_running': false, 'vehicle_speed_kmh': speed},
+          });
+          approval = ModuleClearApproval(
+            operationId: op['id'] as String,
+            status: op['status'] as String,
+            commands: [for (final c in (op['commands'] as List? ?? const [])) '$c'],
+          );
+        } on ApiException catch (e) {
+          await log('approval', {'targets': [t.key], 'source': 'server', 'approved': false, 'detail': e.message});
+          results.add(TargetResult(key: t.key, service: '14', result: 'blocked'));
+          continue;
+        }
+        if (!approval.approves(t.key)) {
+          await log('approval', {'targets': [t.key], 'source': 'server', 'approved': false, 'server_operation_id': approval.operationId});
+          results.add(TargetResult(key: t.key, service: '14', result: 'blocked'));
+          continue;
+        }
+        await log('approval', {'targets': [t.key], 'source': 'server', 'approved': true, 'server_operation_id': approval.operationId});
       }
-      if (!approval.approves(t.key)) {
-        await log('approval', {'targets': [t.key], 'source': 'server', 'approved': false, 'server_operation_id': approval.operationId});
-        results.add(TargetResult(key: t.key, service: '14', result: 'blocked'));
-        continue;
+
+      // Fresh read right before clearing: the module must answer now and report no
+      // active (failing-now) code — otherwise nothing is sent.
+      state = ClearPhase.checking;
+      final pre = await preClearCheck(client.elm, t.module!);
+      switch (pre.status) {
+        case PreClearStatus.ok:
+          break;
+        case PreClearStatus.activeFault:
+          await log('clear_blocked', {'targets': [t.key], 'context': 'active_fault_not_clearable', 'reason': 'active_fault', 'codes': pre.activeCodes});
+          results.add(TargetResult(key: t.key, service: '14', result: 'blocked', codes: {for (final c in pre.activeCodes) c: 'still_active'}));
+          continue;
+        case PreClearStatus.refused:
+          final nrc = pre.nrc == null ? null : '0x${hex2(pre.nrc!)}';
+          await log('clear_blocked', {'targets': [t.key], 'context': 'requires_oem_authorization', 'reason': 'module_refused', 'nrc': ?nrc});
+          results.add(TargetResult(key: t.key, service: '14', result: 'refused', nrc: nrc));
+          continue;
+        case PreClearStatus.readFailed:
+          await log('clear_blocked', {'targets': [t.key], 'context': 'comm_failed', 'reason': 'pre_clear_read_failed'});
+          results.add(TargetResult(key: t.key, service: '14', result: 'comm_failed'));
+          continue;
       }
-      await log('approval', {'targets': [t.key], 'source': 'server', 'approved': true, 'server_operation_id': approval.operationId});
+
       state = ClearPhase.clearing;
       await log('clear_sent', {'targets': [t.key], 'service': '14', 'request_frames': [buildClearRequest()]});
       ModuleClearOutcome out;
@@ -385,7 +415,9 @@ class ClearController extends Notifier<ClearPhase> {
         'positive': out.reply.positive,
         'result': result,
       });
-      await _report(api, approval.operationId, out.reply.positive ? 'succeeded' : 'failed', [out.reply.request], [out.reply.responseRaw], {'nrc': nrc});
+      if (!t.proven) {
+        await _report(api, approval.operationId, out.reply.positive ? 'succeeded' : 'failed', [out.reply.request], [out.reply.responseRaw], {'nrc': nrc});
+      }
       await log('verification', {'targets': [t.key], 'result': result, 'per_code': codes});
       results.add(TargetResult(key: t.key, service: '14', result: result, nrc: nrc, codes: codes, responseFrames: [out.reply.responseRaw]));
     }

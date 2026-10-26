@@ -1098,7 +1098,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get srsNote =>
-      'لا تُمسح أكواد الوسائد الهوائية (SRS) إلا على وحدة مثبتة العنوان ولها وظيفة مسح موثقة وبموافقة الخادم لهذه السيارة — وغير ذلك أبداً. بيانات الاصطدام لا تُمسح مطلقاً.';
+      'لا تُمسح أكواد الإيرباق (SRS) المخزنة إلا بعد أن تستجيب وحدة الإيرباق لقراءة على هذه السيارة، وبموافقتك، وبشرط عدم وجود عطل نشط الآن. بيانات الاصطدام لا تُمسح أبداً.';
 
   @override
   String get autoStartAfterClear => 'تجريبي: تشغيل المحرك تلقائيًا بعد المسح';
@@ -1411,7 +1411,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get reason_address_unverified =>
-      'عنوانها لم يُثبت على سيارة حقيقية بعد.';
+      'عنوانها لم يُثبت على هذه السيارة بعد. شغّل الفحص الكامل والسويتش مفتوح — إذا استجابت الوحدة يصبح مسح أكوادها المخزنة متاحاً.';
 
   @override
   String get reason_clear_not_documented =>
@@ -1754,4 +1754,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get exportPdf => 'تصدير PDF';
+
+  @override
+  String get clearProvenNote =>
+      'العنوان مثبت بقراءة ناجحة على هذه السيارة. تُمسح الأكواد المخزنة فقط (غير النشطة)، وتُقرأ الوحدة قبل المسح وبعده.';
 }

@@ -402,3 +402,29 @@ Future<UdsClearResponse> sendModuleClear(Elm327 elm, UdsModule module) async {
     } catch (_) {}
   }
 }
+
+/// Result of the read done right before a module clear.
+enum PreClearStatus { ok, readFailed, refused, activeFault }
+
+class PreClearCheck {
+  const PreClearCheck(this.status, {this.activeCodes = const [], this.nrc});
+  final PreClearStatus status;
+  final List<String> activeCodes;
+  final int? nrc;
+}
+
+/// Read-only 0x19 just before a clear: the module must answer positively now and report
+/// no active (testFailed) code. Anything else → do not clear.
+Future<PreClearCheck> preClearCheck(Elm327 elm, UdsModule module) async {
+  try {
+    final pre = await readModuleDtcs(elm, module);
+    final data = udsPayload(pre.responseRaw, kUdsReadDtc);
+    if (data.isEmpty || data[0] != kUdsReadDtc + kPositiveOffset) return const PreClearCheck(PreClearStatus.readFailed);
+    final active = [for (final d in pre.dtcs) if (d.active) d.code];
+    return active.isEmpty ? const PreClearCheck(PreClearStatus.ok) : PreClearCheck(PreClearStatus.activeFault, activeCodes: active);
+  } on UdsException catch (e) {
+    return PreClearCheck(PreClearStatus.refused, nrc: e.nrc);
+  } on Object catch (_) {
+    return const PreClearCheck(PreClearStatus.readFailed);
+  }
+}

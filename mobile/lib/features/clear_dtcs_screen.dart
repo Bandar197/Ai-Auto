@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/clear/clear_planner.dart';
+import '../core/clear/proven_modules.dart';
 import '../core/storage/clear_entry.dart';
 import '../core/storage/scan_report.dart';
 import '../l10n/app_localizations.dart';
@@ -37,6 +38,7 @@ class _ClearDtcsScreenState extends ConsumerState<ClearDtcsScreen> {
   ScanReport? _report;
   Recording? _recording;
   Set<String>? _serverProcedures;
+  List<UdsModule> _proven = const [];
   final Set<String> _selected = {};
   bool _loaded = false;
   ClearResult? _result;
@@ -74,11 +76,19 @@ class _ClearDtcsScreenState extends ConsumerState<ClearDtcsScreen> {
         procs = null; // offline → module clears stay blocked
       }
     }
+    final provenKey = provenVehicleKey(
+      vin: r?.vin ?? rec?.vehicle['vin'] as String?,
+      vehicleId: r?.vehicleId ?? ref.read(settingsProvider).selectedVehicleId,
+    );
+    final proven = r?.dataMode == 'live'
+        ? [for (final p in await ProvenModulesStore(store).forVehicle(provenKey)) p.toUdsModule()]
+        : const <UdsModule>[];
     if (!mounted) return;
     setState(() {
       _report = r;
       _recording = rec;
       _serverProcedures = procs;
+      _proven = proven;
       _loaded = true;
       _selected
         ..clear()
@@ -98,6 +108,7 @@ class _ClearDtcsScreenState extends ConsumerState<ClearDtcsScreen> {
       adapter: ref.read(adapterCapabilitiesProvider).value,
       registry: assets.modules.candidatesFor(make),
       serverProcedures: _serverProcedures,
+      proven: _proven,
       describeEn: (c) => assets.kb.lookupFor(c, make: effectiveMake(ref.read(selectedVehicleProvider), _report?.vin, assets))?.description('en'),
     );
   }
@@ -287,6 +298,8 @@ class _ClearDtcsScreenState extends ConsumerState<ClearDtcsScreen> {
                         title: Text(t.name(lang), style: const TextStyle(fontWeight: FontWeight.w700)),
                         subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Text(t.codes.join(' · '), textDirection: TextDirection.ltr),
+                          if (t.proven)
+                            Text(l.clearProvenNote, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.green.shade800)),
                           if (t.permanentCodes.isNotEmpty)
                             Text(l.clearPermanentNote(t.permanentCodes.join(', ')), style: Theme.of(context).textTheme.bodySmall),
                         ]),

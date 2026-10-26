@@ -46,6 +46,7 @@ class ClearTarget {
     this.module,
     this.permanentCodes = const [],
     this.flaggedCodes = const [],
+    this.proven = false,
   });
 
   /// 'engine' for OBD-II; otherwise the module key (srs, abs, bcm, …).
@@ -69,6 +70,9 @@ class ClearTarget {
 
   /// Codes that caused the block (active / crash-data codes).
   final List<String> flaggedCodes;
+
+  /// The module address was confirmed by a successful read on THIS car.
+  final bool proven;
 
   bool get clearable => context == ClearContext.allowed;
   String name(String lang) => lang == 'ar' ? nameAr : nameEn;
@@ -97,9 +101,10 @@ const String kModuleClearProcedure = 'clear_module_dtcs';
 /// for every other one, the context + reason. Nothing is sent from here.
 ///
 /// A module is clearable only when ALL hold: it was read successfully with codes, no
-/// code is active or crash-related, its address is verified in the registry with a
-/// documented 0x14 clear, the adapter did not fail the header test, and the server
-/// allowlists that clear for this vehicle (module clears are never offline).
+/// code is active or crash-related, the adapter did not fail the header test, and
+/// EITHER its address was proven by a successful read on this very car ([proven] —
+/// standard UDS 0x14, the user's consent and the on-device audit are the record), OR
+/// it is registry-verified with a documented clear and allowlisted by the server.
 ClearPlan planClear({
   required Recording? recording,
   List<Map<String, dynamic>> reportDtcs = const [],
@@ -109,6 +114,7 @@ ClearPlan planClear({
   List<UdsModule> registry = const [],
   Set<String>? serverProcedures,
   String? Function(String code)? describeEn,
+  List<UdsModule> proven = const [],
 }) {
   final targets = <ClearTarget>[];
   ClearReason? linkReason;
@@ -142,8 +148,11 @@ ClearPlan planClear({
   for (final m in recording?.moduleScans ?? const <RecordingModuleScan>[]) {
     if (m.outcome == 'read_no_codes') continue; // nothing to clear
     final codes = [for (final d in m.codes) d.code];
-    final reg = registry.where((r) => r.key == m.key && _addr(r) == (m.address ?? '').toUpperCase()).firstOrNull ??
-        registry.where((r) => _addr(r) == (m.address ?? '').toUpperCase()).firstOrNull;
+    final addr = (m.address ?? '').toUpperCase();
+    final provenMod = proven.where((p) => p.key == m.key && _addr(p) == addr).firstOrNull;
+    final reg = provenMod ??
+        registry.where((r) => r.key == m.key && _addr(r) == addr).firstOrNull ??
+        registry.where((r) => _addr(r) == addr).firstOrNull;
 
     ClearTarget t(ClearContext c, ClearReason? r, {List<String> flagged = const []}) => ClearTarget(
           key: m.key,
@@ -156,6 +165,7 @@ ClearPlan planClear({
           category: m.category,
           module: reg,
           flaggedCodes: flagged,
+          proven: provenMod != null,
         );
 
     if (linkReason != null) {
@@ -195,7 +205,7 @@ ClearPlan planClear({
       continue;
     }
     final proc = kSafetyClearProcedure[m.category] ?? kModuleClearProcedure;
-    if (!(serverProcedures?.contains(proc) ?? false)) {
+    if (provenMod == null && !(serverProcedures?.contains(proc) ?? false)) {
       targets.add(t(ClearContext.requiresOemAuthorization, ClearReason.safetyPolicy));
       continue;
     }

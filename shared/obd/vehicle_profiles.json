@@ -5,20 +5,33 @@
     {
       "key": "hyundai_sonata_yf_2012",
       "make": "hyundai",
-      "model": ["sonata", "سوناتا"],
-      "years": [2011, 2012, 2013, 2014],
+      "model": [
+        "sonata",
+        "سوناتا"
+      ],
+      "years": [
+        2011,
+        2012,
+        2013,
+        2014
+      ],
       "verified": false,
       "title_en": "Hyundai Sonata YF (2011–2014)",
       "title_ar": "هيونداي سوناتا YF (2011–2014)",
-      "pending": ["engine (from VIN / ECU identification)", "market/trim", "SRSCM part number", "responding module addresses"],
+      "pending": [
+        "engine (from VIN / ECU identification)",
+        "market/trim",
+        "SRSCM part number",
+        "responding module addresses"
+      ],
       "notes_en": [
         "Profile pending verification: engine, trim and the airbag unit (SRSCM) are confirmed only after a logged read on this car.",
-        "The airbag module address in the registry (request 7D4 / response 7DC) is NOT verified — it is read-only and never used for clearing.",
+        "The airbag module address in the registry (request 7D4 / response 7DC) is NOT verified. It is used for clearing stored codes only after the module answers a read on this car — and never while a fault is active.",
         "After an airbag repair: turn the ignition ON and watch the airbag lamp — it should light for about 6 seconds and then go out. The app does not control the lamp."
       ],
       "notes_ar": [
         "الملف بانتظار التحقق: المحرك والتجهيز ووحدة الإيرباق (SRSCM) لا تُثبت إلا بعد قراءة مسجّلة على هذه السيارة.",
-        "عنوان وحدة الإيرباق في السجل (طلب 7D4 / رد 7DC) غير مثبت — يُستخدم للقراءة فقط ولا يُستخدم للمسح أبداً.",
+        "عنوان وحدة الإيرباق في السجل (طلب 7D4 / رد 7DC) غير مثبت. لا يُستخدم لمسح الأكواد المخزنة إلا بعد أن تستجيب الوحدة لقراءة على هذه السيارة — وأبداً أثناء وجود عطل نشط.",
         "بعد إصلاح الإيرباق: افتح السويتش وراقب لمبة الإيرباق — يُفترض أن تضيء نحو 6 ثوانٍ ثم تنطفئ. التطبيق لا يتحكم باللمبة."
       ],
       "srs_unreachable_en": "LONAUTO has not proven support for this car's airbag module. The airbag was NOT scanned. Use a compatible tool such as Hyundai GDS, or an airbag specialist.",
