@@ -108,11 +108,11 @@ jobs:
       - name: Remove signing key
         if: always()
         run: rm -f "$RUNNER_TEMP/upload.jks"
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: automind-android
           path: mobile/build/app/outputs/flutter-apk/app-release.apk
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: automind-android-symbols
           path: mobile/build/symbols/android/
@@ -141,7 +141,7 @@ jobs:
             Copy-Item "$env:WINDIR/System32/$dll" $out -ErrorAction Stop
           }
           Get-ChildItem $out | Select-Object Name, Length
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: automind-windows
           path: mobile/build/windows/x64/runner/Release/
@@ -159,11 +159,11 @@ jobs:
           dart @msixArgs
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           Get-ChildItem build/msix | Select-Object Name, Length
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: automind-windows-store
           path: mobile/build/msix/AutoMindAI.msix
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: automind-windows-symbols
           path: mobile/build/symbols/windows/
