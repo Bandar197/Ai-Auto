@@ -8,8 +8,13 @@ import 'widgets.dart';
 /// "Live engine readings" — problems seen in measured values even when no fault code
 /// was stored (e.g. an overheating engine with a dead radiator fan).
 class MeasuredFindingsCard extends StatelessWidget {
-  const MeasuredFindingsCard({super.key, required this.findings});
+  const MeasuredFindingsCard({super.key, required this.findings, this.coolingNote});
   final List<MeasuredFinding> findings;
+
+  /// Vehicle-specific fan fuse/relay hint, shown only with a heat-related finding.
+  final String? coolingNote;
+
+  static const Set<String> _heatKeys = {'overheat', 'coolant_hot', 'coolant_sensor_suspect'};
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +27,12 @@ class MeasuredFindingsCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(l.measuredIntro, style: Theme.of(context).textTheme.bodySmall),
         for (final f in findings) _row(context, l, f),
+        if (coolingNote != null && findings.any((f) => _heatKeys.contains(f.key)))
+          Padding(
+            key: const Key('measured-cooling-note'),
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(coolingNote!, style: Theme.of(context).textTheme.bodySmall),
+          ),
       ]),
     );
   }

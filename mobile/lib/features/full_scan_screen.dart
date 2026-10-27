@@ -86,7 +86,15 @@ class FullScanScreen extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
             child: Text(l.detectedMake(scan.make!.toUpperCase()), style: Theme.of(context).textTheme.bodySmall),
           ),
-        if (scan.done) MeasuredFindingsCard(findings: scan.measured),
+        if (scan.done)
+          MeasuredFindingsCard(
+            findings: scan.measured,
+            coolingNote: ref.watch(appAssetsProvider).profiles.match(
+                  make: scan.make,
+                  model: ref.watch(selectedVehicleProvider)?['model']?.toString(),
+                  year: int.tryParse('${ref.watch(selectedVehicleProvider)?['model_year'] ?? ''}'),
+                )?.cooling(lang),
+          ),
         for (final g in sections) _systemCard(context, ref, lang, g),
         if (scan.done)
           Padding(

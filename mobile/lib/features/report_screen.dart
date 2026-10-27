@@ -81,6 +81,11 @@ class ReportScreen extends ConsumerWidget {
                 report: r,
                 kb: ref.watch(appAssetsProvider).kb,
                 make: effectiveMake(ref.watch(selectedVehicleProvider), r.vin, ref.watch(appAssetsProvider)),
+                coolingNote: ref.watch(appAssetsProvider).profiles.match(
+                      make: effectiveMake(ref.watch(selectedVehicleProvider), r.vin, ref.watch(appAssetsProvider)),
+                      model: ref.watch(selectedVehicleProvider)?['model']?.toString(),
+                      year: int.tryParse('${ref.watch(selectedVehicleProvider)?['model_year'] ?? ''}'),
+                    )?.cooling(context.lang),
                 onAnalyze: r.diagnosis != null
                     ? null
                     : () async {
@@ -244,7 +249,10 @@ class ReportScreen extends ConsumerWidget {
 
 /// Pure presentation of a report (server diagnosis or offline KB view).
 class ReportView extends StatelessWidget {
-  const ReportView({super.key, required this.report, required this.kb, this.onAnalyze, this.onClearDtcs, this.make});
+  const ReportView({super.key, required this.report, required this.kb, this.onAnalyze, this.onClearDtcs, this.make, this.coolingNote});
+
+  /// Vehicle-specific radiator fan fuse/relay hint (from the vehicle profile).
+  final String? coolingNote;
 
   final ScanReport report;
   final LocalKb kb;
@@ -310,7 +318,7 @@ class ReportView extends StatelessWidget {
         ),
         if (d != null && d['technician_summary'] != null)
           SectionCard(title: l.technicianSummary, icon: Icons.engineering_outlined, child: Text(pickBi(d['technician_summary'], lang))),
-        MeasuredFindingsCard(findings: [for (final m in report.measured) MeasuredFinding.fromJson(m)]),
+        MeasuredFindingsCard(findings: [for (final m in report.measured) MeasuredFinding.fromJson(m)], coolingNote: coolingNote),
         SectionCard(
           title: l.dtcsTitle,
           icon: Icons.error_outline,

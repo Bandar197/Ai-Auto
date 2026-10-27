@@ -16,6 +16,8 @@ class VehicleProfile {
     this.notesAr = const [],
     this.srsUnreachableEn,
     this.srsUnreachableAr,
+    this.coolingEn,
+    this.coolingAr,
   });
 
   final String key;
@@ -29,6 +31,11 @@ class VehicleProfile {
   final List<String> notesAr;
   final String? srsUnreachableEn;
   final String? srsUnreachableAr;
+
+  /// Where the radiator fan fuse/relays are and how to check them (owner's manual).
+  final String? coolingEn;
+  final String? coolingAr;
+  String? cooling(String lang) => lang == 'ar' ? coolingAr : coolingEn;
 
   String title(String lang) => lang == 'ar' ? titleAr : titleEn;
   List<String> notes(String lang) => lang == 'ar' ? notesAr : notesEn;
@@ -57,6 +64,8 @@ class VehicleProfiles {
             notesAr: strs(p['notes_ar']),
             srsUnreachableEn: p['srs_unreachable_en']?.toString(),
             srsUnreachableAr: p['srs_unreachable_ar']?.toString(),
+            coolingEn: p['cooling_en']?.toString(),
+            coolingAr: p['cooling_ar']?.toString(),
           ),
     ]);
   }
