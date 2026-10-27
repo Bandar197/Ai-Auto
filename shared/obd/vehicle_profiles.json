@@ -27,15 +27,19 @@
       "notes_en": [
         "Profile pending verification: engine, trim and the airbag unit (SRSCM) are confirmed only after a logged read on this car.",
         "The airbag module address in the registry (request 7D4 / response 7DC) is NOT verified. It is used for clearing stored codes only after the module answers a read on this car — and never while a fault is active.",
-        "After an airbag repair: turn the ignition ON and watch the airbag lamp — it should light for about 6 seconds and then go out. The app does not control the lamp."
+        "After an airbag repair: turn the ignition ON and watch the airbag lamp — per the shop manual it lights for about 6 seconds and then goes out. The app does not control the lamp.",
+        "Shop manual (Restraint): the SRSCM stores codes for clearing with Hyundai GDS, and refuses clearing while an internal fault is active or a crash is recorded. If the module refuses the app's clear request, the app shows it as refused — use GDS or a specialist."
       ],
       "notes_ar": [
         "الملف بانتظار التحقق: المحرك والتجهيز ووحدة الإيرباق (SRSCM) لا تُثبت إلا بعد قراءة مسجّلة على هذه السيارة.",
         "عنوان وحدة الإيرباق في السجل (طلب 7D4 / رد 7DC) غير مثبت. لا يُستخدم لمسح الأكواد المخزنة إلا بعد أن تستجيب الوحدة لقراءة على هذه السيارة — وأبداً أثناء وجود عطل نشط.",
-        "بعد إصلاح الإيرباق: افتح السويتش وراقب لمبة الإيرباق — يُفترض أن تضيء نحو 6 ثوانٍ ثم تنطفئ. التطبيق لا يتحكم باللمبة."
+        "بعد إصلاح الإيرباق: افتح السويتش وراقب لمبة الإيرباق — حسب كتاب الصيانة تضيء نحو 6 ثوانٍ ثم تنطفئ. التطبيق لا يتحكم باللمبة.",
+        "كتاب الصيانة (قسم الإيرباق): وحدة الإيرباق مصممة لمسح أكوادها بجهاز هيونداي GDS، وترفض المسح إذا كان فيها عطل داخلي نشط أو سُجّل فيها حادث. إذا رفضت الوحدة طلب المسح من التطبيق يظهر «مرفوض» — استخدم GDS أو راجع مختصاً."
       ],
       "srs_unreachable_en": "LONAUTO has not proven support for this car's airbag module. The airbag was NOT scanned. Use a compatible tool such as Hyundai GDS, or an airbag specialist.",
-      "srs_unreachable_ar": "جهاز LONAUTO لم يثبت دعمه لوحدة الإيرباق في هذه السيارة. لم يتم فحص الإيرباق. استخدم أداة متوافقة مثل Hyundai GDS أو راجع مختص الوسائد الهوائية."
+      "srs_unreachable_ar": "جهاز LONAUTO لم يثبت دعمه لوحدة الإيرباق في هذه السيارة. لم يتم فحص الإيرباق. استخدم أداة متوافقة مثل Hyundai GDS أو راجع مختص الوسائد الهوائية.",
+      "cooling_en": "Radiator fan (2012 Sonata owner's and shop manuals): the engine computer (ECM) switches the fan through two relays, Cooling Fan Low and High, in the engine-compartment fuse box; fuse C/FAN 40A (2.4 GDI) — 2.0 T-GDI: C/FAN LO 40A and C/FAN HI 60A. Thermostat starts opening around 82 °C and is fully open at 95 °C. The fan is switched by coolant temperature and can run with the engine off. With the engine idling hot and no visible coolant loss, check the fan runs; if it doesn't, switch the engine off and check that fuse, the two relays and the fan motor and its connector. For a mechanic: the ECM fan-relay control wires read battery voltage with the relay off and at most 1.0 V when the ECM switches it on.",
+      "cooling_ar": "مروحة الرديتر (من كتيب المالك وكتاب الصيانة لسوناتا 2012): كمبيوتر المحرك يشغّل المروحة عن طريق ريليهين (بطيء وسريع) في علبة الفيوزات بجوار المحرك. محرك 2.4 GDI: فيوز C/FAN بقوة 40 أمبير. محرك 2.0 تيربو: فيوز C/FAN LO بقوة 40 وفيوز C/FAN HI بقوة 60. الثرموستات يبدأ يفتح عند 82 درجة تقريباً ويفتح كاملاً عند 95. المروحة تشتغل حسب حرارة الماء وقد تدور والمحرك طافي. إذا كانت المكينة حارة وشغّالة ولا يوجد تسريب ماء، تأكد أن المروحة تدور؛ إذا لم تدر أطفئ المحرك وافحص الفيوز والريليهين وموتور المروحة وفيشته. للفني: سلك التحكم بريليه المروحة من كمبيوتر المحرك يقرأ جهد البطارية والريليه مطفأ، و1 فولت أو أقل عندما يشغّله الكمبيوتر."
     }
   ]
 }

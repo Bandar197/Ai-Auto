@@ -11,15 +11,18 @@ import '../core/api/api_client.dart';
 import '../core/clear/clear_audit.dart';
 import '../core/open_folder.dart';
 import '../core/kb/local_kb.dart';
+import '../core/measured_findings.dart';
 import '../core/recording/export_service.dart';
 import '../core/recording/report_pdf.dart';
 import '../core/storage/scan_report.dart';
+import '../l10n/app_localizations.dart';
 import '../obd/obd.dart';
 import '../state/clear_controller.dart';
 import '../state/connection_controller.dart';
 import '../state/providers.dart';
 import '../state/verification_controller.dart';
 import '../ui/l10n_helpers.dart';
+import '../ui/measured_card.dart';
 import '../ui/widgets.dart';
 
 class ReportScreen extends ConsumerWidget {
@@ -78,6 +81,11 @@ class ReportScreen extends ConsumerWidget {
                 report: r,
                 kb: ref.watch(appAssetsProvider).kb,
                 make: effectiveMake(ref.watch(selectedVehicleProvider), r.vin, ref.watch(appAssetsProvider)),
+                coolingNote: ref.watch(appAssetsProvider).profiles.match(
+                      make: effectiveMake(ref.watch(selectedVehicleProvider), r.vin, ref.watch(appAssetsProvider)),
+                      model: ref.watch(selectedVehicleProvider)?['model']?.toString(),
+                      year: int.tryParse('${ref.watch(selectedVehicleProvider)?['model_year'] ?? ''}'),
+                    )?.cooling(context.lang),
                 onAnalyze: r.diagnosis != null
                     ? null
                     : () async {
@@ -136,6 +144,7 @@ class ReportScreen extends ConsumerWidget {
     final assets = ref.read(appAssetsProvider);
     final make = effectiveMake(ref.read(selectedVehicleProvider), r.vin, assets);
     final clears = (await ref.read(verificationProvider.future)).where((e) => e.reportId == r.id).toList();
+    final l = lookupAppLocalizations(Locale(lang));
     return buildReportPdf(
       report: r,
       recording: rec,
@@ -145,6 +154,14 @@ class ReportScreen extends ConsumerWidget {
       describe: (code) => assets.kb.lookupFor(code, make: make)?.description(lang),
       clear: clears.isEmpty ? null : clears.first,
       maskVin: !ref.read(settingsProvider).includeVin,
+      measuredLines: [
+        for (final m in r.measured.map(MeasuredFinding.fromJson))
+          if (measuredTexts(l, m) case (final t, final a)) '$t — $a',
+      ],
+      measuredAlerts: [
+        for (final m in r.measured.map(MeasuredFinding.fromJson))
+          if (m.needsAttention) measuredTexts(l, m).$1,
+      ],
     );
   }
 
@@ -232,7 +249,10 @@ class ReportScreen extends ConsumerWidget {
 
 /// Pure presentation of a report (server diagnosis or offline KB view).
 class ReportView extends StatelessWidget {
-  const ReportView({super.key, required this.report, required this.kb, this.onAnalyze, this.onClearDtcs, this.make});
+  const ReportView({super.key, required this.report, required this.kb, this.onAnalyze, this.onClearDtcs, this.make, this.coolingNote});
+
+  /// Vehicle-specific radiator fan fuse/relay hint (from the vehicle profile).
+  final String? coolingNote;
 
   final ScanReport report;
   final LocalKb kb;
@@ -298,6 +318,7 @@ class ReportView extends StatelessWidget {
         ),
         if (d != null && d['technician_summary'] != null)
           SectionCard(title: l.technicianSummary, icon: Icons.engineering_outlined, child: Text(pickBi(d['technician_summary'], lang))),
+        MeasuredFindingsCard(findings: [for (final m in report.measured) MeasuredFinding.fromJson(m)], coolingNote: coolingNote),
         SectionCard(
           title: l.dtcsTitle,
           icon: Icons.error_outline,

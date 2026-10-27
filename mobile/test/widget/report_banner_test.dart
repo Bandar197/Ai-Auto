@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:automind_app/core/vehicle_profiles.dart';
 import 'package:automind_app/core/kb/local_kb.dart';
 import 'package:automind_app/core/storage/scan_report.dart';
 import 'package:automind_app/features/report_screen.dart';
@@ -121,5 +124,34 @@ void main() {
     expect(find.text('أداء حساس ضغط مجمع السحب'), findsOneWidget);
     // P1234 is manufacturer-specific and the make is unknown: never borrowed or invented.
     expect(find.textContaining('كود خاص بالشركة المصنعة'), findsOneWidget);
+  });
+
+  testWidgets('measured overheating is shown even with no fault codes (Arabic)', (tester) async {
+    final r = ScanReport(
+      id: 'm',
+      createdAt: DateTime.utc(2026, 10, 27),
+      dataMode: 'live',
+      measured: const [
+        {'key': 'overheat', 'severity': 'critical', 'signal': 'coolant_temp', 'value': 114.0, 'unit': '°C'},
+      ],
+    );
+    await tester.pumpWidget(_wrap(ReportView(report: r, kb: LocalKb.empty()), locale: 'ar'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('measured-card')), findsOneWidget);
+    expect(find.textContaining('ارتفاع حرارة المحرك (114 °C)'), findsOneWidget);
+    expect(find.textContaining('لا تفتح غطاء الرديتر'), findsOneWidget);
+    expect(find.byKey(const Key('measured-cooling-note')), findsNothing); // no profile note given
+  });
+
+  testWidgets('Sonata profile adds the radiator fan fuse hint to a heat finding', (tester) async {
+    final profiles = VehicleProfiles.fromJsonString(File('../shared/obd/vehicle_profiles.json').readAsStringSync());
+    final p = profiles.match(make: 'hyundai', model: 'Sonata', year: 2012)!;
+    expect(p.cooling('ar'), contains('C/FAN'));
+    final r = ScanReport(id: 'c', createdAt: DateTime.utc(2026, 10, 27), dataMode: 'live', measured: const [
+      {'key': 'coolant_hot', 'severity': 'warning', 'signal': 'coolant_temp', 'value': 107.0, 'unit': '°C'},
+    ]);
+    await tester.pumpWidget(_wrap(ReportView(report: r, kb: LocalKb.empty(), coolingNote: p.cooling('ar')), locale: 'ar'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('measured-cooling-note')), findsOneWidget);
   });
 }

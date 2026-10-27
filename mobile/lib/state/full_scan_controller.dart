@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../core/api/api_client.dart';
 import '../core/clear/proven_modules.dart';
 import '../core/kb/local_kb.dart';
+import '../core/measured_findings.dart';
 import '../core/recording/session_journal.dart';
 import '../core/storage/scan_report.dart';
 import '../core/systems.dart';
@@ -27,6 +28,7 @@ Recording buildFullScanRecording({
   List<TxRxFrame> txRxFrames = const [],
   DateTime? startedAt, // TX/RX t_ms are relative to this
   String? vin,
+  List<RecordingSample> samples = const [],
 }) {
   final now = startedAt ?? DateTime.now().toUtc();
   return Recording(
@@ -45,14 +47,24 @@ Recording buildFullScanRecording({
       'model_year': ?vehicle?['model_year'],
       'vin': ?vin,
     },
-    durationMs: 0,
-    signals: const [],
-    samples: const [],
+    durationMs: samples.isEmpty ? 0 : samples.last.tMs,
+    signals: _signalsOf(samples),
+    samples: samples,
     dtcs: obdDtcs,
     moduleScans: [for (final m in moduleScans) RecordingModuleScan.fromScan(m)],
     adapterCapabilities: adapterCapabilities,
     txRxFrames: txRxFrames,
   );
+}
+
+List<RecordingSignal> _signalsOf(List<RecordingSample> samples) {
+  final seen = <String, RecordingSignal>{};
+  for (final s in samples) {
+    for (final k in s.values.keys) {
+      seen.putIfAbsent(k, () => RecordingSignal(key: k, pid: s.pid));
+    }
+  }
+  return seen.values.toList();
 }
 
 /// One fault code found during a full scan, ready for display + "explain".
@@ -102,6 +114,8 @@ class FullScanState {
     this.reportId,
     this.vin,
     this.make,
+    this.samples = const [],
+    this.measured = const [],
   });
 
   final bool running;
@@ -122,6 +136,12 @@ class FullScanState {
   final String? vin;
   final String? make;
 
+  /// Live values read during the scan (coolant, voltage, rpm, fuel trims) and the
+  /// problems they show — faults that often store no code (e.g. overheating).
+  final List<RecordingSample> samples;
+  final List<MeasuredFinding> measured;
+  int get measuredAlerts => measured.where((m) => m.needsAttention).length;
+
   int get totalCodes => groups.values.fold(0, (n, g) => n + g.codes.length);
 
   FullScanState copy({
@@ -136,6 +156,8 @@ class FullScanState {
     String? reportId,
     String? vin,
     String? make,
+    List<RecordingSample>? samples,
+    List<MeasuredFinding>? measured,
   }) =>
       FullScanState(
         running: running ?? this.running,
@@ -149,6 +171,8 @@ class FullScanState {
         reportId: reportId ?? this.reportId,
         vin: vin ?? this.vin,
         make: make ?? this.make,
+        samples: samples ?? this.samples,
+        measured: measured ?? this.measured,
       );
 }
 
@@ -263,6 +287,11 @@ class FullScanController extends Notifier<FullScanState> {
     state = state.copy(obdDtcs: obdDtcs);
     snapshot();
 
+    // --- Stage 1b: measured values (read-only service 01). Many faults store no code —
+    // a dead radiator fan, low coolant, a weak alternator — so read what the engine
+    // reports right now and judge it. ---
+    await _readMeasured(client);
+
     // --- Stage 2: non-powertrain modules via UDS (SRS / ABS / body) — live only ---
     if (conn.mode != DataMode.replay) {
       state = state.copy(stage: 'modules');
@@ -307,6 +336,37 @@ class FullScanController extends Notifier<FullScanState> {
     state = state.copy(running: false, done: true, stage: '');
   }
 
+  Future<void> _readMeasured(ObdClient client) async {
+    final t0 = _traffic?.startedAt ?? DateTime.now().toUtc();
+    final samples = <RecordingSample>[];
+    var attempted = false;
+    try {
+      if (client.supported == null) await client.readSupportedPids();
+      final sup = client.supported;
+      attempted = true;
+      final pids = [for (final p in kMeasuredPids) if (sup?.supports(p) ?? false) p];
+      for (var round = 0; round < 3; round++) {
+        for (final p in pids) {
+          try {
+            for (final r in await client.readPid(p)) {
+              samples.add(RecordingSample(
+                tMs: DateTime.now().toUtc().difference(t0).inMilliseconds,
+                pid: r.requestId,
+                ecu: r.ecu,
+                raw: r.raw,
+                values: r.values,
+              ));
+            }
+          } on Object catch (_) {}
+        }
+      }
+    } on Object catch (_) {}
+    state = state.copy(
+      samples: samples,
+      measured: measuredFindings(valuesBySignal(samples), coolantAttempted: attempted),
+    );
+  }
+
   /// Build a recording from the finished scan (including the honest module-scan
   /// outcomes) and upload it as a session so the server report shows SRS/ABS/body
   /// states. Sets [FullScanState.reportId] on success (queued offline when signed out).
@@ -331,6 +391,7 @@ class FullScanController extends Notifier<FullScanState> {
         adapterCapabilities: ref.read(adapterCapabilitiesProvider).value,
         txRxFrames: _traffic?.frames ?? const [],
         startedAt: _traffic?.startedAt,
+        samples: state.samples,
       );
       final store = ref.read(localStoreProvider);
       await store.saveRecording(rec);
@@ -344,6 +405,7 @@ class FullScanController extends Notifier<FullScanState> {
         recordingId: rec.recordingId,
         vin: state.vin,
         dtcs: [for (final d in rec.dtcs) d.toJson()],
+        measured: [for (final m in state.measured) m.toJson()],
         vehicleId: vehicleId != null && !vehicleId.startsWith('local-') ? vehicleId : null,
       );
       await store.saveReport(report);

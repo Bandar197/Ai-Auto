@@ -1758,4 +1758,104 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get clearProvenNote =>
       'العنوان مثبت بقراءة ناجحة على هذه السيارة. تُمسح الأكواد المخزنة فقط (غير النشطة)، وتُقرأ الوحدة قبل المسح وبعده.';
+
+  @override
+  String get measuredTitle => 'قراءات مباشرة من المحرك';
+
+  @override
+  String get measuredIntro =>
+      'كثير من الأعطال لا تسجّل كوداً، مثل تعطّل مروحة الرديتر أو نقص الماء أو ضعف الدينمو. هذه النتائج من القراءات المباشرة أثناء الفحص.';
+
+  @override
+  String fullScanMeasuredAlert(int count) {
+    return '$count قراءة مباشرة تحتاج انتباه';
+  }
+
+  @override
+  String measured_overheat(String value) {
+    return 'ارتفاع حرارة المحرك ($value)';
+  }
+
+  @override
+  String get measured_overheat_advice =>
+      'أوقف القيادة واتركها تبرد، ولا تفتح غطاء الرديتر وهو حار. تأكد أن مروحة الرديتر تشتغل عند 100–105 درجة: الفيوز، الريليه، موتور المروحة، مستوى الماء والمكينة باردة، الثرموستات. تعطّل المروحة غالباً لا يسجّل كوداً.';
+
+  @override
+  String measured_coolant_hot(String value) {
+    return 'حرارة المحرك مرتفعة ($value)';
+  }
+
+  @override
+  String get measured_coolant_hot_advice =>
+      'راقب ساعة الحرارة. تأكد أن مروحة الرديتر تشتغل، وافحص مستوى الماء والمكينة باردة، والثرموستات.';
+
+  @override
+  String measured_coolant_sensor_suspect(String value) {
+    return 'قراءة حساس الحرارة غير منطقية ($value)';
+  }
+
+  @override
+  String get measured_coolant_sensor_suspect_advice =>
+      'غالباً الحساس أو سلكه مفصول أو تالف. قد لا تشتغل المروحة أبداً لأن الكمبيوتر يظن المكينة باردة.';
+
+  @override
+  String measured_coolant_ok(String value) {
+    return 'حرارة المحرك حسب الحساس: $value';
+  }
+
+  @override
+  String get measured_coolant_ok_advice =>
+      'إذا كانت ساعة الطبلون عالية وهذه القراءة طبيعية، فحساس الحرارة مشتبه به، ولن تشتغل المروحة.';
+
+  @override
+  String get measured_coolant_not_read => 'لم تُقرأ حرارة المحرك';
+
+  @override
+  String get measured_coolant_not_read_advice =>
+      'لم يُحكم عليها، وهذا لا يعني أنها طبيعية. شغّل المحرك وأعد الفحص.';
+
+  @override
+  String measured_charging_low(String value) {
+    return 'جهد الشحن منخفض ($value)';
+  }
+
+  @override
+  String get measured_charging_low_advice =>
+      'والمحرك شغّال يجب أن يكون بين 13.5 و14.8 فولت. افحص الدينمو وسيره وأطراف البطارية.';
+
+  @override
+  String measured_overcharging(String value) {
+    return 'جهد الشحن مرتفع جداً ($value)';
+  }
+
+  @override
+  String get measured_overcharging_advice =>
+      'أعلى من 15 فولت قد يتلف البطارية والإلكترونيات. افحص منظّم الدينمو.';
+
+  @override
+  String measured_battery_low(String value) {
+    return 'جهد البطارية منخفض ($value)';
+  }
+
+  @override
+  String get measured_battery_low_advice =>
+      'أقل من 12 فولت والمحرك طافي: البطارية ضعيفة أو فاضية.';
+
+  @override
+  String measured_fuel_trim_lean(String value) {
+    return 'خليط الوقود فقير ($value)';
+  }
+
+  @override
+  String get measured_fuel_trim_lean_advice =>
+      'الكمبيوتر يزيد الوقود كثيراً: افحص تسريب الهواء (الفاكيوم)، وحساس الهواء MAF، وضغط البنزين.';
+
+  @override
+  String measured_fuel_trim_rich(String value) {
+    return 'خليط الوقود غني ($value)';
+  }
+
+  @override
+  String get measured_fuel_trim_rich_advice =>
+      'الكمبيوتر ينقص الوقود كثيراً: افحص البخاخات، ومنظّم ضغط البنزين، وحساس الأكسجين.';
 }

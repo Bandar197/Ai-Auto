@@ -1764,4 +1764,105 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get clearProvenNote =>
       'Address confirmed by a successful read on this car. Only stored (not active) codes are cleared; the module is re-read before and after.';
+
+  @override
+  String get measuredTitle => 'Live engine readings';
+
+  @override
+  String get measuredIntro =>
+      'Many faults store no code (a dead radiator fan, low coolant, a weak alternator). These results come from values the engine reported during the scan.';
+
+  @override
+  String fullScanMeasuredAlert(int count) {
+    return '$count live reading(s) need attention';
+  }
+
+  @override
+  String measured_overheat(String value) {
+    return 'Engine overheating ($value)';
+  }
+
+  @override
+  String get measured_overheat_advice =>
+      'Stop driving and let it cool; never open the radiator cap while hot. Check the radiator fan starts at 100–105 °C: fuse, relay, fan motor, coolant level (engine cold), thermostat. A dead fan often stores no code.';
+
+  @override
+  String measured_coolant_hot(String value) {
+    return 'Engine temperature high ($value)';
+  }
+
+  @override
+  String get measured_coolant_hot_advice =>
+      'Watch the gauge. Check the radiator fan starts, the coolant level (engine cold) and the thermostat.';
+
+  @override
+  String measured_coolant_sensor_suspect(String value) {
+    return 'Temperature sensor reading invalid ($value)';
+  }
+
+  @override
+  String get measured_coolant_sensor_suspect_advice =>
+      'Usually a disconnected or failed sensor or wire. The fan may never start because the computer thinks the engine is cold.';
+
+  @override
+  String measured_coolant_ok(String value) {
+    return 'Engine temperature per the sensor: $value';
+  }
+
+  @override
+  String get measured_coolant_ok_advice =>
+      'If the dashboard gauge reads hot while this reads normal, the temperature sensor is suspect — and the fan won\'t start.';
+
+  @override
+  String get measured_coolant_not_read =>
+      'Engine temperature couldn\'t be read';
+
+  @override
+  String get measured_coolant_not_read_advice =>
+      'Not judged — this does not mean normal. Start the engine and scan again.';
+
+  @override
+  String measured_charging_low(String value) {
+    return 'Charging voltage low ($value)';
+  }
+
+  @override
+  String get measured_charging_low_advice =>
+      'With the engine running it should be 13.5–14.8 V. Check the alternator, its belt and the battery terminals.';
+
+  @override
+  String measured_overcharging(String value) {
+    return 'Charging voltage too high ($value)';
+  }
+
+  @override
+  String get measured_overcharging_advice =>
+      'Above 15 V can damage the battery and electronics. Check the alternator regulator.';
+
+  @override
+  String measured_battery_low(String value) {
+    return 'Battery voltage low ($value)';
+  }
+
+  @override
+  String get measured_battery_low_advice =>
+      'Below 12 V with the engine off: the battery is weak or discharged.';
+
+  @override
+  String measured_fuel_trim_lean(String value) {
+    return 'Fuel mixture lean ($value)';
+  }
+
+  @override
+  String get measured_fuel_trim_lean_advice =>
+      'The computer is adding a lot of fuel: check for air (vacuum) leaks, the MAF sensor and fuel pressure.';
+
+  @override
+  String measured_fuel_trim_rich(String value) {
+    return 'Fuel mixture rich ($value)';
+  }
+
+  @override
+  String get measured_fuel_trim_rich_advice =>
+      'The computer is cutting a lot of fuel: check injectors, the fuel pressure regulator and the oxygen sensor.';
 }

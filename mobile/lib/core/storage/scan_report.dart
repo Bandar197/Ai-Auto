@@ -22,6 +22,7 @@ class ScanReport {
     this.milOn,
     this.sessionState,
     this.origin,
+    this.measured = const [],
   });
 
   factory ScanReport.fromJson(Map<String, dynamic> j) => ScanReport(
@@ -46,6 +47,7 @@ class ScanReport {
         milOn: j['mil_on'] as bool?,
         sessionState: j['session_state'] as String?,
         origin: j['origin'] as String?,
+        measured: [for (final m in (j['measured'] as List? ?? const [])) Map<String, dynamic>.from(m as Map)],
       );
 
   final String id;
@@ -83,6 +85,10 @@ class ScanReport {
   final String? origin;
   bool get imported => origin == 'imported';
 
+  /// Problems seen in measured live values (see `measured_findings.dart`) — e.g. an
+  /// overheating engine that stored no fault code.
+  final List<Map<String, dynamic>> measured;
+
   bool get isDemo => dataMode == 'demo' || (dataMode == 'replay' && originalMode == 'demo');
   bool get isReplay => dataMode == 'replay';
   int? get healthScore => (diagnosis?['health_score'] as num?)?.toInt();
@@ -110,5 +116,6 @@ class ScanReport {
         'mil_on': milOn,
         if (sessionState != null) 'session_state': sessionState,
         if (origin != null) 'origin': origin,
+        if (measured.isNotEmpty) 'measured': measured,
       };
 }
