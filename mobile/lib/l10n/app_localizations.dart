@@ -3211,6 +3211,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Address confirmed by a successful read on this car. Only stored (not active) codes are cleared; the module is re-read before and after.'**
   String get clearProvenNote;
+
+  /// No description provided for @measuredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live engine readings'**
+  String get measuredTitle;
+
+  /// No description provided for @measuredIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Many faults store no code (a dead radiator fan, low coolant, a weak alternator). These results come from values the engine reported during the scan.'**
+  String get measuredIntro;
+
+  /// No description provided for @fullScanMeasuredAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} live reading(s) need attention'**
+  String fullScanMeasuredAlert(int count);
+
+  /// No description provided for @measured_overheat.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine overheating ({value})'**
+  String measured_overheat(String value);
+
+  /// No description provided for @measured_overheat_advice.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop driving and let it cool; never open the radiator cap while hot. Check the radiator fan starts at 100–105 °C: fuse, relay, fan motor, coolant level (engine cold), thermostat. A dead fan often stores no code.'**
+  String get measured_overheat_advice;
+
+  /// No description provided for @measured_coolant_hot.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine temperature high ({value})'**
+  String measured_coolant_hot(String value);
+
+  /// No description provided for @measured_coolant_hot_advice.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch the gauge. Check the radiator fan starts, the coolant level (engine cold) and the thermostat.'**
+  String get measured_coolant_hot_advice;
+
+  /// No description provided for @measured_coolant_sensor_suspect.
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature sensor reading invalid ({value})'**
+  String measured_coolant_sensor_suspect(String value);
+
+  /// No description provided for @measured_coolant_sensor_suspect_advice.
+  ///
+  /// In en, this message translates to:
+  /// **'Usually a disconnected or failed sensor or wire. The fan may never start because the computer thinks the engine is cold.'**
+  String get measured_coolant_sensor_suspect_advice;
+
+  /// No description provided for @measured_coolant_ok.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine temperature per the sensor: {value}'**
+  String measured_coolant_ok(String value);
+
+  /// No description provided for @measured_coolant_ok_advice.
+  ///
+  /// In en, this message translates to:
+  /// **'If the dashboard gauge reads hot while this reads normal, the temperature sensor is suspect — and the fan won\'t start.'**
+  String get measured_coolant_ok_advice;
+
+  /// No description provided for @measured_coolant_not_read.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine temperature couldn\'t be read'**
+  String get measured_coolant_not_read;
+
+  /// No description provided for @measured_coolant_not_read_advice.
+  ///
+  /// In en, this message translates to:
+  /// **'Not judged — this does not mean normal. Start the engine and scan again.'**
+  String get measured_coolant_not_read_advice;
+
+  /// No description provided for @measured_charging_low.
+  ///
+  /// In en, this message translates to:
+  /// **'Charging voltage low ({value})'**
+  String measured_charging_low(String value);
+
+  /// No description provided for @measured_charging_low_advice.
+  ///
+  /// In en, this message translates to:
+  /// **'With the engine running it should be 13.5–14.8 V. Check the alternator, its belt and the battery terminals.'**
+  String get measured_charging_low_advice;
+
+  /// No description provided for @measured_overcharging.
+  ///
+  /// In en, this message translates to:
+  /// **'Charging voltage too high ({value})'**
+  String measured_overcharging(String value);
+
+  /// No description provided for @measured_overcharging_advice.
+  ///
+  /// In en, this message translates to:
+  /// **'Above 15 V can damage the battery and electronics. Check the alternator regulator.'**
+  String get measured_overcharging_advice;
+
+  /// No description provided for @measured_battery_low.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery voltage low ({value})'**
+  String measured_battery_low(String value);
+
+  /// No description provided for @measured_battery_low_advice.
+  ///
+  /// In en, this message translates to:
+  /// **'Below 12 V with the engine off: the battery is weak or discharged.'**
+  String get measured_battery_low_advice;
+
+  /// No description provided for @measured_fuel_trim_lean.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel mixture lean ({value})'**
+  String measured_fuel_trim_lean(String value);
+
+  /// No description provided for @measured_fuel_trim_lean_advice.
+  ///
+  /// In en, this message translates to:
+  /// **'The computer is adding a lot of fuel: check for air (vacuum) leaks, the MAF sensor and fuel pressure.'**
+  String get measured_fuel_trim_lean_advice;
+
+  /// No description provided for @measured_fuel_trim_rich.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel mixture rich ({value})'**
+  String measured_fuel_trim_rich(String value);
+
+  /// No description provided for @measured_fuel_trim_rich_advice.
+  ///
+  /// In en, this message translates to:
+  /// **'The computer is cutting a lot of fuel: check injectors, the fuel pressure regulator and the oxygen sensor.'**
+  String get measured_fuel_trim_rich_advice;
 }
 
 class _AppLocalizationsDelegate

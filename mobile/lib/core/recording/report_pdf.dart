@@ -18,6 +18,7 @@ const Map<String, Map<String, String>> _t = {
   'checked': {'ar': 'ما تم فحصه', 'en': 'What was checked'},
   'notChecked': {'ar': 'ما لم يتم فحصه ولماذا', 'en': 'What was NOT checked, and why'},
   'codes': {'ar': 'أكواد الأعطال', 'en': 'Fault codes'},
+  'measured': {'ar': 'قراءات مباشرة من المحرك', 'en': 'Live engine readings'},
   'noCodes': {'ar': 'لم تبلغ الأنظمة المقروءة عن أكواد.', 'en': 'The systems that were read reported no codes.'},
   'beforeAfter': {'ar': 'قبل المسح وبعده', 'en': 'Before and after clearing'},
   'stillNeeds': {'ar': 'ما زال يحتاج إصلاحا أو تحققا', 'en': 'Still needs repair or verification'},
@@ -76,6 +77,8 @@ Future<Uint8List> buildReportPdf({
   String? Function(String code)? describe,
   ClearEntry? clear,
   bool maskVin = true,
+  List<String> measuredLines = const [],
+  List<String> measuredAlerts = const [],
 }) async {
   final ar = lang == 'ar';
   String tr(String k) => _fixAr(_t[k]![ar ? 'ar' : 'en']!);
@@ -128,7 +131,10 @@ Future<Uint8List> buildReportPdf({
       for (final e in ((t['codes'] as Map?) ?? const {}).entries)
         if (e.value == 'cleared') '${e.key}',
   };
-  final still = <String>{for (final r in codeRows) if (!cleared.contains(r[0])) r[0]}.toList();
+  final still = <String>[
+    ...{for (final r in codeRows) if (!cleared.contains(r[0])) r[0]},
+    for (final m in measuredAlerts) _fixAr(m),
+  ];
 
   pw.Widget h(String s) => pw.Padding(
         padding: const pw.EdgeInsets.only(top: 12, bottom: 4),
@@ -179,6 +185,10 @@ Future<Uint8List> buildReportPdf({
       bullets(notChecked),
       h(tr('codes')),
       if (codeRows.isEmpty) p(tr('noCodes')) else table([tr('code'), tr('status'), tr('source'), tr('desc')], codeRows),
+      if (measuredLines.isNotEmpty) ...[
+        h(tr('measured')),
+        bullets([for (final m in measuredLines) _fixAr(m)]),
+      ],
       if (clear != null) ...[
         h(tr('beforeAfter')),
         table([tr('code'), tr('result')], [

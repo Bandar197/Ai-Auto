@@ -122,4 +122,20 @@ void main() {
     // P1234 is manufacturer-specific and the make is unknown: never borrowed or invented.
     expect(find.textContaining('كود خاص بالشركة المصنعة'), findsOneWidget);
   });
+
+  testWidgets('measured overheating is shown even with no fault codes (Arabic)', (tester) async {
+    final r = ScanReport(
+      id: 'm',
+      createdAt: DateTime.utc(2026, 10, 27),
+      dataMode: 'live',
+      measured: const [
+        {'key': 'overheat', 'severity': 'critical', 'signal': 'coolant_temp', 'value': 114.0, 'unit': '°C'},
+      ],
+    );
+    await tester.pumpWidget(_wrap(ReportView(report: r, kb: LocalKb.empty()), locale: 'ar'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('measured-card')), findsOneWidget);
+    expect(find.textContaining('ارتفاع حرارة المحرك (114 °C)'), findsOneWidget);
+    expect(find.textContaining('لا تفتح غطاء الرديتر'), findsOneWidget);
+  });
 }

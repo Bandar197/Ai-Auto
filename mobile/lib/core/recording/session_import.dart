@@ -4,6 +4,7 @@ import 'package:archive/archive.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../obd/obd.dart';
+import '../measured_findings.dart';
 import '../storage/scan_report.dart';
 import 'export_service.dart';
 
@@ -99,4 +100,7 @@ ScanReport localReportFor(Recording rec, {String? sessionState, String? origin})
       uploadState: 'local_only',
       sessionState: sessionState,
       origin: origin,
+      measured: [
+        for (final f in measuredFindings(valuesBySignal(rec.samples), coolantAttempted: rec.samples.isNotEmpty)) f.toJson(),
+      ],
     );

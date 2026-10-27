@@ -8,6 +8,7 @@ import '../state/connection_controller.dart';
 import '../state/full_scan_controller.dart';
 import '../state/providers.dart';
 import '../ui/l10n_helpers.dart';
+import '../ui/measured_card.dart';
 import '../ui/widgets.dart';
 
 /// Staged, categorized full scan: standard OBD codes (engine / emissions /
@@ -40,12 +41,11 @@ class FullScanScreen extends ConsumerWidget {
             margin: const EdgeInsets.all(12),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: (scan.totalCodes == 0 ? Colors.green : Colors.orange).withValues(alpha: 0.12),
+              color: _bannerColor(scan).withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Icon(scan.totalCodes == 0 ? Icons.check_circle : Icons.report_problem,
-                  color: scan.totalCodes == 0 ? Colors.green : Colors.orange),
+              Icon(_allClear(scan) ? Icons.check_circle : Icons.report_problem, color: _bannerColor(scan)),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -53,6 +53,14 @@ class FullScanScreen extends ConsumerWidget {
                     scan.totalCodes == 0 ? l.fullScanAllClear : l.fullScanSummary(scan.totalCodes),
                     style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
+                  // No codes is not "healthy" when live readings show a problem (e.g. overheating).
+                  if (scan.measuredAlerts > 0)
+                    Padding(
+                      key: const Key('measured-alert'),
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(l.fullScanMeasuredAlert(scan.measuredAlerts),
+                          style: TextStyle(fontWeight: FontWeight.w700, color: _bannerColor(scan))),
+                    ),
                   if (_unverifiedCount(scan) > 0)
                     Padding(
                       padding: const EdgeInsets.only(top: 2),
@@ -78,6 +86,7 @@ class FullScanScreen extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
             child: Text(l.detectedMake(scan.make!.toUpperCase()), style: Theme.of(context).textTheme.bodySmall),
           ),
+        if (scan.done) MeasuredFindingsCard(findings: scan.measured),
         for (final g in sections) _systemCard(context, ref, lang, g),
         if (scan.done)
           Padding(
@@ -157,6 +166,13 @@ class FullScanScreen extends ConsumerWidget {
         ),
       ]),
     );
+  }
+
+  bool _allClear(FullScanState scan) => scan.totalCodes == 0 && scan.measuredAlerts == 0;
+
+  Color _bannerColor(FullScanState scan) {
+    if (scan.measured.any((m) => m.severity == 'critical')) return Colors.red;
+    return _allClear(scan) ? Colors.green : Colors.orange;
   }
 
   /// Systems that were checked but not genuinely read — honestly "couldn't verify",

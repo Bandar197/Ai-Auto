@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../core/api/api_client.dart';
+import '../core/measured_findings.dart';
 import '../core/recording/session_journal.dart';
 import '../core/storage/clear_entry.dart';
 import '../core/storage/scan_report.dart';
@@ -317,6 +318,9 @@ class ScanController extends Notifier<ScanState> {
       vehicleId: vehicleId != null && !vehicleId.startsWith('local-') ? vehicleId : null,
       connectionLog: connectionLog,
       milOn: milOn,
+      measured: [
+        for (final f in measuredFindings(valuesBySignal(recording.samples), coolantAttempted: true)) f.toJson(),
+      ],
     );
     await store.saveReport(report);
     state = state.copyWith(reportId: report.id);
