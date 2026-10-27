@@ -29,3 +29,9 @@
 - العربية: 151 كوداً من قوالب مصطلحات مراجعة (`tools/import_oem_dtcs.py`)، و6389 **ترجمة بالذكاء الاصطناعي** بقاموس ورشة موحّد (`tools/apply_oem_translations.py`، `ar_by: "ai"`)، موسومة في التطبيق. 3 اختصارات بلا ترجمة.
 - لإضافة مصدر مرخّص (مثل أكواد هيونداي): `python3 tools/import_oem_dtcs.py FILE --make hyundai --source "..." --license "..." [--verified]` ثم `tools/sync_shared.sh`.
 - AndrOBD **لم يُستخدم** (رخصة GPL-3.0).
+
+## هيونداي (من كتاب الصيانة) / Hyundai (from the shop manual) — 2026-10-27
+- 3 أكواد إيرباق موثّقة من كتاب صيانة سوناتا YF 2012 (نسخة المالك): `B1762` خطأ ترميز وحدة الإيرباق، `B1683` تجاوز الحد الأقصى لمرات الترميز، `B1102` جهد البطارية منخفض. `verified: true`.
+- أُخذ المعنى فقط وكُتب بصياغتنا؛ لا يُنسخ نص الكتاب ولا صفحاته إلى التطبيق أو المستودع.
+- الكتاب المرسل لا يحتوي قائمة أكواد المحرك أو الفرامل أو الهيكل، ولا أوامر تحكم (يحيل إلى جهاز GDS → Actuation Test).
+- Facts only (code meanings), own wording; the manual is not stored in the repo. It contains no full DTC tables and no raw control commands (it points to GDS → Actuation Test).
