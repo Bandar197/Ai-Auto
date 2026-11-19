@@ -44,3 +44,10 @@ reports_out/
 Thumbs.db
 .idea/
 .vscode/
+
+# recruitment teaser films: build intermediates
+marketing/recruitment-teasers/out/shots/
+marketing/recruitment-teasers/out/tmp/
+marketing/recruitment-teasers/out/*.video.mp4
+marketing/recruitment-teasers/out/*.wav
+marketing/recruitment-teasers/out/*.cues.json
