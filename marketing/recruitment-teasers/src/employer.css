@@ -1,0 +1,79 @@
+/* employer-film-only styles */
+
+/* S1 – flying CV sheets with a paper face and a digital face */
+.sheet { position: absolute; left: 0; top: 0; width: 250px; height: 330px; }
+.sheet > div { position: absolute; inset: 0; border-radius: 16px; }
+.sheet .pf { background: linear-gradient(170deg, #ffffff, #dbe7e7); box-shadow: 0 14px 30px rgba(0,0,0,.45); padding: 22px; }
+.sheet .pf .sk { background: #c2d3d4; height: 10px; }
+.sheet .pf .sk.t { background: #2aa79c; }
+.sheet .pf .av { width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(145deg, #1b7f88, #0c4047); flex: none; }
+.sheet .df { background: linear-gradient(160deg, rgba(20,92,100,.95), rgba(6,28,32,.96)); border: 2px solid rgba(125,243,232,.65);
+  box-shadow: 0 0 34px rgba(46,230,214,.5), inset 0 0 40px rgba(46,230,214,.12); padding: 22px; }
+.sheet .df .sk { background: rgba(125,243,232,.4); height: 10px; }
+.sheet .df .av { width: 54px; height: 54px; border-radius: 50%; border: 2px solid #7df3e8; background: rgba(46,230,214,.2); flex: none; }
+.sheet .gf { background: linear-gradient(160deg, rgba(120,88,22,.96), rgba(40,28,6,.97)); border: 3px solid #ffe7a8;
+  box-shadow: 0 0 60px rgba(244,201,93,.85), 0 0 140px rgba(244,201,93,.45), inset 0 0 40px rgba(244,201,93,.25); padding: 22px; }
+.sheet .gf .sk { background: rgba(255,231,168,.65); height: 10px; }
+.sheet .gf .av { width: 54px; height: 54px; border-radius: 50%; border: 2px solid #ffe7a8; background: rgba(244,201,93,.35); flex: none; }
+
+.e-desk { position: absolute; left: -400px; width: 1880px; height: 600px; background: linear-gradient(180deg, #17363b 0%, #0a181a 20%, #050809 100%);
+  border-top: 2px solid rgba(125,243,232,.4); box-shadow: 0 -24px 90px rgba(46,230,214,.14); }
+
+/* generic module chrome (S2 stations, S3 dashboard, S4 board) */
+.mod { position: absolute; left: 0; top: 0; border-radius: 40px; padding: 40px 44px;
+  background: linear-gradient(165deg, rgba(17,72,79,.97) 0%, rgba(8,38,43,.98) 50%, rgba(6,22,25,.985) 100%);
+  border: 1.5px solid rgba(125,243,232,.3);
+  box-shadow: 0 50px 110px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.14), inset 0 0 80px rgba(46,230,214,.05); }
+.mod .hd { display: flex; align-items: center; gap: 20px; height: 84px; }
+.mod .hd .ttl { font-size: 40px; }
+.mod .hd .sub { font-size: 25px; }
+.mod .body { position: absolute; left: 44px; right: 44px; top: 150px; bottom: 44px; }
+.mod .a { position: absolute; }
+.field { position: absolute; left: 0; right: 0; height: 124px; }
+.field .fl { font: 500 25px/1.3 "Plex"; color: var(--mute); }
+.field .fi { margin-top: 10px; height: 78px; border-radius: 20px; background: rgba(0,0,0,.28); border: 1.5px solid rgba(125,243,232,.22); padding: 0 24px;
+  display: flex; align-items: center; gap: 12px; font: 600 32px/1 "Alexandria"; color: #fff; }
+.lrow { position: absolute; left: 0; right: 0; height: 104px; border-radius: 24px; padding: 0 22px; display: flex; align-items: center; gap: 18px;
+  background: rgba(255,255,255,.055); border: 1px solid rgba(125,243,232,.18); }
+.lrow .nm { font: 600 29px/1.3 "Alexandria"; color: #fff; }
+.lrow .rl { font: 400 23px/1.3 "Plex"; color: var(--mute); }
+.tile { position: absolute; left: 0; top: 0; border-radius: 24px; background: rgba(255,255,255,.06); border: 1.5px solid rgba(125,243,232,.2);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+.tile .sk { height: 10px; }
+.tile.hit { border-color: rgba(125,243,232,.85); box-shadow: 0 0 34px rgba(46,230,214,.35); background: rgba(46,230,214,.1); }
+.kcol { position: absolute; top: 0; bottom: 0; border-radius: 22px; background: rgba(0,0,0,.22); border: 1px solid rgba(125,243,232,.14); }
+.kcol b { display: block; text-align: center; font: 600 25px/64px "Alexandria"; color: var(--teal-soft); border-bottom: 1px solid rgba(125,243,232,.14); }
+.kcard { position: absolute; left: 0; top: 0; width: 138px; height: 96px; border-radius: 18px; background: linear-gradient(160deg, #1d6f78, #0d3d43); border: 1.5px solid rgba(125,243,232,.4);
+  display: flex; align-items: center; gap: 10px; padding: 0 12px; box-shadow: 0 10px 22px rgba(0,0,0,.4); }
+.kcard .avatar { width: 46px; height: 46px; }
+.kcard .sk { height: 8px; }
+.kcard.win-k { background: linear-gradient(160deg, #b58a2c, #5b420f); border-color: #ffe7a8; box-shadow: 0 0 34px rgba(244,201,93,.6); }
+.wave { display: flex; align-items: center; justify-content: center; gap: 8px; direction: ltr; }
+.wave i { display: block; width: 10px; height: 100px; border-radius: 6px; background: linear-gradient(180deg, #7df3e8, #2ee6d6); box-shadow: 0 0 12px rgba(46,230,214,.6); }
+.cell { position: absolute; border: 1px solid rgba(125,243,232,.14); border-radius: 12px; background: rgba(0,0,0,.18); }
+.slot { position: absolute; left: 0; top: 0; border-radius: 14px; background: linear-gradient(160deg, #1f8690, #0f4a51); border: 1.5px solid rgba(125,243,232,.5);
+  display: flex; align-items: center; gap: 8px; padding: 0 10px; box-shadow: 0 10px 24px rgba(0,0,0,.4); }
+.slot.bad { background: linear-gradient(160deg, #a23b3b, #4d1616); border-color: #ff9c9c; box-shadow: 0 0 30px rgba(255,107,107,.55); }
+.slot .sk { height: 8px; flex: 1; }
+.sheetwin { position: absolute; left: 0; top: 0; border-radius: 22px; overflow: hidden; background: #f3f7f7; box-shadow: 0 30px 70px rgba(0,0,0,.55); }
+.sheetwin .bar { height: 50px; background: #dfe8e8; display: flex; align-items: center; gap: 9px; padding: 0 18px; direction: ltr; }
+.sheetwin .bar i { width: 13px; height: 13px; border-radius: 50%; background: #b9c8c9; }
+.sheetwin .grid { position: absolute; left: 0; right: 0; top: 50px; bottom: 0;
+  background-image: linear-gradient(#c9d6d7 1.5px, transparent 1.5px), linear-gradient(90deg, #c9d6d7 1.5px, transparent 1.5px); background-size: 136px 62px; }
+.sheetwin .grid .hdr { position: absolute; left: 0; right: 0; top: 0; height: 62px; background: rgba(27,127,136,.22); }
+.sheetwin .grid u { position: absolute; height: 12px; border-radius: 6px; background: #9fb4b6; }
+.sheetwin .grid .sel { position: absolute; width: 136px; height: 62px; border: 4px solid #1b7f88; background: rgba(27,127,136,.12); }
+.mailrow { position: absolute; left: 0; right: 0; height: 84px; border-bottom: 1.5px solid #d3dfdf; display: flex; align-items: center; gap: 16px; padding: 0 22px; background: #f6faf9; }
+.mailrow .dot { width: 16px; height: 16px; border-radius: 50%; background: #e0574f; flex: none; }
+.mailrow .sk { background: #b9c9ca; height: 11px; }
+.badge { position: absolute; min-width: 74px; height: 74px; border-radius: 37px; background: #e0574f; color: #fff; font: 800 34px/74px "Alexandria"; text-align: center; padding: 0 14px;
+  box-shadow: 0 8px 24px rgba(224,87,79,.6); direction: ltr; }
+.stamp { position: absolute; width: 150px; height: 150px; border-radius: 50%; border: 9px solid #e0574f; color: #e0574f; display: grid; place-items: center; font: 800 86px/1 "Alexandria"; background: rgba(255,255,255,.6); }
+.hudseg { height: 8px; flex: 1; border-radius: 4px; background: rgba(255,255,255,.14); overflow: hidden; }
+.hudseg i { display: block; height: 100%; width: 100%; background: linear-gradient(270deg, #2ee6d6, #7df3e8); transform-origin: 100% 50%; transform: scaleX(0); box-shadow: 0 0 12px rgba(46,230,214,.8); }
+.tnode { position: absolute; left: 0; top: 0; width: 620px; height: 132px; border-radius: 30px; padding: 0 28px; display: flex; align-items: center; gap: 22px;
+  background: linear-gradient(160deg, rgba(22,90,98,.96), rgba(8,42,47,.97)); border: 1.5px solid rgba(125,243,232,.3); box-shadow: 0 22px 50px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.12); }
+.tnode.gold-n { background: linear-gradient(160deg, rgba(150,112,30,.97), rgba(52,37,8,.98)); border-color: #ffe7a8; box-shadow: 0 0 70px rgba(244,201,93,.55), 0 22px 50px rgba(0,0,0,.45); }
+.tdot { position: absolute; left: 0; top: 0; width: 44px; height: 44px; border-radius: 50%; background: #0c3d43; border: 4px solid #2ee6d6; box-shadow: 0 0 22px rgba(46,230,214,.7); }
+/* headings in this film: a touch more word spacing (Alexandria's space is narrow next to wide final forms) */
+.scene[id^="e"] .h1, .scene[id^="e"] .h2, .scene[id^="e"] .h3, .ehud .h3 { word-spacing: .14em; }
