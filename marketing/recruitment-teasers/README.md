@@ -8,7 +8,8 @@
 | `out/final/01-job-seeker-teaser-*.mp4` | الفيلم الأول: الباحث عن عمل — «قدمت.. وبعدين؟» |
 | `out/final/02-employer-teaser-*.mp4` | الفيلم الثاني: المنشآت ومسؤولو التوظيف — «التوظيف ما لازم يكون بهذه الصعوبة!» |
 
-لكل فيلم ثلاث نسخ: `4K-2160x3840-60fps` (الماستر)، `1080x1920-60fps` (للنشر)، `1080x1920-captions` (للمشاهدة بدون صوت: نص التعليق محروق على الصورة).
+لكل فيلم نسختان: `4K-2160x3840-60fps` (الماستر) و`1080x1920-60fps` (للنشر). النصوص الأساسية ظاهرة داخل المشاهد نفسها فتُفهم القصة بلا صوت.
+نسخة اختيارية بنص التعليق محروقا أسفل الصورة: `CAPTIONS=1 render/build.sh <film> <name>`.
 
 ## كيف صُنعت
 
@@ -31,7 +32,7 @@ render/render.mjs    التصيير المتوازي          render/build.sh   
 ```bash
 npm install                                   # الخطوط + GSAP (مرة واحدة)
 python3 audio/vo.py                           # اختياري: إعادة توليد التعليق (يتطلب pip install edge-tts واتصالا بالخدمة)
-render/build.sh seeker   01-job-seeker-teaser # ≈ 45 دقيقة على 4 أنوية
+render/build.sh seeker   01-job-seeker-teaser # ≈ 30 دقيقة على 4 أنوية
 render/build.sh employer 02-employer-teaser
 ```
 
