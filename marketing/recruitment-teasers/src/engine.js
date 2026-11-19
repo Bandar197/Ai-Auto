@@ -167,7 +167,7 @@
     for (const f of flashes) {
       if (t < f.t || t > f.t + f.dur) continue;
       const p = (t - f.t) / f.dur;
-      const a = f.a * Math.pow(1 - p, 2.2);
+      const a = f.a * Math.pow(Math.max(0, 1 - p), 2.2);
       const g = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r * (0.35 + p * 0.65));
       g.addColorStop(0, `rgba(${f.color},${a})`); g.addColorStop(0.5, `rgba(${f.color},${a * 0.35})`); g.addColorStop(1, `rgba(${f.color},0)`);
       ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.globalCompositeOperation = 'source-over';
