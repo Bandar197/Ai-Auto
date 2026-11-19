@@ -197,7 +197,7 @@ MELODY = {  # 8th-note motifs for the drive section
 def build_music(dur, meta, sfx):
     sections = meta['sections']
     kinds = [(s['t'], sections[i + 1]['t'] if i + 1 < len(sections) else dur, s['kind']) for i, s in enumerate(sections)]
-    impacts = sorted(c['t'] for c in sfx if c['type'] == 'impact')
+    impacts = sorted(c['t'] for c in sfx if c['type'] == 'impact' and c.get('g', 1) >= 0.9)   # only the big hits steer the harmony
     drums, bassb, padb, arpb, leadb = (Bus(dur) for _ in range(5))
     K, KL, CL, HT, HO = kick(), kick(long=True), clap(), hat(), hat(28, 5500)
 
@@ -345,7 +345,9 @@ def build_music(dur, meta, sfx):
     lv = np.ones(music.shape[1])
     for a, b, kind in kinds:
         lv[int(a * SR):int(b * SR)] = level.get(kind, 1.0)
-    g *= np.concatenate([np.full(SR // 4, lv[0]), smooth(lv, 0.5)])[:len(g)]
+    sm = smooth(lv, 0.5)
+    pad = len(lv) - len(sm)
+    g *= np.concatenate([np.full(pad // 2, lv[0]), sm, np.full(pad - pad // 2, lv[-1])])
     end = [s['t'] for s in sections if s['kind'] == 'end']
     if end:
         i0 = int((end[0] - 0.5) * SR)

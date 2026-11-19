@@ -91,6 +91,7 @@
     const q1 = line(w, 'h2 glowtxt', 'بس كيف تعرف..', 300);
     reveal(q1, 5.75, { stagger: 0.16 });
     const q2 = add(w, `<div class="c" style="left:0;width:1080px;top:392px;text-align:center"><div class="gold" style="font:800 128px/1.3 'Alexandria'">مين الأنسب؟</div></div>`);
+    sc.root.appendChild(q1); sc.root.appendChild(q2);      // flat layer above the 3D world: flying sheets never cover the question
     gsap.set(q2, { transformOrigin: '50% 50%' });
     enter(q2, { scale: 1.7, opacity: 0 }, { scale: 1, opacity: 1 }, 6.7, 0.45, 'back.out(1.6)');
     tl.to(q2, { scale: 1.12, duration: 0.12, ease: 'power2.out' }, 8.5).to(q2, { scale: 1, duration: 0.5, ease: 'power2.out' }, 8.62);
@@ -872,7 +873,7 @@
     { line: 'e1', w: [0, 2], at: 58.6 }, { line: 'e1', w: [3, 5], at: 60.8 }, { line: 'e1', w: [6, 10], at: 62.6 },
   ];
   window.MUSIC = { sections: [{ t: 0, kind: 'tension' }, { t: 10, kind: 'pulse' }, { t: 20, kind: 'reveal' }, { t: 30, kind: 'drive' }, { t: 58, kind: 'finale' }, { t: 70.5, kind: 'end' }], silences: [[19.9, 20.8]] };
-  E.start({ duration: 72, audio: '../out/employer-audio.wav', captions: [
+  E.start({ duration: 72, audio: '../out/employer.wav', captions: [
     { a: 0.5, b: 2.6, text: 'عندك وظيفة شاغرة..' }, { a: 2.8, b: 5.0, text: 'وجاك مئات المتقدمين..' }, { a: 5.6, b: 8.0, text: 'بس كيف تعرف مين الأنسب؟' },
     { a: 10.4, b: 12.1, text: 'فرز سير ذاتية..' }, { a: 12.4, b: 13.9, text: 'ومقابلات..' }, { a: 14.2, b: 16.2, text: 'ومتابعة متقدمين..' }, { a: 16.4, b: 19.5, text: 'ووقت كبير يضيع على مهام متكررة!' },
     { a: 20.8, b: 21.8, text: 'طيب..' }, { a: 22.0, b: 25.8, text: 'وش لو صارت رحلة التوظيف كلها في نظام واحد؟' },
